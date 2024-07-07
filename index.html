@@ -141,6 +141,117 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-python、java多环境" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/07/07/python%E3%80%81java%E5%A4%9A%E7%8E%AF%E5%A2%83/" class="article-date">
+  <time class="dt-published" datetime="2024-07-07T15:15:06.000Z" itemprop="datePublished">2024-07-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/07/07/python%E3%80%81java%E5%A4%9A%E7%8E%AF%E5%A2%83/">python、java多环境</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h3 id="python虚拟环境"><a href="#python虚拟环境" class="headerlink" title="python虚拟环境"></a>python虚拟环境</h3><h4 id="vent"><a href="#vent" class="headerlink" title="vent"></a>vent</h4><p>创建虚拟环境需要用到venv，python3.6以上默认安装的</p>
+<h4 id="创建虚拟环境"><a href="#创建虚拟环境" class="headerlink" title="创建虚拟环境"></a>创建虚拟环境</h4><p>可以在任意文件夹下创建虚拟环境，注意的是，创建出来的虚拟环境是和当前python版本是一样的，主要作用是下载脚本相适配的库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyhton -m vent [要创建环境的名称]</span><br></pre></td></tr></table></figure>
+
+<p>执行成功后生成一个和名称相同的文件夹，文件夹内的Scripts文件夹内是启动虚拟环境的脚本，lin文件夹内是环境依赖</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707162341789.png" alt="image-20240707162341789"></p>
+<h4 id="启动虚拟环境"><a href="#启动虚拟环境" class="headerlink" title="启动虚拟环境"></a>启动虚拟环境</h4><p>启动脚本来启动虚拟环境，脚本需要在Windows PowerShell中允许，默认的命令行，只能打开这个记事本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[虚拟环境的名称]\Scripts\Activate.ps1</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="启动问题——Windows-PowerShell执行策略"><a href="#启动问题——Windows-PowerShell执行策略" class="headerlink" title="启动问题——Windows PowerShell执行策略"></a>启动问题——Windows PowerShell执行策略</h4><p>我这就是没用过Windows PowerShell的提示，因为Windows PowerShell默认是只能执行本地的脚本，不能执行下载的脚本，是一种安全模式(Restricted)</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707163923274.png" alt="image-20240707163923274"></p>
+<p>在Windows PowerShell中查看当前的执行策略</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-ExecutionPolicy</span><br></pre></td></tr></table></figure>
+
+<p>管理员运行Windows PowerShell更改策略</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-ExecutionPolicy RemoteSigned</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707164700351.png" alt="image-20240707164700351"></p>
+<p>再次执行脚本，出现绿框内容表示成功进入虚拟环境，通过pip list可以发现环境十分干净，没有其他的库</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707164918878.png" alt="image-20240707164918878"></p>
+<h4 id="退出环境"><a href="#退出环境" class="headerlink" title="退出环境"></a>退出环境</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deactivate</span><br></pre></td></tr></table></figure>
+
+
+
+<p>总结：</p>
+<p>python的虚拟环境不算很复杂，可以根据脚本的要求下载对象版本的库</p>
+<h3 id="python多环境管理"><a href="#python多环境管理" class="headerlink" title="python多环境管理"></a>python多环境管理</h3><h4 id="下载安装pyenv"><a href="#下载安装pyenv" class="headerlink" title="下载安装pyenv"></a>下载安装pyenv</h4><p>从gitup上下载pyenv-win <a target="_blank" rel="noopener" href="https://github.com/pyenv-win/pyenv-win#readme">https://github.com/pyenv-win/pyenv-win#readme</a> </p>
+<p>解压下来，找到pyenv-win的bin目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xxx\pyenv-win-master\pyenv-win-master\pyenv-win</span><br></pre></td></tr></table></figure>
+
+
+
+<p>也可以使用pip安装，但是会安装到C盘，我就没有弄</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install pyenv-win</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h4><p>新建一个系统变量 <code>PYENV</code></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707203445362.png" alt="image-20240707203445362"></p>
+<p>新增两行环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%PYENV%\bin</span><br><span class="line">%PYENV%\shims</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707203537895.png" alt="image-20240707203537895"></p>
+<p>配置完成后，命令行输入pyenv验证一下</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707203657370.png" alt="image-20240707203657370"></p>
+<h4 id="切换python版本"><a href="#切换python版本" class="headerlink" title="切换python版本"></a>切换python版本</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyenv global [切换到的版本]</span><br></pre></td></tr></table></figure>
+
+
+
+<p>pyenv的方法输入pyenv都可以看到，install下载版本什么的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707205346137.png" alt="image-20240707205346137"></p>
+<h4 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h4><p>输入pyenv versions是看不到本地下载的python版本的，只能看到通过pyenv install下载的python版本</p>
+<p>我认为呢，问题不大，可以再将本地再重新下载一个，因为库是不变的，更该python版本，系统上的库不会变化，如何有需要，可以再创建虚拟环境</p>
+<p>pyenv下载的python版本在pyenv的目录下的versions目录下</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707211345538.png" alt="image-20240707211345538"></p>
+<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>在Linux系统下，需要用到update-alternatives来管理多系统</p>
+<p>使用update-alternatives的前提是Linux里已经装好了不同版本的python</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">update-alternatives --install [链接] [名称] [路径] [优先级]</span><br><span class="line">链接/usr/bin/python</span><br><span class="line">名称一般为python，也可以自定义</span><br><span class="line">路径为python的版本路径</span><br></pre></td></tr></table></figure>
+
+
+
+<p>配置好链接后，切换版本时，只需要</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update-alternatives --config python</span><br></pre></td></tr></table></figure>
+
+<p>然后输入要切换的编号即可</p>
+<p>Linux中Java的多环境和python一样，也是通过update-alternatives来实现</p>
+<p>我也没配置jdk8的环境，直接切换就可以使用</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707230355226.png" alt="image-20240707230355226"></p>
+<p>注意还要配置javac</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/07/07/python%E3%80%81java%E5%A4%9A%E7%8E%AF%E5%A2%83/" data-id="clybp5fk7000070ng19pl1fa3" data-title="python、java多环境" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-form表单验证" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/07/03/form%E8%A1%A8%E5%8D%95%E9%AA%8C%E8%AF%81/" class="article-date">
@@ -330,6 +441,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2024/07/07/python%E3%80%81java%E5%A4%9A%E7%8E%AF%E5%A2%83/">python、java多环境</a>
+          </li>
         
           <li>
             <a href="/2024/07/03/form%E8%A1%A8%E5%8D%95%E9%AA%8C%E8%AF%81/">(no title)</a>
