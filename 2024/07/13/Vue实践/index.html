@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%8D%9A%E5%AE%A2.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%8D%9A%E5%AE%A2-copy.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="小敲一下 想写一个与之前微信小程序中相似的实时时间更新 1234567891011121314151617181920212223242526272829303132&#x2F;&#x2F;定义一个方法获取时间    updateDateTime: function () &#123;        var date &#x3D; new Date();        var year &#x3D; date.getFullYear()">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue实践">
+<meta property="og:url" content="http://example.com/2024/07/13/Vue%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="妙妙屋">
+<meta property="og:description" content="小敲一下 想写一个与之前微信小程序中相似的实时时间更新 1234567891011121314151617181920212223242526272829303132&#x2F;&#x2F;定义一个方法获取时间    updateDateTime: function () &#123;        var date &#x3D; new Date();        var year &#x3D; date.getFullYear()">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240530202913984.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240530222305593.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240531115246422.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240531135049372.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240531143824887.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240531150142785.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240531160347088.png">
+<meta property="article:published_time" content="2024-07-13T13:27:49.000Z">
+<meta property="article:modified_time" content="2024-07-13T13:29:24.839Z">
+<meta property="article:author" content="没事数命的猫">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240530202913984.png">
+
+<link rel="canonical" href="http://example.com/2024/07/13/Vue%E5%AE%9E%E8%B7%B5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Vue实践 | 妙妙屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">妙妙屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">思而不学则殆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/13/Vue%E5%AE%9E%E8%B7%B5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Vue实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-07-13 21:27:49 / 修改时间：21:29:24" itemprop="dateCreated datePublished" datetime="2024-07-13T21:27:49+08:00">2024-07-13</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>小敲一下</p>
+<p>想写一个与之前微信小程序中相似的实时时间更新</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义一个方法获取时间</span></span><br><span class="line">    <span class="attr">updateDateTime</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> date = <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">        <span class="keyword">var</span> year = date.<span class="title function_">getFullYear</span>();</span><br><span class="line">        <span class="keyword">var</span> month = date.<span class="title function_">getMonth</span>() + <span class="number">1</span>; <span class="comment">// 月份从0开始，所以需要加1</span></span><br><span class="line">        <span class="comment">// 这个月份从0开始，转化到我们这边需要加一</span></span><br><span class="line">        <span class="keyword">var</span> day = date.<span class="title function_">getDate</span>();</span><br><span class="line">        <span class="keyword">var</span> hours = date.<span class="title function_">getHours</span>();</span><br><span class="line">        <span class="keyword">var</span> minutes = date.<span class="title function_">getMinutes</span>();</span><br><span class="line">        <span class="keyword">var</span> seconds = date.<span class="title function_">getSeconds</span>();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//这里是将时间变为自己想要的样子，如果都行无所谓的话也可以直接</span></span><br><span class="line">        <span class="keyword">var</span> newdate = <span class="keyword">new</span> <span class="title class_">Date</span>().<span class="title function_">toLocaleString</span>()</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 格式化日期和时间</span></span><br><span class="line">        <span class="keyword">var</span> formattedDateTime = <span class="string">`<span class="subst">$&#123;year&#125;</span>-<span class="subst">$&#123;month.toString().padStart(<span class="number">2</span>, <span class="string">&#x27;0&#x27;</span>)&#125;</span>-<span class="subst">$&#123;day.toString().padStart(<span class="number">2</span>, <span class="string">&#x27;0&#x27;</span>)&#125;</span> <span class="subst">$&#123;hours.toString().padStart(<span class="number">2</span>, <span class="string">&#x27;0&#x27;</span>)&#125;</span>:<span class="subst">$&#123;minutes.toString().padStart(<span class="number">2</span>, <span class="string">&#x27;0&#x27;</span>)&#125;</span>:<span class="subst">$&#123;seconds.toString().padStart(<span class="number">2</span>, <span class="string">&#x27;0&#x27;</span>)&#125;</span>`</span>;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="title function_">setData</span>(&#123;</span><br><span class="line">            <span class="attr">currentDateTime</span>: formattedDateTime</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">        </span><br><span class="line">    <span class="title function_">onLoad</span>(<span class="params">options</span>) &#123;</span><br><span class="line">         <span class="comment">// 页面加载时开始更新时间</span></span><br><span class="line">         <span class="variable language_">this</span>.<span class="title function_">updateDateTime</span>();</span><br><span class="line">         <span class="comment">// 设置定时器，每秒更新一次时间</span></span><br><span class="line">         <span class="variable language_">this</span>.<span class="property">timer</span> = <span class="built_in">setInterval</span>(<span class="variable language_">this</span>.<span class="property">updateDateTime</span>, <span class="number">1000</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">onUnload</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="built_in">clearInterval</span>(<span class="variable language_">this</span>.<span class="property">timer</span>);</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line"><span class="comment">//Vue3中的写法与之类似，但是有个问题，因为Vue3 我使用的是Vue3语法糖就有一些问题</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">    //我的想法捏</span><br><span class="line">    import &#123; ref,onMounted &#125; from &#x27;vue&#x27;</span><br><span class="line">    </span><br><span class="line">    let date = ref(new Date().toLocaleString())</span><br><span class="line">    </span><br><span class="line">    function updateTime() &#123;</span><br><span class="line">        date = ref(new Date().toLocaleString())</span><br><span class="line">    &#125;</span><br><span class="line">    onMounted() &#123;</span><br><span class="line">        updateTime()</span><br><span class="line">        setInterval(updateTime, 1000);</span><br><span class="line">    &#125;</span><br><span class="line">    // 但是，不刷新数据是不会自动更新的，也就是说setInterval(updateTime, 1000);并没有起作用</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>其实，这里有两个问题，第一个onMounted这个钩子的用法不对，这里写的用法是类似于微信小程序中钩子的写法在Vue3中应该为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">onMounted(()=&gt;&#123;</span><br><span class="line">     updateTime()</span><br><span class="line">     setInterval(updateTime, 1000);    </span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>第二个问题，这里的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240530202913984.png" alt="image-20240530202913984"></p>
+<p>需要改为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">date.value = new Date().toLocaleString()</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">    //我的想法捏</span><br><span class="line">    import &#123; ref,onMounted,onUnmounted &#125; from &#x27;vue&#x27;</span><br><span class="line">    </span><br><span class="line">    let date = ref(new Date().toLocaleString())</span><br><span class="line">    let timer:any</span><br><span class="line">    </span><br><span class="line">    function updateTime() &#123;</span><br><span class="line">        date.value = new Date().toLocaleString()</span><br><span class="line">    &#125;</span><br><span class="line">    onMounted() &#123;</span><br><span class="line">        updateTime()</span><br><span class="line">        timer = setInterval(updateTime, 1000);</span><br><span class="line">    &#125;</span><br><span class="line">    onUnmounted(()=&gt;&#123;</span><br><span class="line">		clearInterval(timer)</span><br><span class="line">	&#125;)</span><br><span class="line">    // 卸载计时器，因为即使是组件卸载掉了，计时器仍然会继续date依然更新，浪费性能没必要</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>但是通过对比发现两者的写法差别是不大的</p>
+<h2 id="组件模仿页面切换"><a href="#组件模仿页面切换" class="headerlink" title="组件模仿页面切换"></a>组件模仿页面切换</h2><p>但是微信小程序和Vue3 我感觉主要的区别在于，Vue3所有的活动都是在App.vue这个根上的，而微信小程序可以创建很多新的页面，这个时候我准备给Vue3写一个类似于小程序的东西</p>
+<p>先搞一个路由</p>
+<p>因为只有一个根组件，那么我可以只用路由来达到目的，App.vue中先写一个占位，更换路由占位更换，这就相当于页面更换，这样的话，我感觉就实现了微信小程序页面更换的问题</p>
+<p>看一下App.vue</p>
+<p>App.vue相当简洁，写了 一个路由占位符，准备渲染组件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;router-view&gt;&lt;/router-view&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot; name=&quot;app&quot;&gt;</span><br><span class="line">	</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line"></span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>写一下路由组件</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.ts</span></span><br><span class="line"><span class="comment">// 引入组件和路由器，设置一个history传参</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123; createRouter, createWebHistory &#125; <span class="keyword">from</span> <span class="string">&quot;vue-router&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Index</span> <span class="keyword">from</span> <span class="string">&quot;./index.vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Demo</span> <span class="keyword">from</span> <span class="string">&quot;./demo.vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Demolist</span> <span class="keyword">from</span> <span class="string">&quot;./demolist.vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Get</span> <span class="keyword">from</span> <span class="string">&quot;./get.vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Text</span> <span class="keyword">from</span> <span class="string">&quot;./text.vue&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Mess</span> <span class="keyword">from</span> <span class="string">&quot;./mess.vue&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> router = <span class="title function_">createRouter</span>(&#123;</span><br><span class="line">	<span class="attr">history</span>: <span class="title function_">createWebHistory</span>(),</span><br><span class="line">	<span class="attr">routes</span>: [&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 封装路由，将/设置为index组件，默认展示index组件，然后在index路由下封装四个组件准备展示在index组件</span></span><br><span class="line">		<span class="attr">path</span>: <span class="string">&#x27;/home&#x27;</span>,</span><br><span class="line">		<span class="attr">component</span>: <span class="title class_">Index</span>,</span><br><span class="line">		<span class="attr">children</span>: [</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="attr">name</span>: <span class="string">&#x27;demo&#x27;</span>,</span><br><span class="line">				<span class="attr">path</span>: <span class="string">&#x27;demo&#x27;</span>,</span><br><span class="line">				<span class="attr">component</span>: <span class="title class_">Demo</span></span><br><span class="line">			&#125;, &#123;</span><br><span class="line">				<span class="attr">name</span>: <span class="string">&#x27;demolist&#x27;</span>,</span><br><span class="line">				<span class="attr">path</span>: <span class="string">&#x27;demolist&#x27;</span>,</span><br><span class="line">				<span class="attr">component</span>: <span class="title class_">Demolist</span></span><br><span class="line">			&#125;, &#123;</span><br><span class="line">				<span class="attr">name</span>: <span class="string">&#x27;get&#x27;</span>,</span><br><span class="line">				<span class="attr">path</span>: <span class="string">&#x27;get&#x27;</span>,</span><br><span class="line">				<span class="attr">component</span>: <span class="title class_">Get</span></span><br><span class="line">			&#125;, &#123;</span><br><span class="line">				<span class="attr">name</span>:<span class="string">&#x27;mess&#x27;</span>,</span><br><span class="line">				<span class="attr">path</span>: <span class="string">&#x27;mess&#x27;</span>,</span><br><span class="line">				<span class="attr">component</span>: <span class="title class_">Mess</span></span><br><span class="line">			&#125;</span><br><span class="line">		]</span><br><span class="line">	&#125;,&#123;</span><br><span class="line">        <span class="comment">// 再写一个text组件，脱离index，我打算以点击事件的方式将这个组件渲染到App.vue 来实现类似微信小程序的页面跳转</span></span><br><span class="line">		<span class="attr">path</span>: <span class="string">&#x27;/text&#x27;</span>,</span><br><span class="line">		<span class="attr">component</span>: <span class="title class_">Text</span></span><br><span class="line">	&#125;,&#123;</span><br><span class="line">		<span class="attr">path</span>:<span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">		<span class="attr">redirect</span>:<span class="string">&#x27;/home&#x27;</span></span><br><span class="line">	&#125;]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> router</span><br></pre></td></tr></table></figure>
+
+<p>这样呢是形成了两个页面的效果，一个是&#x2F;home首页，另一个是&#x2F;text 因为index.vue内是写了一些样式，是一个路由，所以只能算一个页面，而这个text组件，确实是独立的一个页面效果，他是再index组件卸载后，渲染上去的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// text.vue</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;h2&gt;text&lt;/h2&gt;</span><br><span class="line">	&lt;button @click=&quot;showHome()&quot;&gt;点我&lt;/button&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">	import &#123; useRouter &#125; from &#x27;vue-router&#x27;;</span><br><span class="line">	</span><br><span class="line">	let router = useRouter()</span><br><span class="line">	</span><br><span class="line">	function showHome() &#123;</span><br><span class="line">		router.push(&#123;</span><br><span class="line">			path:&#x27;/&#x27;</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240530222305593.png" alt="image-20240530222305593"></p>
+<p>这样这个效果基本实现，但是是这个跳转方法是不太好复现的，因为无论是history还是hash跳转都是卸载掉当前组件，然后再挂载新的组件的，毕竟一直在那里的只有app.vue，但是还是有点相像的毕竟history可以有浏览器提供的返回键来返回，就相当于wx.navigateTo这种跳转，hash不能由浏览器提供的返回键返回，是属于覆盖性的，就相当于wx.redirectTo跳转了</p>
+<h2 id="引入Vant组件库"><a href="#引入Vant组件库" class="headerlink" title="引入Vant组件库"></a>引入Vant组件库</h2><p>之前在微信小程序中使用的 vant4 组件库也支持Vue版本，这边搞一下</p>
+<p>先在Vue3项目中下载Vant</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i vant</span><br></pre></td></tr></table></figure>
+
+<p>官方文档：<a target="_blank" rel="noopener" href="https://vant-ui.github.io/vant/#/zh-CN/quickstart">https://vant-ui.github.io/vant/#/zh-CN/quickstart</a></p>
+<h3 id="全局引用"><a href="#全局引用" class="headerlink" title="全局引用"></a>全局引用</h3><p>因为 我的Vue3是使用vite 来构建的，因此，会有一个vite.comfig.js文件</p>
+<p>更改这个文件</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> vue <span class="keyword">from</span> <span class="string">&#x27;@vitejs/plugin-vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 看变量名也可以猜出来，自动引入组件API</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">AutoImport</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-auto-import/vite&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个会在使用组件后，自动解析并注册组件</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">Components</span> <span class="keyword">from</span> <span class="string">&#x27;unplugin-vue-components/vite&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个从vant中拿到相应的样式</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">VantResolver</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;@vant/auto-import-resolver&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        <span class="title function_">vue</span>(),</span><br><span class="line">        <span class="title class_">AutoImport</span>(&#123;</span><br><span class="line">            <span class="attr">resolvers</span>: [<span class="title class_">VantResolver</span>()],</span><br><span class="line">        &#125;),</span><br><span class="line">        <span class="title class_">Components</span>(&#123;</span><br><span class="line">            <span class="attr">resolvers</span>: [<span class="title class_">VantResolver</span>()],</span><br><span class="line">        &#125;),</span><br><span class="line">    ],</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果报错的话，依次下载三个引入的地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm i unplugin-auto-import -D</span><br><span class="line">npm i unplugin-vue-components -D</span><br><span class="line">npm i @vant/auto-import-resolver -D</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这个时候就可以直接在页面中使用vant组件了，不再需要任何的引用</p>
+<p>  <img src="/../%E5%9B%BE%E7%89%87/image-20240531115246422.png" alt="image-20240531115246422"></p>
+<h3 id="按需引用"><a href="#按需引用" class="headerlink" title="按需引用"></a>按需引用</h3><p>按需引用比较麻烦，需要再 main.js 的入口文件中引入</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个代码的意思是将Button这个组件中拿出来，如果我还需要 cell,calendae 等等，这里就会写很长</span></span><br><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Button</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;vant&#x27;</span></span><br><span class="line"><span class="comment">// 引入组件样式</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;vant/lib/index.css&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">createApp</span>(<span class="title class_">App</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里要使用app.use使用组件，感觉这种方式有点麻烦，不如全局引入，一劳永逸</span></span><br><span class="line">app.<span class="title function_">use</span>(<span class="title class_">Button</span>)</span><br><span class="line">app.<span class="title function_">mount</span>(<span class="string">&#x27;#app&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>剩下的就用就完了，没啥好说的。</p>
+<h2 id="引入three-js"><a href="#引入three-js" class="headerlink" title="引入three.js"></a>引入three.js</h2><p>官方文档：<a target="_blank" rel="noopener" href="https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene">https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i three</span><br></pre></td></tr></table></figure>
+
+
+
+<p>安装版本号</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240531135049372.png" alt="image-20240531135049372"></p>
+<p>这个时候新建一个组件开始敲</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;div ref=&quot;threeContainer&quot; class=&quot;three-container&quot;&gt;&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot; name=&quot;ThreeComponent&quot;&gt;</span><br><span class="line">	import * as THREE from &#x27;three&#x27;</span><br><span class="line">	import &#123; ref,onMounted &#125; from &#x27;vue&#x27;;</span><br><span class="line">	</span><br><span class="line">	const threeContainer = ref(null)</span><br><span class="line">	</span><br><span class="line">	onMounted (()=&gt;&#123;</span><br><span class="line">		// 初始化Three，获取容器信息</span><br><span class="line">		const container = threeContainer.value</span><br><span class="line">        </span><br><span class="line">		</span><br><span class="line">		// 创建场景，创建一个新的 Three.js 场景</span><br><span class="line">		const scene = new THREE.Scene();</span><br><span class="line">        </span><br><span class="line">		</span><br><span class="line">		// 创建相机，创建一个透明相机，并设置其位置</span><br><span class="line">	 	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1 ,1000 );</span><br><span class="line">        // 这个postion.z 是设置相机高度</span><br><span class="line">		camera.position.z = 5</span><br><span class="line">        </span><br><span class="line">		</span><br><span class="line">		// 创建渲染器，将其大小设置为容器的宽度和高度，然后将渲染器的 DOM 元素添加到容器中</span><br><span class="line">		const renderer = new THREE.WebGLRenderer();</span><br><span class="line">		renderer.setSize( window.innerWidth, window.innerHeight );</span><br><span class="line">		container.appendChild( renderer.domElement )</span><br><span class="line">        </span><br><span class="line">		</span><br><span class="line">		// 创建一个立方体，并将其组合成一个网格对象，然后将该网络对象添加到场景中</span><br><span class="line">		const geometry = new THREE.BoxGeometry();</span><br><span class="line">		const material = new THREE.MeshBasicMaterial(&#123; color:0x00ff00 &#125;)</span><br><span class="line">        // 设置立方体颜色，color</span><br><span class="line">		const cube = new THREE.Mesh(geometry,material)</span><br><span class="line">		scene.add(cube)</span><br><span class="line">        // 将这个cude添加到 Three.js 中</span><br><span class="line">        </span><br><span class="line">		</span><br><span class="line">		// 渲染循环，创建一个动画循环，在每一帧中，旋转立方体，渲染场景</span><br><span class="line">		const animate = () =&gt; &#123;</span><br><span class="line">			requestAnimationFrame(animate);</span><br><span class="line">			</span><br><span class="line">			cube.rotation.x += 0.01</span><br><span class="line">			cube.rotation.y += 0.01</span><br><span class="line">			// x,y 分别为x,y方向旋转的速度</span><br><span class="line">			renderer.render(scene,camera)</span><br><span class="line">		&#125;</span><br><span class="line">		animate()</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">    .three-container &#123;</span><br><span class="line">		width: 100%;</span><br><span class="line">		height: 100%;</span><br><span class="line">		overflow: hidden;</span><br><span class="line">	&#125;</span><br><span class="line">    // 设置div样式，使其覆盖整个视口并隐藏溢出内容</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240531143824887.png" alt="image-20240531143824887"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install --save-dev @types/three</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这样就写出来了一个自动旋转的绿色正方体</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240531150142785.png" alt="image-20240531150142785"></p>
+<p>注意这里是有循环的，要使用卸载钩子将组件不引用时卸载掉three场景，释放资源</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">// 引入监听页面卸载的钩子，小改一下代码，懒得写注释了</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot; name=&quot;ThreeComponent&quot;&gt;</span><br><span class="line">	import * as THREE from &#x27;three&#x27;</span><br><span class="line">	import &#123; ref,onMounted,onUnmounted &#125; from &#x27;vue&#x27;;</span><br><span class="line">	</span><br><span class="line">	const threeContainer = ref&lt;HTMLDivElement | null&gt;(null)</span><br><span class="line">	const cube = new THREE.Mesh</span><br><span class="line">	const renderer = new THREE.WebGLRenderer();</span><br><span class="line">	let animationId:number</span><br><span class="line">	</span><br><span class="line">	onMounted (()=&gt;&#123;</span><br><span class="line">		if (!threeContainer.value) return;</span><br><span class="line">		</span><br><span class="line">		// 初始化Three</span><br><span class="line">		const container = threeContainer.value</span><br><span class="line">		</span><br><span class="line">		// 创建场景</span><br><span class="line">		const scene = new THREE.Scene();</span><br><span class="line">		</span><br><span class="line">		// 创建相机</span><br><span class="line">	 	const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1 ,1000 );</span><br><span class="line">		camera.position.z = 3</span><br><span class="line">		</span><br><span class="line">		// 创建渲染器</span><br><span class="line">		renderer.setSize( window.innerWidth, window.innerHeight );</span><br><span class="line">		container.appendChild( renderer.domElement )</span><br><span class="line">		</span><br><span class="line">		// 创建一个立方体</span><br><span class="line">		const geometry = new THREE.BoxGeometry();</span><br><span class="line">		const material = new THREE.MeshBasicMaterial(&#123; color:0x00ff00 &#125;)</span><br><span class="line">		const cube = new THREE.Mesh(geometry,material)</span><br><span class="line">		scene.add(cube)</span><br><span class="line">		</span><br><span class="line">		// 渲染循环</span><br><span class="line">		const animate = () =&gt; &#123;</span><br><span class="line">			animationId = requestAnimationFrame(animate);</span><br><span class="line">			</span><br><span class="line">			cube.rotation.x += 0.01</span><br><span class="line">			cube.rotation.y += 0.01</span><br><span class="line">			console.log(&#x27;1&#x27;)</span><br><span class="line">			renderer.render(scene,camera)</span><br><span class="line">		&#125;</span><br><span class="line">		animate()</span><br><span class="line">	&#125;),</span><br><span class="line">	onUnmounted (()=&gt;&#123;</span><br><span class="line">        // 停止动画循环</span><br><span class="line">		cancelAnimationFrame(animationId)</span><br><span class="line">        </span><br><span class="line">        // 清除几何体材质</span><br><span class="line">		cube.geometry.dispose();</span><br><span class="line">		(cube.material as THREE.Material).dispose()</span><br><span class="line">        </span><br><span class="line">        // 移除渲染器的 DOM 元素</span><br><span class="line">		if (renderer &amp;&amp; renderer.domElement &amp;&amp; renderer.domElement.parentNode) &#123;</span><br><span class="line">			renderer.domElement.parentNode.removeChild(renderer.domElement);</span><br><span class="line">		&#125;</span><br><span class="line">        </span><br><span class="line">        // 清理渲染器</span><br><span class="line">		renderer.dispose();</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里写了一个打印1的地方，通过编程式导航来进行跳转发现，返回后，1停止打印，说明已经释放资源  </p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240531160347088.png" alt="  "></p>
+<h2 id="防止父容器的点击态"><a href="#防止父容器的点击态" class="headerlink" title="防止父容器的点击态"></a>防止父容器的点击态</h2><p>想写一个俄罗斯方块，写到暂停键的时候，遇到了问题，先看一下能不能看出来</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;div class=&quot;box-right&quot;&gt;</span><br><span class="line">		&lt;div style=&quot;margin-top: 80px;&quot;&gt;&#123;&#123;forTime&#125;&#125;&lt;/div&gt;</span><br><span class="line">			&lt;div class=&quot;box-right-icon&quot; @click=&quot;stop&quot;&gt;</span><br><span class="line">				&lt;div @click=&quot;stop&quot; :class=&quot;status?&#x27;icon-content&#x27;:&#x27;icon-stop&#x27;&quot; &gt;&lt;/div&gt;</span><br><span class="line">    	&lt;/div&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">	import &#123; ref,watch,onMounted,onUnmounted &#125; from &#x27;vue&#x27;;</span><br><span class="line">	</span><br><span class="line">	let num = 200</span><br><span class="line">	let hour = ref(0)</span><br><span class="line">	let minute = ref(0)</span><br><span class="line">	let second = ref(0)</span><br><span class="line">	let timer:any</span><br><span class="line">	let forTime = ref(&#x27;&#x27;)</span><br><span class="line">	let status = ref(true)</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	function updatatime() &#123;</span><br><span class="line">		if (status.value=true) &#123;</span><br><span class="line">			if (second.value == 59) &#123;</span><br><span class="line">				second.value = 0</span><br><span class="line">				minute.value += 1</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				second.value += 1</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			return</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	function stop() &#123;</span><br><span class="line">		console.log(&#x27;stop triggered&#x27;)</span><br><span class="line">		status.value = !status.value</span><br><span class="line">		if (status.value) &#123;</span><br><span class="line">		    timer = setInterval(updatatime, 1000); // 继续计时</span><br><span class="line">		  &#125; else &#123;</span><br><span class="line">		    clearInterval(timer)</span><br><span class="line">			&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	onMounted(()=&gt;&#123;</span><br><span class="line">		updatatime()</span><br><span class="line">		timer = setInterval(updatatime,1000)</span><br><span class="line">	&#125;)</span><br><span class="line">	onUnmounted(()=&gt;&#123;</span><br><span class="line">		clearInterval(timer)</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">	const time = watch(second,(value)=&gt;&#123;</span><br><span class="line">		if (minute.value&lt;10 &amp;&amp; second.value&lt;10) &#123;</span><br><span class="line">			forTime.value =	hour.value+&#x27;:0&#x27;+minute.value+&#x27;:0&#x27;+second.value</span><br><span class="line">		&#125; else if(second.value&lt;10) &#123;</span><br><span class="line">			forTime.value =	hour.value+&#x27;:&#x27;+minute.value+&#x27;:0&#x27;+second.value</span><br><span class="line">		&#125; else if(minute.value&lt;10) &#123;</span><br><span class="line">			forTime.value =	hour.value+&#x27;:0&#x27;+minute.value+&#x27;:&#x27;+second.value</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			forTime.value =	hour.value+&#x27;:&#x27;+minute.value+&#x27;:&#x27;+second.value</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>我是通过打印事件，排查出来的，点击样式内的div后，会触发两次点击事件，true变为false又变为false，以此，导致了视觉上的子容器的点击事件不好使的情况</p>
+<p>解决方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">	function stop(event: Event) &#123;</span><br><span class="line">		event.stopPropagation()</span><br><span class="line">		status.value = !status.value</span><br><span class="line">		if (status.value) &#123;</span><br><span class="line">		    timer = setInterval(updatatime, 1000); // 继续计时</span><br><span class="line">		  &#125; else &#123;</span><br><span class="line">		    clearInterval(timer)</span><br><span class="line">			&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">// 给他来一个event.stopPropagation()阻止冒泡即可，之前从未遇到过这样需求，长知识了</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="获取非普通标签的DOM元素"><a href="#获取非普通标签的DOM元素" class="headerlink" title="获取非普通标签的DOM元素"></a>获取非普通标签的DOM元素</h2><p>写俄罗斯方块的时候，我将方块封装为不同的组件</p>
+<p>封装组件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;div class=&quot;lang&quot; ref=&quot;rootElement&quot;&gt;</span><br><span class="line">		&lt;div v-for=&quot;x in 4&quot; class=&quot;lang-bor&quot;&gt;&lt;/div&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">	import &#123; ref &#125; from &#x27;vue&#x27;;</span><br><span class="line">	</span><br><span class="line">	const rootElement =ref&lt;HTMLElement | null&gt;(null)</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>想要获取组件的DOM元素，只需要给最外层一个ref即可</p>
+<p>然后再调用组件的页面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;long-vue ref=&quot;movableDiv&quot;&gt;&lt;/long-vue&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">	import &#123; ref,watch,onMounted,onUnmounted,nextTick &#125; from &#x27;vue&#x27;;</span><br><span class="line">    import longVue from &#x27;../components/long.vue&#x27;;</span><br><span class="line">    </span><br><span class="line">    onMounted(async ()=&gt;&#123;</span><br><span class="line">		await nextTick()</span><br><span class="line">		if (movableDiv.value) &#123;</span><br><span class="line">			const movawidth = movableDiv.value.$el.offsetWidth</span><br><span class="line">			const movaheight = movableDiv.value.$el.offsetHeight</span><br><span class="line">			console.log(movawidth,movaheight)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>比直接获取HTML标签的DOM元素中多了一个 <code>$el</code> 加上就可以直接拿到组件的DOM 元素</p>
+<h2 id="导出微信语音"><a href="#导出微信语音" class="headerlink" title="导出微信语音"></a>导出微信语音</h2><p>首先将微信呢语音收藏，然后呢在手机版中，将语音转化为笔记</p>
+<p>再在..\FileStorage\Fav\Temp\xxxxx\res中 找到一个拓展名为silk的文件</p>
+<p>利用一个小工具silk2mp3，我是不敢在真机中使用，所以扔虚拟机了</p>
+<p>直接解码为mp3即可导出微信语音</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>autoplay</td>
+<td>autoplay</td>
+<td>如果出现该属性，则音频在就绪后马上播放。</td>
+</tr>
+<tr>
+<td>controls</td>
+<td>controls</td>
+<td>如果出现该属性，则向用户显示音频控件（比如播放&#x2F;暂停按钮）。</td>
+</tr>
+<tr>
+<td>loop</td>
+<td>loop</td>
+<td>如果出现该属性，则每当音频结束时重新开始播放。</td>
+</tr>
+<tr>
+<td>muted</td>
+<td>muted</td>
+<td>如果出现该属性，则音频输出为静音。</td>
+</tr>
+<tr>
+<td>preload</td>
+<td>auto<br/>metadata<br/>none</td>
+<td>规定当网页加载时，音频是否默认被加载以及如何被加载。</td>
+</tr>
+<tr>
+<td>src</td>
+<td>URL</td>
+<td>规定音频文件的 URL。</td>
+</tr>
+</tbody></table>
+<h3 id="audio属性"><a href="#audio属性" class="headerlink" title="audio属性"></a>audio属性</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>audioTracks</td>
+<td>返回表示可用音频轨道的 AudioTrackList 对象</td>
+</tr>
+<tr>
+<td>autoplay</td>
+<td>设置或返回是否在加载完成后随即播放音频</td>
+</tr>
+<tr>
+<td>buffered</td>
+<td>返回表示音频已缓冲部分的 TimeRanges 对象</td>
+</tr>
+<tr>
+<td>controller</td>
+<td>返回表示音频当前媒体控制器的 MediaController 对象</td>
+</tr>
+<tr>
+<td>controls</td>
+<td>设置或返回音频是否显示控件（比如播放&#x2F;暂停等）</td>
+</tr>
+<tr>
+<td>crossOrigin</td>
+<td>设置或返回音频的 CORS 设置</td>
+</tr>
+<tr>
+<td>currentSrc</td>
+<td>回当前音频的 URL</td>
+</tr>
+<tr>
+<td>currentTime</td>
+<td>设置或返回音频中的当前播放位置（以秒计）</td>
+</tr>
+<tr>
+<td>defaultMuted</td>
+<td>设置或返回音频默认是否静音</td>
+</tr>
+<tr>
+<td>defaultPlaybackRate</td>
+<td>设置或返回音频的默认播放速度</td>
+</tr>
+<tr>
+<td>duration</td>
+<td>返回当前音频的长度（以秒计）</td>
+</tr>
+<tr>
+<td>ended</td>
+<td>返回音频的播放是否已结束</td>
+</tr>
+<tr>
+<td>error</td>
+<td>返回表示音频错误状态的 MediaError 对象</td>
+</tr>
+<tr>
+<td>loop</td>
+<td>设置或返回音频是否应在结束时重新播放</td>
+</tr>
+<tr>
+<td>mediaGroup</td>
+<td>设置或返回音频所属的组合（用于连接多个音频元素）</td>
+</tr>
+<tr>
+<td>muted</td>
+<td>设置或返回音频是否静音</td>
+</tr>
+<tr>
+<td>networkState</td>
+<td>返回音频的当前网络状态</td>
+</tr>
+<tr>
+<td>paused</td>
+<td>设置或返回音频是否暂停</td>
+</tr>
+<tr>
+<td>playbackRate</td>
+<td>设置或返回音频播放的速度</td>
+</tr>
+<tr>
+<td>played</td>
+<td>返回表示音频已播放部分的 TimeRanges 对象</td>
+</tr>
+<tr>
+<td>preload</td>
+<td>设置或返回音频是否应该在页面加载后进行加载</td>
+</tr>
+<tr>
+<td>readyState</td>
+<td>返回音频当前的就绪状态</td>
+</tr>
+<tr>
+<td>seekable</td>
+<td>返回表示音频可寻址部分的 TimeRanges 对象</td>
+</tr>
+<tr>
+<td>seeking</td>
+<td>返回用户是否正在音频中进行查找</td>
+</tr>
+<tr>
+<td>src</td>
+<td>设置或返回音频元素的当前来源</td>
+</tr>
+<tr>
+<td>textTracks</td>
+<td>返回表示可用文本轨道的 TextTrackList 对象</td>
+</tr>
+<tr>
+<td>volume</td>
+<td>设置或返回音频的音量</td>
+</tr>
+</tbody></table>
+<h3 id="audio方法"><a href="#audio方法" class="headerlink" title="audio方法"></a>audio方法</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>addTextTrack()</td>
+<td>在音频中添加一个新的文本轨道</td>
+</tr>
+<tr>
+<td>canPlayType()</td>
+<td>检查浏览器是否可以播放指定的音频类型</td>
+</tr>
+<tr>
+<td>fastSeek()</td>
+<td>在音频播放器中指定播放时间。</td>
+</tr>
+<tr>
+<td>getStartDate()</td>
+<td>返回一个新的Date对象，表示当前时间轴偏移量</td>
+</tr>
+<tr>
+<td>load()</td>
+<td>重新加载音频元素</td>
+</tr>
+<tr>
+<td>play()</td>
+<td>开始播放音频</td>
+</tr>
+<tr>
+<td>pause()</td>
+<td>暂停当前播放的音频</td>
+</tr>
+</tbody></table>
+<h2 id="封装图片验证码"><a href="#封装图片验证码" class="headerlink" title="封装图片验证码"></a>封装图片验证码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;div class=&quot;img-verify&quot;&gt;</span><br><span class="line">		&lt;canvas ref=&quot;verify&quot; :width=&quot;state.width&quot; :height=&quot;state.height&quot; @click=&quot;handleDraw&quot;&gt;&lt;/canvas&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">	import &#123; ref,onMounted,reactive &#125; from &#x27;vue&#x27;;</span><br><span class="line">	</span><br><span class="line">	const verify = ref(null)</span><br><span class="line">	const emit = defineEmits([&quot;get-code&quot;])</span><br><span class="line">	const state = reactive(&#123;</span><br><span class="line">		pool:&quot;qwertyuiopasdfghjklzxcvbnm1234567890&quot;,</span><br><span class="line">		width:120,</span><br><span class="line">		height:40,</span><br><span class="line">		imgCode:&#x27;&#x27;,</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">	// 随机数字</span><br><span class="line">	const randomNum = (min,max) =&gt; &#123;</span><br><span class="line">		return parseInt(Math.random() * (max - min) + min)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	// 随机颜色</span><br><span class="line">	const randomColor = (min,max) =&gt; &#123;</span><br><span class="line">		const r = randomNum(min,max)</span><br><span class="line">		const g = randomNum(min,max)</span><br><span class="line">		const b = randomNum(min,max)</span><br><span class="line">		return `rgb($&#123;r&#125;,$&#123;g&#125;,$&#123;b&#125;)`</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	// 绘制图片</span><br><span class="line">	const draw = () =&gt; &#123;</span><br><span class="line">		// 填充背景颜色</span><br><span class="line">		const ctx = verify.value.getContext(&quot;2d&quot;)</span><br><span class="line">		// 填充颜色</span><br><span class="line">		ctx.fillStyle = randomColor(180,230)</span><br><span class="line">		// 填充位置</span><br><span class="line">		ctx.fillRect(0,0,state.width,state.width)</span><br><span class="line">		</span><br><span class="line">		// 定义paramText</span><br><span class="line">		let imgCode = &#x27;&#x27;;</span><br><span class="line">		</span><br><span class="line">		// 产生随机数字，并且随即旋转</span><br><span class="line">		for (let i = 0; i &lt; 4; i++) &#123;</span><br><span class="line">			// 产生随机数字</span><br><span class="line">			const text = state.pool[randomNum(0,state.pool.length)]</span><br><span class="line">			imgCode += text</span><br><span class="line">			</span><br><span class="line">			// 随机大小字体</span><br><span class="line">			const fontSize = randomNum(18,40);</span><br><span class="line">			</span><br><span class="line">			// 随机字体角度</span><br><span class="line">			const deg = randomNum(-30,30)</span><br><span class="line">			</span><br><span class="line">			ctx.font = fontSize + &#x27;px Simhei&#x27;;</span><br><span class="line">			ctx.textBaseline = &quot;top&quot;;</span><br><span class="line">			ctx.fillStyle = randomColor(80,150)</span><br><span class="line">			</span><br><span class="line">			</span><br><span class="line">			ctx.save()</span><br><span class="line">			ctx.translate(30 * i + 15,15);</span><br><span class="line">			ctx.rotate((deg * Math.PI) / 180)</span><br><span class="line">			</span><br><span class="line">			</span><br><span class="line">			ctx.fillText(text, -15 + 5, -15)</span><br><span class="line">			ctx.restore()</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		// 随机5条干扰线</span><br><span class="line">		for (var i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">			ctx.beginPath();</span><br><span class="line">			ctx.moveTo(randomNum(0,state.width),randomNum(0,state.height))</span><br><span class="line">			ctx.lineTo(randomNum(0,state.width),randomNum(0,state.height))</span><br><span class="line">			ctx.strokeStyle = randomColor(180,230);</span><br><span class="line">			ctx.closePath()</span><br><span class="line">			ctx.stroke()</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		// 产生40个干扰点</span><br><span class="line">		for (var i = 0; i &lt; 40; i++) &#123;</span><br><span class="line">			ctx.beginPath();</span><br><span class="line">			ctx.acr(</span><br><span class="line">				randomNum(0,state.width),</span><br><span class="line">				randomNum(0,state.height),</span><br><span class="line">				1,</span><br><span class="line">				0,</span><br><span class="line">				2 * Math.PI</span><br><span class="line">			);</span><br><span class="line">			ctx.closePath();</span><br><span class="line">			ctx.fillStyle = randomColor(150,200);</span><br><span class="line">			ctx.fill();</span><br><span class="line">		&#125;</span><br><span class="line">		return imgCode</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	// 点击切换图片</span><br><span class="line">	const handleDraw = () =&gt; &#123;</span><br><span class="line">		state.imgCode = draw();</span><br><span class="line">		emit(&quot;get-code&quot;,state.imgCode)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	// 初始化</span><br><span class="line">	onMounted(()=&gt;&#123;</span><br><span class="line">		state.imgCode = draw();</span><br><span class="line">		emit(&quot;get-code&quot;,state.imgCode)</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">	.img-verify &#123;</span><br><span class="line">		height: 40px;</span><br><span class="line">		margin: 0 0.1rem;</span><br><span class="line">	&#125;</span><br><span class="line">	.img-verify canvas &#123;</span><br><span class="line">		cursor: pointer;</span><br><span class="line">	&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/07/13/wxss%E5%AE%9E%E8%B7%B5/" rel="prev" title="wxss实践">
+      <i class="fa fa-chevron-left"></i> wxss实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/07/13/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/" rel="next" title="微信小程序对称加密">
+      微信小程序对称加密 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E6%A8%A1%E4%BB%BF%E9%A1%B5%E9%9D%A2%E5%88%87%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text">组件模仿页面切换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E5%85%A5Vant%E7%BB%84%E4%BB%B6%E5%BA%93"><span class="nav-number">2.</span> <span class="nav-text">引入Vant组件库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%BC%95%E7%94%A8"><span class="nav-number">2.1.</span> <span class="nav-text">全局引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E9%9C%80%E5%BC%95%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">按需引用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E5%85%A5three-js"><span class="nav-number">3.</span> <span class="nav-text">引入three.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B2%E6%AD%A2%E7%88%B6%E5%AE%B9%E5%99%A8%E7%9A%84%E7%82%B9%E5%87%BB%E6%80%81"><span class="nav-number">4.</span> <span class="nav-text">防止父容器的点击态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%9D%9E%E6%99%AE%E9%80%9A%E6%A0%87%E7%AD%BE%E7%9A%84DOM%E5%85%83%E7%B4%A0"><span class="nav-number">5.</span> <span class="nav-text">获取非普通标签的DOM元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%87%BA%E5%BE%AE%E4%BF%A1%E8%AF%AD%E9%9F%B3"><span class="nav-number">6.</span> <span class="nav-text">导出微信语音</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#audio%E5%B1%9E%E6%80%A7"><span class="nav-number">6.1.</span> <span class="nav-text">audio属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#audio%E6%96%B9%E6%B3%95"><span class="nav-number">6.2.</span> <span class="nav-text">audio方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%81%E8%A3%85%E5%9B%BE%E7%89%87%E9%AA%8C%E8%AF%81%E7%A0%81"><span class="nav-number">7.</span> <span class="nav-text">封装图片验证码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="没事数命的猫"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">没事数命的猫</p>
+  <div class="site-description" itemprop="description">学而不思则罔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">没事数命的猫</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
