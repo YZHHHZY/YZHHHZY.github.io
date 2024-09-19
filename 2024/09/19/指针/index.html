@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%8D%9A%E5%AE%A2.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%8D%9A%E5%AE%A2-copy.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="指针这是利用指针来修改值的一个简单演示  指针的概念：123两种理解方式	1、指针就是地址，地址就是指针；	2、指针变量，其实是C&#x2F;C++的一种变量。这种变量比价特殊，通常会被赋值为某变量的地址 (p &#x3D; &amp;a)，然后利用 *p 的方式来间接访问 p 所指向的地址   指针的定义和初始化123456789既然指针是一种变量，那么肯定也可以定义，也可以初始化	1、先定义再赋值		int *">
+<meta property="og:type" content="article">
+<meta property="og:title" content="指针">
+<meta property="og:url" content="http://example.com/2024/09/19/%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="妙妙屋">
+<meta property="og:description" content="指针这是利用指针来修改值的一个简单演示  指针的概念：123两种理解方式	1、指针就是地址，地址就是指针；	2、指针变量，其实是C&#x2F;C++的一种变量。这种变量比价特殊，通常会被赋值为某变量的地址 (p &#x3D; &amp;a)，然后利用 *p 的方式来间接访问 p 所指向的地址   指针的定义和初始化123456789既然指针是一种变量，那么肯定也可以定义，也可以初始化	1、先定义再赋值		int *">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915175142084.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915181314618.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915214624603.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915220004310.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915221201598.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915225132566.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915225839433.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915231036804.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915231654545.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915232309434.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916005620645.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916010053987.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916012435232.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916014530238.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915174303124.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915223751211.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916022520615.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916023133902.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916023746682.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916024717314.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916150401967.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916151430742.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916152049596.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916155409022.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916160435964.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916162413664.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916201207128.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916202414425.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916210523761.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916213347260.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916215656068.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240916220146185.png">
+<meta property="article:published_time" content="2024-09-19T13:21:45.000Z">
+<meta property="article:modified_time" content="2024-09-19T13:30:27.661Z">
+<meta property="article:author" content="没事数命的猫">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240915175142084.png">
+
+<link rel="canonical" href="http://example.com/2024/09/19/%E6%8C%87%E9%92%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>指针 | 妙妙屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">妙妙屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">思而不学则殆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/19/%E6%8C%87%E9%92%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          指针
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-09-19 21:21:45 / 修改时间：21:30:27" itemprop="dateCreated datePublished" datetime="2024-09-19T21:21:45+08:00">2024-09-19</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h3><p>这是利用指针来修改值的一个简单演示</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915175142084.png" alt="image-20240915175142084"></p>
+<h5 id="指针的概念："><a href="#指针的概念：" class="headerlink" title="指针的概念："></a>指针的概念：</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">两种理解方式</span><br><span class="line">	1、指针就是地址，地址就是指针；</span><br><span class="line">	2、指针变量，其实是C/C++的一种变量。这种变量比价特殊，通常会被赋值为某变量的地址 (p = &amp;a)，然后利用 *p 的方式来间接访问 p 所指向的地址</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915181314618.png" alt="image-20240915181314618"></p>
+<h5 id="指针的定义和初始化"><a href="#指针的定义和初始化" class="headerlink" title="指针的定义和初始化"></a>指针的定义和初始化</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">既然指针是一种变量，那么肯定也可以定义，也可以初始化</span><br><span class="line">	1、先定义再赋值</span><br><span class="line">		int * p;		// 定义指针变量p</span><br><span class="line">		p = &amp;a;			// 给p赋值</span><br><span class="line">		</span><br><span class="line">	2、定义的同时初始化</span><br><span class="line">		int * p = &amp;a;</span><br><span class="line">		</span><br><span class="line">	// 两种的效果是一样的</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">有两个重要的运算符 &amp; 和 * </span><br><span class="line">	1、&amp;：取地址值符，将他加在某个变量的前面，组合后的符号代表这个变量的地址值</span><br><span class="line">		int a = 100; int * p; p = &amp;a;</span><br><span class="line">		表示将a的地址值赋值给p</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">			</span><br><span class="line">	2、*：指针符号。指针符号再指针定义和指针操作的时候，解析方法是不同的</span><br><span class="line">		int p;			// p是一个整型变量</span><br><span class="line">		int * p;		// p是一个指针变量，该指针指向一个整形数</span><br><span class="line">		使用该指针的时候，*p则代表变量p所指向的那个变量，这个过程有些也叫做解引用</span><br><span class="line">		</span><br><span class="line">		</span><br><span class="line">		符号解释：</span><br><span class="line">        	a	代表变量a本身</span><br><span class="line">			p	代表指针变量p本身</span><br><span class="line">			&amp;a	代表变量a的地址值</span><br><span class="line">			*p	代表指针变量p所指向的那个变量，也就是变量a</span><br><span class="line">			&amp;p	代表指针变量p本身的地址值。符号合法，但无意义。在二级指针中使用</span><br><span class="line">			*a	把a看作一个指针，*a表示这个指针所指向的变量。该符号不合法</span><br><span class="line">				也就是说：</span><br><span class="line">				int a = （一个地址值）</span><br><span class="line">				cout &lt;&lt; *a &lt;&lt; endl</span><br><span class="line">				这样的表述是不合法的，即使是存储的地址值也应该将a的类型转成int *来进行操作</span><br><span class="line">					int * a = (int*)0000DE298342</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="指针变量的解读"><a href="#指针变量的解读" class="headerlink" title="指针变量的解读"></a>指针变量的解读</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">指针变量本质上是一个变量</span><br><span class="line">指针变量的类型属于指针类型</span><br><span class="line">int * p：定义了一个指针类型的变量p，p能指向的变量是int</span><br><span class="line">其他类型的指针：</span><br><span class="line">	int * pInt;</span><br><span class="line">	char * pChar;</span><br><span class="line">	float * pFloat;</span><br><span class="line">	double * pDouble;</span><br><span class="line">	各种指针类型和所指向的变量类型必须匹配，否则结果不可预知</span><br><span class="line">	</span><br><span class="line">		如果非要用的话，还可以进行指针间的强转   reinterpret_cast</span><br><span class="line">		char c = &#x27;a&#x27;;</span><br><span class="line">		int * p;</span><br><span class="line">		p = reinterpret_cast&lt;int *&gt;(&amp;c)</span><br><span class="line">		</span><br><span class="line">		// 这样强转也会出现问题的，因为char占一个字节，int占四个字节，因此结果不可预知</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h5 id="空指针和野指针"><a href="#空指针和野指针" class="headerlink" title="空指针和野指针"></a>空指针和野指针</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">空指针：指针指向的地址是0</span><br><span class="line">野指针：指针变量未经赋值，或者指向非法地址</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915214624603.png" alt="image-20240915214624603"></p>
+<p>C语言这里是没有默认初始化的，所以这里是野指针错误，有的语言会进行初始化</p>
+<p>全局变量是会初始化的 </p>
+<h5 id="指针大小"><a href="#指针大小" class="headerlink" title="指针大小"></a>指针大小</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">两种情况</span><br><span class="line">	32位，64位</span><br><span class="line">	4字节，8字节</span><br><span class="line">	</span><br><span class="line">现在电脑程序一般是64位，手机是32位</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915220004310.png" alt="image-20240915220004310"></p>
+<h5 id="指针使用count"><a href="#指针使用count" class="headerlink" title="指针使用count"></a>指针使用count</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">为了防止误改，使用count来修饰指针</span><br><span class="line"></span><br><span class="line"> const int* p1 = &amp;a;		// 常量指针</span><br><span class="line"> int* const p2 = &amp;a;		// 指针常量</span><br><span class="line"> const int* const p3 = &amp;a;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int a = 10;</span><br><span class="line">int b = 20;</span><br><span class="line"></span><br><span class="line">const int* p1 = &amp;a;		// 常量指针</span><br><span class="line">int* const p2 = &amp;a;		// 指针常量</span><br><span class="line">const int* const p3 = &amp;a;</span><br><span class="line"></span><br><span class="line">// 常量指针不能修改所指对象的值，但可以修改指针本身的值</span><br><span class="line">//*p1 = 30;		// 错误，常量指针不能修改所指对象的值</span><br><span class="line">p1 = &amp;b;		// 正确，指针常量只能修改指针本身的值</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">// 指针常量只能修改指针本身的值，不能修改所指对象的值</span><br><span class="line">// p2 = &amp;b;		// 错误，指针常量只能修改指针本身的值</span><br><span class="line">*p2 = 30;		// 正确，指针常量只能修改指针本身的值</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  </span><br><span class="line">// 指针常量不能修改所指对象的值，也不能修改指针本身的值</span><br><span class="line">// p3 = &amp;b;		// 错误，指针常量不能修改所指对象的值</span><br><span class="line">//*p3 = 30;		// 错误，指针常量不能修改指针本身的值</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915221201598.png" alt="image-20240915221201598"></p>
+<h5 id="指针应用"><a href="#指针应用" class="headerlink" title="指针应用"></a>指针应用</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">指针应用：</span><br><span class="line">	实现函数参数引用传递</span><br><span class="line">	实现函数返回多个值</span><br><span class="line">	方便处理字符串</span><br><span class="line">	表示复杂的数据结构(结构体等)，在作为参数传递的时候更节省内存</span><br></pre></td></tr></table></figure>
+
+
+
+<p>返回多个值是一种表述：返回值只有一个，但是可以通过利用向方法中传递指针，在函数体内修改指针指向的内容来实现多个参数改变</p>
+<p>为什么说传递复杂数据结构的时候可以节省内存呢，因为是传递的地址值，不需要将这个复杂的数据结构赋值给另一个地址值来进行操作</p>
+<h5 id="数组指针"><a href="#数组指针" class="headerlink" title="数组指针"></a>数组指针</h5><p>先看一下数组</p>
+<p>int数组和char数组</p>
+<p>看注释</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">char arr_str[] = &#123;&#x27;h&#x27;, &#x27;e&#x27;, &#x27;l&#x27;, &#x27;l&#x27;, &#x27;o&#x27;, &#x27;\0&#x27;&#125;</span><br><span class="line">这样定义一个char数组可以正常输出</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915225132566.png" alt="image-20240915225132566"></p>
+<p>字符串数组</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915225839433.png" alt="image-20240915225839433"></p>
+<p>字符串数组在C中表示是char数组的数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">char arr_str[][] = &#123;&quot;hello&quot;, &quot;world&quot;, &quot;c++&quot;, &quot;run&quot;&#125;</span><br><span class="line">// 这个时候第二个括号内需要填写数值，这个数值不能小于最长的那个字符串长度</span><br><span class="line">// 使用const char* 可以定义一个字符串，在字符串的基础上再创建一个数组就是字符串数组了，这个时候就没上上面的限制了</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 上面说的是C语言中的字符串数组定义方法，C++中有string，可以直接定义</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>再来看指针</strong></p>
+<p>int数组指针</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915231036804.png" alt="image-20240915231036804"></p>
+<p>char数组指针</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915231654545.png" alt="image-20240915231654545"></p>
+<p>字符串数组</p>
+<p>int * 指向int 类型</p>
+<p>int**指向int*类型这个很好理解的吧</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915232309434.png" alt="image-20240915232309434"></p>
+<h5 id="指针运算"><a href="#指针运算" class="headerlink" title="指针运算"></a>指针运算</h5><p>指针运算就是上面使用的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cout &lt;&lt; *p++;</span><br><span class="line">cout &lt;&lt; *(++p);</span><br><span class="line">cout &lt;&lt; *(P+1);</span><br><span class="line"></span><br><span class="line">// 这些都是指针运算</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916005620645.png" alt="image-20240916005620645"></p>
+<p>它的这几个运算方式是不同的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">*p++ 和 *++p 这两种方法是针对p本身进行操作，p自己+1</span><br><span class="line"></span><br><span class="line">而，*(P+1)是先运算再取值，并且不对p本身的大小进行操作</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">而*p++ 和 *++p 也是有差别的，看下面的输出，*p++是先输出*p然后再进行++操作，而*++p是先进行++操作再取值</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916010053987.png" alt="image-20240916010053987"></p>
+<h4 id="函数参数的引用传递"><a href="#函数参数的引用传递" class="headerlink" title="函数参数的引用传递"></a>函数参数的引用传递</h4><h5 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h5><p>之前说过函数值的传递在Java中基本数据类型是做不到的</p>
+<p>但是也有其他方法，比如放到数组，或者在一个类当中，数组已经演示过了，下面是在类中更改，两者的底层原理是一样代表，都是传入地址值，直接操作地址值内的数</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916012435232.png" alt="image-20240916012435232"></p>
+<p>C++</p>
+<p>将地址传入方法相当于</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int * a = &amp;a;</span><br><span class="line">int * b = &amp;b </span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916014530238.png" alt="image-20240916014530238"></p>
+<h5 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h5><p>已经演示过了</p>
+<p>Java</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915174303124.png" alt="image-20240915174303124"></p>
+<p>C++：</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240915223751211.png" alt="image-20240915223751211"></p>
+<p>数组传递的是地址值可以直接操作，原因是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void add(int a[]);</span><br><span class="line">到解析的时候会转化为，一个int指针</span><br><span class="line">void add(int * a);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">一般为了能够正常输出这个数组，还会传递一个length数组长度进去</span><br><span class="line">add(arr, sizeof(arr) / sizeof(int))</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">常见写法：</span><br><span class="line">	1、返回值为void，参数当作返回值，这时候需要用指针把参数变为引用传递</span><br><span class="line">	2、加密函数中，传1个context，传1个明文指针，1个明文长度，1个结果指针</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">定义函数指针：	</span><br><span class="line">	void (*name)(指向的函数参数类型);</span><br><span class="line">	</span><br><span class="line">// 还可以进行初始化</span><br><span class="line">	void (*pFunc)(int *,int *) = nullptr || NULL   -》 两个都可以</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">函数指针赋值：</span><br><span class="line">	pFunc = add;      或者</span><br><span class="line">	pFunc = &amp;add;</span><br><span class="line">	</span><br><span class="line">	// 因为函数和数组一样，函数名就是函数地址</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916022520615.png" alt="image-20240916022520615"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">函数指针的调用</span><br><span class="line">	(*pFunc)(&amp;a, b);</span><br><span class="line">	pFunc(&amp;a, b);    // 这种调用方法仅限于函数指针，其他指针不可以使用</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916023133902.png" alt="image-20240916023133902"></p>
+<h5 id="函数指针数组"><a href="#函数指针数组" class="headerlink" title="函数指针数组"></a>函数指针数组</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">void (*pFunc[2])(int *, int *);</span><br><span class="line">// 这个表示这个函数指针可以放三个函数</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916023746682.png" alt="image-20240916023746682"></p>
+<h5 id="函数指针作为参数"><a href="#函数指针作为参数" class="headerlink" title="函数指针作为参数"></a>函数指针作为参数</h5><p>函数指针可以作为一个参数传到另一个函数内，函数指针还可以放到结构体内，结构体只能放基本数据类型，不能定义函数和方法，但是可以存放函数指针</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">将函数指针放到了函数内，在函数内执行了另一个函数</span><br><span class="line"></span><br><span class="line">定义函数指针，指定函数，使用函数指针调用函数</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916024717314.png" alt="image-20240916024717314"></p>
+<h4 id="全局变量"><a href="#全局变量" class="headerlink" title="全局变量"></a>全局变量</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">全局变量：	</span><br><span class="line">	本文件中的全局变量定义</span><br><span class="line">	引用别的文件中定义的全局变量</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916150401967.png" alt="image-20240916150401967"></p>
+<p>extern</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、extern int a; 		表示引用别的文件中的全局变量a</span><br><span class="line">2、extern &quot;C&quot; ……;		表示后续代码使用C语言进行编译，不识别标识符</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="静态变量"><a href="#静态变量" class="headerlink" title="静态变量"></a>静态变量</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">static：</span><br><span class="line">	1、静态局部变量	</span><br><span class="line">		生命周期延长，与全局变量的生命周期一致，程序结束时销毁</span><br><span class="line">		</span><br><span class="line">	2、静态全局变量	</span><br><span class="line">		限制在本文件中使用</span><br><span class="line">		</span><br><span class="line">	3、静态函数	     </span><br><span class="line">		限制在本文件中使用</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916151430742.png" alt="image-20240916151430742"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916152049596.png" alt="image-20240916152049596"></p>
+<h4 id="内存四区"><a href="#内存四区" class="headerlink" title="内存四区"></a>内存四区</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">代码区：存放CPU执行的机器指令，该区域数据共享、只读</span><br><span class="line">全局区：存放全局变量、全局常量、静态常量、字符串常量，程序结束后由系统操作释放</span><br><span class="line">栈区：自动分配和释放，存放函数的参数、局部变量等</span><br><span class="line">堆区：由程序员分配和释放，若程序员不释放，程序结束时由操作系统回收</span><br><span class="line">		C中进入堆区使用关键字malloc，Java、C++进入堆区使用关键字new</span><br><span class="line"></span><br><span class="line">不同区域存放的数据，赋予不同的生命周期，赋予不同的权限</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="模拟加密后的数据转Hex编码"><a href="#模拟加密后的数据转Hex编码" class="headerlink" title="模拟加密后的数据转Hex编码"></a>模拟加密后的数据转Hex编码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">void swap() &#123;</span><br><span class="line">    char result[3];</span><br><span class="line">    char * res = result;</span><br><span class="line">    char realResult[33] = &#123; 0 &#125;;</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; 16; i++)&#123;</span><br><span class="line">        int index = i;</span><br><span class="line">        sprintf_s(res, sizeof(result), &quot;%.2X&quot;, index);</span><br><span class="line">        strcat_s(realResult, sizeof(realResult), res);</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; realResult &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916155409022.png" alt="image-20240916155409022"></p>
+<p>利用sprint_s格式化去两位十六进制数，然后利用strcat_s将得到的res拼接起来到realResult中</p>
+<h4 id="char-和char数组"><a href="#char-和char数组" class="headerlink" title="char * 和char数组"></a>char * 和char数组</h4><p>这两个都能表示一个字符串，但是是有差别的。</p>
+<p>char * p 是字符串常量，是放到全局区域的，这里还有提示，如果让他指向一个字符串的话，需要加上const</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const char * p</span><br><span class="line"></span><br><span class="line">这种形式的指针只能修改指向的内容的值，不能修改内容，可以</span><br><span class="line">p = &quot;asda&quot;; 但是不能 *p[0] = &#x27;a&#x27;</span><br><span class="line"></span><br><span class="line">而char数组的值就可以随意修改了</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916160435964.png" alt="image-20240916160435964"></p>
+<h4 id="内存操作"><a href="#内存操作" class="headerlink" title="内存操作"></a>内存操作</h4><p>还是写加密后数据转Hex编码这个案例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">void swap1() &#123;</span><br><span class="line">    char temp[3];</span><br><span class="line">    char * reaResult = nullptr;</span><br><span class="line">    // 使用malloc申请内存</span><br><span class="line">    reaResult = (char*) malloc(33);</span><br><span class="line">    // 申请到的内存是没有清理的，可能有乱码，需要自己清理</span><br><span class="line">    memset(reaResult, 0, 33);</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; 16; i++)&#123;</span><br><span class="line">        int index = i;</span><br><span class="line">        sprintf_s(temp, sizeof(temp), &quot;%.2X&quot;, index);</span><br><span class="line">        strcat_s(reaResult, 33, temp);</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; reaResult &lt;&lt; endl;</span><br><span class="line">    // 手动释放内存</span><br><span class="line">    free(reaResult);</span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 还有一个申请内存的操作 calloc calloc会自动把申请过来的内存清理</span><br><span class="line"></span><br><span class="line">char * realResult = (char *)calloc(33,1)</span><br><span class="line"></span><br><span class="line">// 这里free释放，释放的是内存空间，如果reaResult没有指向申请来的内存空间，释放也就没有意义，所以要将free指向指向内存空间的指针，</span><br><span class="line">// 任何一个指向这块内存空间的指针都可以释放这块空间</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916162413664.png" alt="image-20240916162413664"></p>
+<h5 id="指针的注意事项"><a href="#指针的注意事项" class="headerlink" title="指针的注意事项"></a>指针的注意事项</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">不要把函数内部的局部变量地址，交给函数外的指针变量</span><br><span class="line"></span><br><span class="line">// 函数执行完毕局部变量会被销毁，那么指针也就成为了野指针</span><br><span class="line">// 如果需要局部变量，可以传入参数指针，把参数当作返回值使用</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="多级指针"><a href="#多级指针" class="headerlink" title="多级指针"></a>多级指针</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">概念：指向指针的指针</span><br><span class="line">例：</span><br><span class="line">	int a = 100;</span><br><span class="line">	int * p = &amp;a;</span><br><span class="line">	int ** pp = &amp;p;</span><br><span class="line">	int *** ppp = &amp;pp;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916201207128.png" alt="image-20240916201207128"></p>
+<h4 id="多级指针的应用"><a href="#多级指针的应用" class="headerlink" title="多级指针的应用"></a>多级指针的应用</h4><p><img src="/../%E5%9B%BE%E7%89%87/image-20240916202414425.png" alt="image-20240916202414425"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">从上图可以看到int *指针可以正常使用，但是char *的时候就遇到了问题，为什么呢</span><br><span class="line"></span><br><span class="line">全局区：</span><br><span class="line">	0x123456789 &quot;kong&quot;</span><br><span class="line">	0x123987654 &quot;hello world&quot;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">main栈：</span><br><span class="line">	char * res = 0x123456789</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">swap4栈：</span><br><span class="line">	char * a = 0x123987654</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">可以看到本质上main栈内res所指向的地址值并没没有改变，这个时候就需要用到二级指针了</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">这里的原理刚开始我有点想不通：</span><br><span class="line">	char *可以看作和int等效，因为char *用来指向字符串常量的地址，如果再用一个char *来接收这个数值，那么就是进行了一个赋值，并没有用到指针，所以需要使用char **来接收地址值，就可以实现类似与int *的效果了</span><br></pre></td></tr></table></figure>
+
+
+
+<p>用二级指针来操作char *数组</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916210523761.png" alt="image-20240916210523761"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">全局区：</span><br><span class="line">	0x123456789 &quot;kong&quot;</span><br><span class="line">	0x123987654 &quot;hello world&quot;</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">main栈：</span><br><span class="line">	0x123456789 char * res = 0x123456789</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">swap4栈：</span><br><span class="line">	char ** a = 0x123456789</span><br><span class="line">	*a = &quot;hello world&quot; 0x123987654</span><br><span class="line">	</span><br><span class="line">	-&gt; swap4栈中  char ** a = 0x123987654 -&gt; main栈中  char * res = 0x123987654   -&gt;  &quot;hello world&quot;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>1、想把参数当返回值，传入的实参是char *等指针的时候</p>
+<p>2、传入的实参是一级指针，那么想把参数当作返回值，形参就得是二级指针</p>
+<p>3、结论：形参要比实参多一级指针，才能把参数当返回值使用</p>
+</blockquote>
+<h5 id="模拟加密字符串的返回"><a href="#模拟加密字符串的返回" class="headerlink" title="模拟加密字符串的返回"></a>模拟加密字符串的返回</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">void swap5(const char ** result) &#123;</span><br><span class="line">    char temp[3];</span><br><span class="line">    char * reaResult = nullptr;</span><br><span class="line">    // 使用malloc申请内存</span><br><span class="line">    // 申请到的内存是没有清理的，可能有乱码，需要自己清理</span><br><span class="line">    reaResult = (char*) malloc(33);</span><br><span class="line">    memset(reaResult, 0, 33);</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; 16; i++)&#123;</span><br><span class="line">        int index = i;</span><br><span class="line">        sprintf_s(temp, sizeof(temp), &quot;%.2X&quot;, index);</span><br><span class="line">        strcat_s(reaResult, 33, temp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    *result = reaResult;</span><br><span class="line">    //cout &lt;&lt; reaResult &lt;&lt; endl;</span><br><span class="line">    // 手动释放内存，这个时候就不能释放内存了，因为释放之后，出了这个函数，就拿不到数据了，处理了个寂寞</span><br><span class="line">    //free(reaResult);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">	const char * result = &quot;kong&quot;;</span><br><span class="line">	swap5(&amp;result);</span><br><span class="line">	cout &lt;&lt; result &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">	// 拿到地址之后再释放内存</span><br><span class="line">	free((void*)result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916213347260.png" alt="image-20240916213347260"></p>
+<h4 id="结构体指针"><a href="#结构体指针" class="headerlink" title="结构体指针"></a>结构体指针</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">okl * pp = &amp;ok;</span><br><span class="line">(*pp).pFunc(a);</span><br><span class="line">pp-&gt;pFunc(a);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916215656068.png" alt="image-20240916215656068"></p>
+<blockquote>
+<p>结构体指针还有一种调用方式，就是箭头调用，可以去掉一层*</p>
+</blockquote>
+<h4 id="结构体传参"><a href="#结构体传参" class="headerlink" title="结构体传参"></a>结构体传参</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">值传递： 如果一个结构体数组，很占内存</span><br><span class="line">引用传递： 指针4或者8个</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240916220146185.png" alt="image-20240916220146185"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/07/13/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/" rel="prev" title="微信小程序对称加密">
+      <i class="fa fa-chevron-left"></i> 微信小程序对称加密
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88"><span class="nav-number">1.</span> <span class="nav-text">指针</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E7%9A%84%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="nav-number">1.0.1.</span> <span class="nav-text">指针的概念：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.0.2.</span> <span class="nav-text">指针的定义和初始化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">1.0.3.</span> <span class="nav-text">运算符</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%8F%98%E9%87%8F%E7%9A%84%E8%A7%A3%E8%AF%BB"><span class="nav-number">1.0.4.</span> <span class="nav-text">指针变量的解读</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A9%BA%E6%8C%87%E9%92%88%E5%92%8C%E9%87%8E%E6%8C%87%E9%92%88"><span class="nav-number">1.0.5.</span> <span class="nav-text">空指针和野指针</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.0.6.</span> <span class="nav-text">指针大小</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E4%BD%BF%E7%94%A8count"><span class="nav-number">1.0.7.</span> <span class="nav-text">指针使用count</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%BA%94%E7%94%A8"><span class="nav-number">1.0.8.</span> <span class="nav-text">指针应用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E6%8C%87%E9%92%88"><span class="nav-number">1.0.9.</span> <span class="nav-text">数组指针</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E8%BF%90%E7%AE%97"><span class="nav-number">1.0.10.</span> <span class="nav-text">指针运算</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%8F%82%E6%95%B0%E7%9A%84%E5%BC%95%E7%94%A8%E4%BC%A0%E9%80%92"><span class="nav-number">1.1.</span> <span class="nav-text">函数参数的引用传递</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">基本数据类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">1.1.2.</span> <span class="nav-text">数组</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88"><span class="nav-number">1.2.</span> <span class="nav-text">函数指针</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88%E6%95%B0%E7%BB%84"><span class="nav-number">1.2.1.</span> <span class="nav-text">函数指针数组</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">函数指针作为参数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F"><span class="nav-number">1.3.</span> <span class="nav-text">全局变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">静态变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%9B%9B%E5%8C%BA"><span class="nav-number">1.5.</span> <span class="nav-text">内存四区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E5%8A%A0%E5%AF%86%E5%90%8E%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%ACHex%E7%BC%96%E7%A0%81"><span class="nav-number">1.6.</span> <span class="nav-text">模拟加密后的数据转Hex编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#char-%E5%92%8Cchar%E6%95%B0%E7%BB%84"><span class="nav-number">1.7.</span> <span class="nav-text">char * 和char数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%93%8D%E4%BD%9C"><span class="nav-number">1.8.</span> <span class="nav-text">内存操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.8.1.</span> <span class="nav-text">指针的注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E7%BA%A7%E6%8C%87%E9%92%88"><span class="nav-number">1.9.</span> <span class="nav-text">多级指针</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E7%BA%A7%E6%8C%87%E9%92%88%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.10.</span> <span class="nav-text">多级指针的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F%E5%8A%A0%E5%AF%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E8%BF%94%E5%9B%9E"><span class="nav-number">1.10.1.</span> <span class="nav-text">模拟加密字符串的返回</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E6%8C%87%E9%92%88"><span class="nav-number">1.11.</span> <span class="nav-text">结构体指针</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E4%BC%A0%E5%8F%82"><span class="nav-number">1.12.</span> <span class="nav-text">结构体传参</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="没事数命的猫"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">没事数命的猫</p>
+  <div class="site-description" itemprop="description">学而不思则罔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">没事数命的猫</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
