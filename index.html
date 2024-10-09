@@ -186,6 +186,403 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x03%E7%AE%80%E5%8D%95%E9%80%86%E5%90%91apk/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x03%E7%AE%80%E5%8D%95%E9%80%86%E5%90%91apk/" class="post-title-link" itemprop="url">逆向学习 0x03简单逆向apk</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-10-09 15:36:08 / 修改时间：15:38:17" itemprop="dateCreated datePublished" datetime="2024-10-09T15:36:08+08:00">2024-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="app逆向示例"><a href="#app逆向示例" class="headerlink" title="app逆向示例"></a>app逆向示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1、抓包分析是否有需要逆向的加密字段</span><br><span class="line">2、查壳分析是否加固</span><br><span class="line">3、查看界面元素，看是否是原生开发的app，因为不同形式app分析方法不一样</span><br><span class="line">4、传统关键代码定位方法</span><br><span class="line">	通过控件绑定的事件代码，来一步步定位</span><br><span class="line">		控件id、setOnClickListener</span><br><span class="line">	人肉搜索字符串</span><br><span class="line">		搜索链接</span><br><span class="line">		搜索加密的参数名：当有多个可以关键处，如何确定是哪一个？动态调试、Hook</span><br><span class="line">		搜索同一个数据包中，没有加密的参数名</span><br><span class="line">		</span><br><span class="line">5、关键代码快速定位</span><br><span class="line">	跑一下自吐算法</span><br><span class="line">	hook常用系统函数，如果app有调用就打印函数栈</span><br><span class="line">	在自制的沙盒中运行，打印app运行过程中的指令、函数调用关系等</span><br><span class="line">	</span><br><span class="line">6、逆向分析不是完全静态分析明白了才去hook，实际上是边分析边hook</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="app界面控件查看"><a href="#app界面控件查看" class="headerlink" title="app界面控件查看"></a>app界面控件查看</h4><p>逆向的第一步就是先让app可以运行，app可能存在手机类型检测，或者没有X86架构的so，模拟器运行不了。或者存在抓包检测，不抓包可以用，有抓包用不了</p>
+<p>因为是简单操作，以上这些都不考虑，现在的情况是抓到包了，包含加密后的数据，如果是明文也没必要逆向了，这个时候就需要考虑怎么解密了</p>
+<p>首先分析其开发方式，开发方式不同分析的方法也不同</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008160008324.png" alt="image-20241008160008324"></p>
+<p>通过其界面来分析开发方式，利用Android Studio中的一个的SDK下tools中的一个工具</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008164013180.png" alt="image-20241008164013180"></p>
+<p>打开后选择截图，分析页面</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x03%E7%AE%80%E5%8D%95%E9%80%86%E5%90%91apk/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x02frida%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x02frida%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">逆向学习 0x02frida环境配置和抓包工具</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-10-09 15:35:33 / 修改时间：15:38:18" itemprop="dateCreated datePublished" datetime="2024-10-09T15:35:33+08:00">2024-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="抓包工具"><a href="#抓包工具" class="headerlink" title="抓包工具"></a>抓包工具</h3><p>抓包就是在客户端和服务端之间，再加上一个代理服务器，这个代理服务器可以拦截发送的数据包，对数据包进行查看、操作、放行</p>
+<h4 id="抓包工具的分类"><a href="#抓包工具的分类" class="headerlink" title="抓包工具的分类"></a>抓包工具的分类</h4><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全局抓包工具</td>
+<td>&#x3D;&#x3D;Http v7&#x3D;&#x3D;、Http debugger pro</td>
+</tr>
+<tr>
+<td>代理抓包工具</td>
+<td>&#x3D;&#x3D;Charles&#x3D;&#x3D;、Fiddler</td>
+</tr>
+<tr>
+<td>VPN抓包工具</td>
+<td>&#x3D;&#x3D;HttpCanary&#x3D;&#x3D;</td>
+</tr>
+<tr>
+<td>网卡抓包工具</td>
+<td>&#x3D;&#x3D;WireShark&#x3D;&#x3D;</td>
+</tr>
+<tr>
+<td>手机抓包工具</td>
+<td>tcpdump</td>
+</tr>
+<tr>
+<td>Hook抓包工具</td>
+<td>&#x3D;&#x3D;r0Capture&#x3D;&#x3D;</td>
+</tr>
+</tbody></table>
+<h4 id="Charles"><a href="#Charles" class="headerlink" title="Charles"></a>Charles</h4><h5 id="下载安装激活"><a href="#下载安装激活" class="headerlink" title="下载安装激活"></a>下载安装激活</h5><p>Charles免费激活：<a target="_blank" rel="noopener" href="https://zzzmode.com/mytools/charles/">https://zzzmode.com/mytools/charles/</a></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240921194140576.png" alt="image-20240921194140576"></p>
+<h5 id="抓包手机"><a href="#抓包手机" class="headerlink" title="抓包手机"></a>抓包手机</h5><p>Charles如何抓包手机呢，Charles安装在电脑上，抓包手机就相当于抓包另一台电脑，需要一些配置</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x02frida%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x01%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x01%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">逆向学习 0x01安卓基础</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-10-09 15:34:55 / 修改时间：15:38:20" itemprop="dateCreated datePublished" datetime="2024-10-09T15:34:55+08:00">2024-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>windows配置</p>
+<p>开启开发者人员模式</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240917130613989-1728459407955-1.png" alt="image-20240917130613989"></p>
+<p>cmd命令</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">dir</td>
+<td align="center">查看目录下的文件</td>
+</tr>
+<tr>
+<td align="center">cls</td>
+<td align="center">清屏</td>
+</tr>
+<tr>
+<td align="center">cd &#x2F;d</td>
+<td align="center">从根目录下开始进入</td>
+</tr>
+<tr>
+<td align="center">cd ..</td>
+<td align="center">到上级目录</td>
+</tr>
+<tr>
+<td align="center">右键复制粘贴</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<p>jed不能有中文路径</p>
+<p>在使用国外的软件时路径最好不要有中文、空格、特殊符号，计算机名不要是中文</p>
+<p>android studio</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240917211606975-1728459407956-2.png" alt="image-20240917211606975"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240917211626133-1728459407956-3.png" alt="image-20240917211626133"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x01%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/09/Java%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/09/Java%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">Java入门学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-10-09 15:34:19 / 修改时间：15:38:11" itemprop="dateCreated datePublished" datetime="2024-10-09T15:34:19+08:00">2024-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Java上"><a href="#Java上" class="headerlink" title="Java上"></a>Java上</h1><p>常用的dos命令</p>
+<table>
+<thead>
+<tr>
+<th>作用</th>
+<th>命令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>切换盘符</td>
+<td>盘符名:-&gt;</td>
+</tr>
+<tr>
+<td>查看目录下文件</td>
+<td>dir</td>
+</tr>
+<tr>
+<td>跳转文件夹</td>
+<td>cd</td>
+</tr>
+<tr>
+<td>清空</td>
+<td>cls</td>
+</tr>
+<tr>
+<td>退出</td>
+<td>exit</td>
+</tr>
+<tr>
+<td>创建文件夹</td>
+<td>mkdir</td>
+</tr>
+<tr>
+<td>删除文件夹</td>
+<td>rd</td>
+</tr>
+<tr>
+<td>删除文件</td>
+<td>del</td>
+</tr>
+</tbody></table>
+<p>jvm和跨平台</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、jvm：Java运行程序的假想虚拟机，主要用来运行Java程序</span><br><span class="line">2、跨平台：Java代码可以在不同的操作系统上运行</span><br></pre></td></tr></table></figure>
+
+
+
+<p>java是运行命令，javac是编译命令，跳过让人头疼的环境变量吧</p>
+<h5 id="写一个helloword"><a href="#写一个helloword" class="headerlink" title="写一个helloword"></a>写一个helloword</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1、编写</span><br><span class="line">   a.新建一个.java文件</span><br><span class="line">2、编译</span><br><span class="line">   a.命令javac java文件名.java</span><br><span class="line">   b.javac会将Java文件编译生成一个.class文件，jvm只认识.class文件</span><br><span class="line">3、运行</span><br><span class="line">   a.命令：Java class文件名</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里我一直错误，配置了好久的环境变量，结果不是环境变量的问题</p>
+<p>输入运一下java -cd .&#x2F; Hello 即可，神经</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/10/09/Java%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/27/%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -674,169 +1071,11 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/07/python%E3%80%81java%E5%A4%9A%E7%8E%AF%E5%A2%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="没事数命的猫">
-      <meta itemprop="description" content="学而不思则罔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="妙妙屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/07/07/python%E3%80%81java%E5%A4%9A%E7%8E%AF%E5%A2%83/" class="post-title-link" itemprop="url">python、java多环境</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-07-07 23:15:06" itemprop="dateCreated datePublished" datetime="2024-07-07T23:15:06+08:00">2024-07-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-08-10 00:20:08" itemprop="dateModified" datetime="2024-08-10T00:20:08+08:00">2024-08-10</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="python虚拟环境"><a href="#python虚拟环境" class="headerlink" title="python虚拟环境"></a>python虚拟环境</h3><h4 id="venv"><a href="#venv" class="headerlink" title="venv"></a>venv</h4><p>创建虚拟环境需要用到venv，python3.6以上默认安装的</p>
-<h4 id="创建虚拟环境"><a href="#创建虚拟环境" class="headerlink" title="创建虚拟环境"></a>创建虚拟环境</h4><p>可以在任意文件夹下创建虚拟环境，注意的是，创建出来的虚拟环境是和当前python版本是一样的，主要作用是下载脚本相适配的库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pyhton -m venv [要创建环境的名称]</span><br></pre></td></tr></table></figure>
-
-<p>执行成功后生成一个和名称相同的文件夹，文件夹内的Scripts文件夹内是启动虚拟环境的脚本，lin文件夹内是环境依赖</p>
-<p><img src="/../%E5%9B%BE%E7%89%87/image-20240707162341789.png" alt="image-20240707162341789"></p>
-<h4 id="启动虚拟环境"><a href="#启动虚拟环境" class="headerlink" title="启动虚拟环境"></a>启动虚拟环境</h4><p>启动脚本来启动虚拟环境，脚本需要在Windows PowerShell中允许，默认的命令行，只能打开这个记事本</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/07/07/python%E3%80%81java%E5%A4%9A%E7%8E%AF%E5%A2%83/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/03/form%E8%A1%A8%E5%8D%95%E9%AA%8C%E8%AF%81/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="没事数命的猫">
-      <meta itemprop="description" content="学而不思则罔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="妙妙屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/07/03/form%E8%A1%A8%E5%8D%95%E9%AA%8C%E8%AF%81/" class="post-title-link" itemprop="url">form表单验证</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-07-03 17:15:46" itemprop="dateCreated datePublished" datetime="2024-07-03T17:15:46+08:00">2024-07-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-07-08 11:36:52" itemprop="dateModified" datetime="2024-07-08T11:36:52+08:00">2024-07-08</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="form表单验证"><a href="#form表单验证" class="headerlink" title="form表单验证"></a>form表单验证</h1><p>前言：做获奖申报时，我想把一些输入框设置为必填，原生小程序中没有表单验证，如果在后端将输入框内的变量挨个使用 <code>if ……else</code> 似乎过于麻烦，结构太复杂，我想用vant组件的表单验证解决，但是遇到点问题：vant-form组件无法引入</p>
-<p><img src="/../%E5%9B%BE%E7%89%87/image-20240401203626963.png" alt="image-20240401203626963"></p>
-<p>改变思路，尝试引入vue组件，经过一些操作，成功报错</p>
-<p>发生错误SyntaxError: parse js file (D:\微信小程序开发\微信小程序练习\miniprogram-18&#x2F;miniprogram&#x2F;node_modules&#x2F;@vue&#x2F;compiler-sfc&#x2F;dist&#x2F;compiler-sfc.cjs.js) failed: Unexpected token (333:15)</p>
-<p><img src="/../%E5%9B%BE%E7%89%87/image-20240401200131194.png" alt="image-20240401200131194"></p>
-<p>解决方法：</p>
-<p>清除npm缓存</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm cache clean --force</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="柳暗花明又一村"><a href="#柳暗花明又一村" class="headerlink" title="柳暗花明又一村"></a>柳暗花明又一村</h2>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/07/03/form%E8%A1%A8%E5%8D%95%E9%AA%8C%E8%AF%81/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -903,7 +1142,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

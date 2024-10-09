@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%8D%9A%E5%AE%A2.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%8D%9A%E5%AE%A2-copy.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="app逆向示例12345678910111213141516171、抓包分析是否有需要逆向的加密字段2、查壳分析是否加固3、查看界面元素，看是否是原生开发的app，因为不同形式app分析方法不一样4、传统关键代码定位方法	通过控件绑定的事件代码，来一步步定位		控件id、setOnClickListener	人肉搜索字符串		搜索链接		搜索加密的参数名：当有多个可以关键处，如何确定是哪一个？动态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向学习 0x03简单逆向apk">
+<meta property="og:url" content="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x03%E7%AE%80%E5%8D%95%E9%80%86%E5%90%91apk/index.html">
+<meta property="og:site_name" content="妙妙屋">
+<meta property="og:description" content="app逆向示例12345678910111213141516171、抓包分析是否有需要逆向的加密字段2、查壳分析是否加固3、查看界面元素，看是否是原生开发的app，因为不同形式app分析方法不一样4、传统关键代码定位方法	通过控件绑定的事件代码，来一步步定位		控件id、setOnClickListener	人肉搜索字符串		搜索链接		搜索加密的参数名：当有多个可以关键处，如何确定是哪一个？动态">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008160008324.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008164013180.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008164028462.png">
+<meta property="og:image" content="http://example.com/2024/10/09/%E5%9B%BE%E7%89%87/image-20241008204823187.png">
+<meta property="og:image" content="http://example.com/2024/10/09/%E5%9B%BE%E7%89%87/image-20241008213436432.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008213557980.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008213808135.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008214226589.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008214651735.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008215024596.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241009085929689.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241009091755079.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241009110546414.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241009110606927.png">
+<meta property="article:published_time" content="2024-10-09T07:36:08.000Z">
+<meta property="article:modified_time" content="2024-10-09T07:38:17.155Z">
+<meta property="article:author" content="没事数命的猫">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008160008324.png">
+
+<link rel="canonical" href="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x03%E7%AE%80%E5%8D%95%E9%80%86%E5%90%91apk/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向学习 0x03简单逆向apk | 妙妙屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">妙妙屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">思而不学则殆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x03%E7%AE%80%E5%8D%95%E9%80%86%E5%90%91apk/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向学习 0x03简单逆向apk
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-10-09 15:36:08 / 修改时间：15:38:17" itemprop="dateCreated datePublished" datetime="2024-10-09T15:36:08+08:00">2024-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="app逆向示例"><a href="#app逆向示例" class="headerlink" title="app逆向示例"></a>app逆向示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1、抓包分析是否有需要逆向的加密字段</span><br><span class="line">2、查壳分析是否加固</span><br><span class="line">3、查看界面元素，看是否是原生开发的app，因为不同形式app分析方法不一样</span><br><span class="line">4、传统关键代码定位方法</span><br><span class="line">	通过控件绑定的事件代码，来一步步定位</span><br><span class="line">		控件id、setOnClickListener</span><br><span class="line">	人肉搜索字符串</span><br><span class="line">		搜索链接</span><br><span class="line">		搜索加密的参数名：当有多个可以关键处，如何确定是哪一个？动态调试、Hook</span><br><span class="line">		搜索同一个数据包中，没有加密的参数名</span><br><span class="line">		</span><br><span class="line">5、关键代码快速定位</span><br><span class="line">	跑一下自吐算法</span><br><span class="line">	hook常用系统函数，如果app有调用就打印函数栈</span><br><span class="line">	在自制的沙盒中运行，打印app运行过程中的指令、函数调用关系等</span><br><span class="line">	</span><br><span class="line">6、逆向分析不是完全静态分析明白了才去hook，实际上是边分析边hook</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="app界面控件查看"><a href="#app界面控件查看" class="headerlink" title="app界面控件查看"></a>app界面控件查看</h4><p>逆向的第一步就是先让app可以运行，app可能存在手机类型检测，或者没有X86架构的so，模拟器运行不了。或者存在抓包检测，不抓包可以用，有抓包用不了</p>
+<p>因为是简单操作，以上这些都不考虑，现在的情况是抓到包了，包含加密后的数据，如果是明文也没必要逆向了，这个时候就需要考虑怎么解密了</p>
+<p>首先分析其开发方式，开发方式不同分析的方法也不同</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008160008324.png" alt="image-20241008160008324"></p>
+<p>通过其界面来分析开发方式，利用Android Studio中的一个的SDK下tools中的一个工具</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008164013180.png" alt="image-20241008164013180"></p>
+<p>打开后选择截图，分析页面</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008164028462.png" alt="image-20241008164028462"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">查看界面控件的作用</span><br><span class="line">	原生方式开发的app，使用Java和C++开发，加密用的是Java和C++</span><br><span class="line">	H5的app，使用Webview控件加载网页，加密用的JS</span><br><span class="line">	app自动化测试，需要知道控件的ID，或者说需要定位到控件</span><br><span class="line">	</span><br><span class="line">用uiautomatorviewer.bat查看</span><br><span class="line">	Android SDK根 目录\tooIs\bin</span><br><span class="line">	</span><br><span class="line">这个方式也不是一直有效的，在app开发中可以作禁止截屏，那么这个工具就用不了了</span><br><span class="line">	禁止截屏：activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);</span><br><span class="line">	解除禁止：activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);</span><br><span class="line">	</span><br><span class="line">// 如果非要用，学会hook之后，把这个方法hook掉即可，或者找个地方执行clearFlags把这个常量值清除掉也可以</span><br></pre></td></tr></table></figure>
+
+<p>这个禁止截屏的方法有很多种，这个只是一个简单的示例，也可以在so层之间调用Java方法禁止截屏，或者找更底层的方法来实现这个功能。不一定就是这一种</p>
+<h4 id="app壳"><a href="#app壳" class="headerlink" title="app壳"></a>app壳</h4><p>反编译之前先使用软件检测一下是否有壳</p>
+<img src="../图片/image-20241008204823187.png" alt="image-20241008204823187" style="zoom:50%;" />
+
+
+
+<p>其实也可以之间反编译，因为加壳之后反编译结果不正常，很容易看出来，很明显的代码少，甚至没有代码</p>
+<h4 id="人肉搜索"><a href="#人肉搜索" class="headerlink" title="人肉搜索"></a>人肉搜索</h4><h5 id="搜索控件绑定事件"><a href="#搜索控件绑定事件" class="headerlink" title="搜索控件绑定事件"></a>搜索控件绑定事件</h5><p>登录操作产生的密文</p>
+<img src="../图片/image-20241008213436432.png" alt="image-20241008213436432" style="zoom:50%;" />
+
+
+
+<p>按钮ID <code>btn_login</code></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008213557980.png" alt="image-20241008213557980"></p>
+<p>反编译爆搜id</p>
+<p><code>findViewById</code> 是一种寻找id的方式，下面两个是QQ登录和微信登录的按钮id</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008213808135.png" alt="image-20241008213808135"></p>
+<p>追进去</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008214226589.png" alt="image-20241008214226589"></p>
+<p>继续追</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008214651735.png" alt="image-20241008214651735"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008215024596.png" alt="image-20241008215024596"></p>
+<p>返回为true之后，执行上一个函数的login方法</p>
+<h5 id="搜索关键字符串"><a href="#搜索关键字符串" class="headerlink" title="搜索关键字符串"></a>搜索关键字符串</h5><p>可以搜索这个相关链接，搜不到就缩小长度搜，搜 user&#x2F;login 就出来了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241009085929689.png" alt="image-20241009085929689"></p>
+<p>也可以从其他字符串入手，比如这个 encrypt ，或者是登录失败的提示。因为登录逻辑一般在同一个地方的，找到一个就都找到了</p>
+<p>搜索结果过多的时候，优先看和包名有关的类</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241009091755079.png" alt="image-20241009091755079"></p>
+<h4 id="传统搜索的弊端"><a href="#传统搜索的弊端" class="headerlink" title="传统搜索的弊端"></a>传统搜索的弊端</h4><p>通过人肉搜索是放在最后才用的，因为暴力搜索很费时费力还可能搜不到，如果开发控件的时候不将登录的逻辑写在同一个文件内，然后各种调用，各种接口就很难找到真正的功能方法。如果字符串不组合，使用相加的形式，那么单独搜索一个字符串的话可能会有上千条数据，一一分析起来非常麻烦。甚至可以做加密处理，搜索字符串根本搜不到。例如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// login_0</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">login_0</span> <span class="keyword">extends</span> <span class="title class_">AppCompatActivity</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(Bundle savedInstanceState)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">password</span> <span class="operator">=</span> <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line"></span><br><span class="line">            <span class="type">MessageDigest</span> <span class="variable">md5</span> <span class="operator">=</span> MessageDigest.getInstance(<span class="string">&quot;MD5&quot;</span>);</span><br><span class="line"><span class="comment">//            Class&lt;?&gt; a = Class.forName(dd(&quot;amF2YS5zZWN1cml0eS5nZYWdlRGlnZXN0&quot;));</span></span><br><span class="line"><span class="comment">//            Method getInstance = a.getMethod(dd(&quot;Z2v0sW5zdGFuY2U&quot;),String.class);</span></span><br><span class="line"><span class="comment">//            Object b = getInstance.invoke(a, dd(&quot;TUQ1&quot;));</span></span><br><span class="line"></span><br><span class="line">          md5.update(password.getBytes());</span><br><span class="line"><span class="comment">//            Method update = a.getMethod(dd(&quot;dXBkYXRl&quot;), byte[].class);</span></span><br><span class="line"><span class="comment">//            update.invoke(b, password.getBytes());</span></span><br><span class="line"></span><br><span class="line">            <span class="type">byte</span>[] digest = md5.digest();</span><br><span class="line"><span class="comment">//            Method c=a.getMethod(dd(&quot;ZGlnZXNo&quot;));</span></span><br><span class="line"><span class="comment">//            byte[] d = (byte[])c.invoke(b);</span></span><br><span class="line"></span><br><span class="line">            HashMap&lt;String,String&gt; hashMap =<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">            hashMap.put(<span class="string">&quot;password&quot;</span>, Base64.encodeToString(digest, <span class="number">0</span>));</span><br><span class="line">            Log.d(<span class="string">&quot;xiaojianbang&quot;</span>,hashMap.toString());</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;\</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// login</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">login</span> <span class="keyword">extends</span> <span class="title class_">AppCompatActivity</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(Bundle savedInstanceState)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">password</span> <span class="operator">=</span> <span class="string">&quot;12345678&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//            MessageDigest md5 = MessageDigest.getInstance(&quot;MD5&quot;);</span></span><br><span class="line">            Class&lt;?&gt; a = Class.forName(dd(<span class="string">&quot;amF2YS5zZWN1cml0eS5nZYWdlRGlnZXN0&quot;</span>));</span><br><span class="line">            <span class="comment">// 这个是上面MessageDigest的base64编码之后的结果</span></span><br><span class="line">            <span class="type">Method</span> <span class="variable">getInstance</span> <span class="operator">=</span> a.getMethod(dd(<span class="string">&quot;Z2v0sW5zdGFuY2U&quot;</span>),String.class);</span><br><span class="line">            <span class="comment">// 这个是上面getInstance的base64编码之后的结果</span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">b</span> <span class="operator">=</span> getInstance.invoke(a, dd(<span class="string">&quot;TUQ1&quot;</span>));</span><br><span class="line">            <span class="comment">// 通过这三行代码将真正使用的方法名隐藏起来，并且执行方法</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//          md5.update(password.getBytes());</span></span><br><span class="line">            <span class="type">Method</span> <span class="variable">update</span> <span class="operator">=</span> a.getMethod(dd(<span class="string">&quot;dXBkYXRl&quot;</span>), <span class="type">byte</span>[].class);</span><br><span class="line">            update.invoke(b, password.getBytes());</span><br><span class="line"></span><br><span class="line"><span class="comment">//            byte[] digest = md5.digest();</span></span><br><span class="line">            Method c=a.getMethod(dd(<span class="string">&quot;ZGlnZXNo&quot;</span>));</span><br><span class="line">            <span class="type">byte</span>[] d = (<span class="type">byte</span>[])c.invoke(b);</span><br><span class="line"></span><br><span class="line">            HashMap&lt;String,String&gt; hashMap =<span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">            hashMap.put(dd(<span class="string">&quot;cGFzc3dvcmQ=&quot;</span>), Base64.encodeToString(d, <span class="number">0</span>));</span><br><span class="line">            Log.d(<span class="string">&quot;xiaojianbang&quot;</span>,hashMap.toString());</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">dd</span><span class="params">(String cipherText)</span> &#123;</span><br><span class="line">        <span class="type">byte</span>[] decode = Base64.decode(cipherText, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">String</span>(decode);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两种方法输出的结果是一样的，但是反编译的结果截然不同</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241009110546414.png" alt="image-20241009110546414"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241009110606927.png" alt="image-20241009110606927"></p>
+<p>只需要对字符串进行一个反射和加密就搜索不到了，通过反射将加密使用的方法名给隐藏起来，通过base64将字符串加密，这样一来，就大大降低了搜索找到的可能性。</p>
+<h5 id="常见防护"><a href="#常见防护" class="headerlink" title="常见防护"></a>常见防护</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1、反编译一个app搜不到关键字：</span><br><span class="line">	a) HTML5的app （HTML5的关键信息通常在js里面）</span><br><span class="line">	b) 字符串被加密了 （通过算法或者字符串拼接等手段）</span><br><span class="line">	c) 反射调用的相关类</span><br><span class="line">	d) app被加固了 （加壳）</span><br><span class="line">	e) 动态加载的dex （jadx会将所有的dex文件反编译，但是如果有dex文件加密了，经过解密之后动态加载，这个时候是反编译不出来的。一般在分析的时候都会将重点放到classes.dex上，很容易忽略其他dex）</span><br><span class="line">	f) 热修复 （在安卓中，有骚操作是app运行起来之后动态修改代码，静态分析不出来，这个时候就必须需要hook获取内存中的数据了）</span><br><span class="line">	</span><br><span class="line">2、简单字符串加密的实现</span><br><span class="line">	dex的字符串加密可以用代码自动实现，需要使用到dexlib2这个库</span><br><span class="line">	</span><br><span class="line">3、反射相关类的实现</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="Hook"><a href="#Hook" class="headerlink" title="Hook"></a>Hook</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hook可以用来做什么</span><br><span class="line">	可以用来判断app执行某个操作的时候，是否经过我们的怀疑的这个函数</span><br><span class="line">	可以用来修改被hook函数的运行逻辑</span><br><span class="line">	可以用来在运行过程中，获取被hook的函数传入的具体的参数和返回值</span><br><span class="line">	可以用来主动调用app中的某些函数</span><br></pre></td></tr></table></figure>
+
+<p>hook环境之前就搭建好了，开发js文件的话直接使用VScode，需要调试的话下载node.js</p>
+<h4 id="关键代码定位"><a href="#关键代码定位" class="headerlink" title="关键代码定位"></a>关键代码定位</h4><p>这个时候就需要hook了，因为无论你怎么加工包装，都是用了系统定义好了的 <code>MessageDigest.getInstance</code> 方法，将传入的内容打印一下，就可以直接到得明文</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x02frida%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/" rel="prev" title="逆向学习 0x02frida环境配置和抓包工具">
+      <i class="fa fa-chevron-left"></i> 逆向学习 0x02frida环境配置和抓包工具
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#app%E9%80%86%E5%90%91%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">app逆向示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#app%E7%95%8C%E9%9D%A2%E6%8E%A7%E4%BB%B6%E6%9F%A5%E7%9C%8B"><span class="nav-number">1.1.</span> <span class="nav-text">app界面控件查看</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#app%E5%A3%B3"><span class="nav-number">1.2.</span> <span class="nav-text">app壳</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%BA%E8%82%89%E6%90%9C%E7%B4%A2"><span class="nav-number">1.3.</span> <span class="nav-text">人肉搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E6%8E%A7%E4%BB%B6%E7%BB%91%E5%AE%9A%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.3.1.</span> <span class="nav-text">搜索控件绑定事件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E5%85%B3%E9%94%AE%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.3.2.</span> <span class="nav-text">搜索关键字符串</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E6%90%9C%E7%B4%A2%E7%9A%84%E5%BC%8A%E7%AB%AF"><span class="nav-number">1.4.</span> <span class="nav-text">传统搜索的弊端</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%98%B2%E6%8A%A4"><span class="nav-number">1.4.1.</span> <span class="nav-text">常见防护</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hook"><span class="nav-number">1.5.</span> <span class="nav-text">Hook</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81%E5%AE%9A%E4%BD%8D"><span class="nav-number">1.6.</span> <span class="nav-text">关键代码定位</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="没事数命的猫"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">没事数命的猫</p>
+  <div class="site-description" itemprop="description">学而不思则罔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">没事数命的猫</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

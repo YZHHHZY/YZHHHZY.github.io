@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%8D%9A%E5%AE%A2.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%8D%9A%E5%AE%A2-copy.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="抓包工具抓包就是在客户端和服务端之间，再加上一个代理服务器，这个代理服务器可以拦截发送的数据包，对数据包进行查看、操作、放行 抓包工具的分类   工具 工具    全局抓包工具 &#x3D;&#x3D;Http v7&#x3D;&#x3D;、Http debugger pro   代理抓包工具 &#x3D;&#x3D;Charles&#x3D;&#x3D;、Fiddler   VPN抓包工具 &amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向学习 0x02frida环境配置和抓包工具">
+<meta property="og:url" content="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x02frida%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="妙妙屋">
+<meta property="og:description" content="抓包工具抓包就是在客户端和服务端之间，再加上一个代理服务器，这个代理服务器可以拦截发送的数据包，对数据包进行查看、操作、放行 抓包工具的分类   工具 工具    全局抓包工具 &#x3D;&#x3D;Http v7&#x3D;&#x3D;、Http debugger pro   代理抓包工具 &#x3D;&#x3D;Charles&#x3D;&#x3D;、Fiddler   VPN抓包工具 &amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240921194140576.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240921194239724.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922113129896.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922113345398.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922120529680.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922113521041.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922130034633.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922130628823.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922122453735.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922122836182.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922111754491.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922143043094.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922143225653.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240923083755266.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922143507596.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240922143600370.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240923084831676.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241007204055440.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241007212139483.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241007212238664.png">
+<meta property="og:image" content="http://example.com/2024/10/09/%E5%9B%BE%E7%89%87/image-20241008090108833.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008085839408.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008092716033.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008110949000.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008113055431.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241008114414345.png">
+<meta property="og:image" content="http://example.com/2024/10/09/%E5%9B%BE%E7%89%87/image-20241008144745638.png">
+<meta property="article:published_time" content="2024-10-09T07:35:33.000Z">
+<meta property="article:modified_time" content="2024-10-09T07:38:18.690Z">
+<meta property="article:author" content="没事数命的猫">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240921194140576.png">
+
+<link rel="canonical" href="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x02frida%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向学习 0x02frida环境配置和抓包工具 | 妙妙屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">妙妙屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">思而不学则殆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x02frida%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%92%8C%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向学习 0x02frida环境配置和抓包工具
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-10-09 15:35:33 / 修改时间：15:38:18" itemprop="dateCreated datePublished" datetime="2024-10-09T15:35:33+08:00">2024-10-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="抓包工具"><a href="#抓包工具" class="headerlink" title="抓包工具"></a>抓包工具</h3><p>抓包就是在客户端和服务端之间，再加上一个代理服务器，这个代理服务器可以拦截发送的数据包，对数据包进行查看、操作、放行</p>
+<h4 id="抓包工具的分类"><a href="#抓包工具的分类" class="headerlink" title="抓包工具的分类"></a>抓包工具的分类</h4><table>
+<thead>
+<tr>
+<th>工具</th>
+<th>工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全局抓包工具</td>
+<td>&#x3D;&#x3D;Http v7&#x3D;&#x3D;、Http debugger pro</td>
+</tr>
+<tr>
+<td>代理抓包工具</td>
+<td>&#x3D;&#x3D;Charles&#x3D;&#x3D;、Fiddler</td>
+</tr>
+<tr>
+<td>VPN抓包工具</td>
+<td>&#x3D;&#x3D;HttpCanary&#x3D;&#x3D;</td>
+</tr>
+<tr>
+<td>网卡抓包工具</td>
+<td>&#x3D;&#x3D;WireShark&#x3D;&#x3D;</td>
+</tr>
+<tr>
+<td>手机抓包工具</td>
+<td>tcpdump</td>
+</tr>
+<tr>
+<td>Hook抓包工具</td>
+<td>&#x3D;&#x3D;r0Capture&#x3D;&#x3D;</td>
+</tr>
+</tbody></table>
+<h4 id="Charles"><a href="#Charles" class="headerlink" title="Charles"></a>Charles</h4><h5 id="下载安装激活"><a href="#下载安装激活" class="headerlink" title="下载安装激活"></a>下载安装激活</h5><p>Charles免费激活：<a target="_blank" rel="noopener" href="https://zzzmode.com/mytools/charles/">https://zzzmode.com/mytools/charles/</a></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240921194140576.png" alt="image-20240921194140576"></p>
+<h5 id="抓包手机"><a href="#抓包手机" class="headerlink" title="抓包手机"></a>抓包手机</h5><p>Charles如何抓包手机呢，Charles安装在电脑上，抓包手机就相当于抓包另一台电脑，需要一些配置</p>
+<p>设置一个端口，找到IP地址</p>
+<p>将SOCKS代理打开</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240921194239724.png" alt="image-20240921194239724"></p>
+<p>IP地址</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922113129896.png" alt="image-20240922113129896"></p>
+<p>使用VPN软件链接主机的IP的指定端口，将IP地址和端口配置给SocksDroid然后打开，成功之后会有一个VPN样式</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922113345398.png" alt="image-20240922113345398"></p>
+<p>还可以更改模拟器WiFi的IP地址和端口，手动更改WiFi的代理服务器主机和端口，让主机Charles监听的端口作为代理端口，这个时候就不能使用SOCKS协议端口了，需要配置http端口</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922120529680.png" alt="image-20240922120529680"></p>
+<p>关闭对Windows电脑的抓包</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922113521041.png" alt="image-20240922113521041"></p>
+<p>现在不能抓到https，所以还需要一些配置</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922130034633.png" alt="image-20240922130034633"></p>
+<p>打开 <code>Proxy</code>  -&gt; <code>SSL Proxying Setting</code> </p>
+<p>为了方便可以给第一个配置两个*。Exclude是设置排除的不用管</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922130628823.png" alt="image-20240922130628823"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922122453735.png" alt="image-20240922122453735"></p>
+<p>在模拟器中访问：<a target="_blank" rel="noopener" href="http://chls.pro/ssl">http://chls.pro/ssl</a></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922122836182.png" alt="image-20240922122836182"></p>
+<h5 id="证书不安全问题"><a href="#证书不安全问题" class="headerlink" title="证书不安全问题"></a>证书不安全问题</h5><p>一般来说这就已经成功了，但我测试的时候没有数据，而且还提示证书不安全</p>
+<p>因为在安卓7之后系统只信任系统证书，需要把用户证书移动到系统证书目录</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922111754491.png" alt="image-20240922111754491"></p>
+<p>这些解析的https数据也是错误</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922143043094.png" alt="image-20240922143043094"></p>
+<p>这个时候需要找到证书的目录了，将安装的证书，放到受信任证书的目录下</p>
+<p>模拟器就设置可以写入和开启root</p>
+<p>如果是真机的话就需要Magisk中的模块来移动证书了，没有真机不做演示了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922143225653.png" alt="image-20240922143225653"></p>
+<p>找到 &#x2F;data&#x2F;misc&#x2F;user&#x2F;0&#x2F;cacerts-added 这个目录，如果安装了证书这里会有一共 .0 文件，将这个文件移动&#x2F;复制到 &#x2F;system&#x2F;etc&#x2F;security&#x2F;cacerts 目录下</p>
+<p>这个名字是根据哈希计算的，后面加 .0 如果是哈希值存在一样的就是 .0 .1</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240923083755266.png" alt="image-20240923083755266"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922143507596.png" alt="image-20240922143507596"></p>
+<p>现在再进行抓包即可获取到解密后的数据</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240922143600370.png" alt="image-20240922143600370"></p>
+<p>如此如此这般这般，Charles抓包手机就完成了</p>
+<h4 id="HttpCanary"><a href="#HttpCanary" class="headerlink" title="HttpCanary"></a>HttpCanary</h4><p>这是一个VPN抓包工具相当于上面Charles和socksdroid的组合，而且他比Charles和socksdroid的组合好用，抓包更多，解析更多</p>
+<p>HttpCanary可以按照引导直接将证书移动到安全目录下，如果不能移动的话，参考上方的方法</p>
+<p>配置完成就可以使用了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240923084831676.png" alt="image-20240923084831676"></p>
+<h4 id="r0capture"><a href="#r0capture" class="headerlink" title="r0capture"></a>r0capture</h4><p>一个Hook抓包脚本，主要原理就是Hook了一些SSL相关的系统函数，直接抓取系统发送的一些明文数据</p>
+<p>这个东西是开源的，可以抓取大部分按照框架写的app，如果有魔改的就需要有一定的逆向能力了</p>
+<p>GitHup地址：<a target="_blank" rel="noopener" href="https://github.com/r0ysue/r0capture">https://github.com/r0ysue/r0capture</a></p>
+<h5 id="配置hook"><a href="#配置hook" class="headerlink" title="配置hook"></a>配置hook</h5><h6 id="下载frida"><a href="#下载frida" class="headerlink" title="下载frida"></a>下载frida</h6><p>因为r0capture是一个python脚本，需要python3.6以上的环境，下载几个python库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pip install frida-tools</span><br><span class="line">pip install loguru click</span><br><span class="line">pip install hexdump</span><br></pre></td></tr></table></figure>
+
+
+
+<p>配置好本地Frida之后，查看frida版本，查看手机cpu类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">frida --version</span><br><span class="line"></span><br><span class="line">adb shell</span><br><span class="line">getprop ro.product.cpu.abi</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241007204055440.png" alt="image-20241007204055440"></p>
+<h6 id="配置frida-server"><a href="#配置frida-server" class="headerlink" title="配置frida-server"></a>配置frida-server</h6><p>去下载对应版本的对应类型的frida-server</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/frida/frida/releases">https://github.com/frida/frida/releases</a></p>
+<p>下载对应版本下载到手机的 <code>/data/local/tmp/</code> 目录下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">进入手机端命令：adb shell</span><br><span class="line">切换获取手机的root权限：Su</span><br><span class="line">查找文件是否在手机中：cd/data/local/tmp/</span><br><span class="line">查看路径下的文件并看文件的权限：Is-l</span><br><span class="line">拥有root权限更改文件的权限为777： chmod 777 frida-server-16.5.2-android-x86</span><br><span class="line">在手机中启动运行该文件：./frida-server-14.0.5-android-x86 &amp;</span><br><span class="line">电脑运行检查手机端服务是否开启成功：frida-ps-U</span><br><span class="line">windows运行端口转发到PC：adbforward tcp:27043 tcp:27043</span><br></pre></td></tr></table></figure>
+
+
+
+<p>执行 <code>frida-ps-U</code> 成功效果如下</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241007212139483.png" alt="image-20241007212139483"></p>
+<p>执行上方语法出现一下情况</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241007212238664.png" alt="image-20241007212238664"></p>
+<blockquote>
+<p>attach模式是选择app在你感兴趣的地方开始抓包。</p>
+<p>apawn模式是系统开始抓包，从打开app开始</p>
+<p>使用r0capture抓取的是明文内容，因此并不需要证书</p>
+</blockquote>
+<p>END</p>
+<h5 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h5><p>r0capture有两种使用方式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">attach模式，抓包内容可以保存为pacp文件供后续分析</span><br><span class="line">	python r0capture.py -U com.qiyi.video -v -p iqiyi.pcap</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">apawn模式</span><br><span class="line">	python r0capture.py -U -f com.qiyi.video -v -p iqiyi.pcap</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">-p：保存为pacp文件</span><br><span class="line">-f：frida启动这个apk开始抓包</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="抓包原理"><a href="#抓包原理" class="headerlink" title="抓包原理"></a>抓包原理</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">1、为什么Charles要配合socksdroid使用</span><br><span class="line">	VPN的开关比设置手动代理更加方便</span><br><span class="line">	有些app不走HTTP代理，有些机型http代理不生效（雷电4），VPN代理是可以让所有的流量强制走VPN</span><br><span class="line">	能抓到更全的流量（TCP	UDP）</span><br><span class="line">	OSI七层模型：IP协议、UDP协议、TCP协议、SSL协议、HTTP协议</span><br><span class="line">	</span><br><span class="line">2、对称加密算法：</span><br><span class="line">	典型：AES</span><br><span class="line">	特点：</span><br><span class="line">    	加密解密都是用一个密钥</span><br><span class="line">		加密速度快，可以加密大量数据</span><br><span class="line">		</span><br><span class="line">3、RSA算法(非对称加密算法)</span><br><span class="line">	特点：</span><br><span class="line">		加密和解密使用不同的密钥</span><br><span class="line">		有一个密钥对  公钥  私钥————公钥加密只能私钥解密，私钥加密只能公钥解密</span><br><span class="line">		从公钥无法推导出私钥</span><br><span class="line">		加密速度慢，加密数据有限——————1024公钥，在pkcslpadding  加密117个字节，在nopadding 加密128个字节</span><br><span class="line">		</span><br><span class="line">	如此涉及到了一个应用，RSA算法加密数据有限，可以在本地随机生成一个对称加密的密钥A，然后使用RSA算法加密A，得到密文B，密文B提交给服务器，服务器使用私钥解密，得到了明文A，在后续的通讯过程中使用明文A来进行对称解密</span><br></pre></td></tr></table></figure>
+
+<img src="../图片/image-20241008090108833.png" alt="image-20241008090108833" style="zoom:50%;" />
+
+
+
+
+
+<p>访问一个链接之后就会返回一个证书，包含RSA的公钥</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008085839408.png" alt="image-20241008085839408"></p>
+<p>这个时候在加上抓包工具的代理服务端考虑一下</p>
+<p>未安装证书之前也能够抓包，但是是加密后的数据，这样一看是不是可以理解一些了</p>
+<p>代理服务端，作为客户端和服务端的中间人，这个中间人要获取抓包数据的话需要先安装一个证书。</p>
+<p>先伪造一个公钥发送给客户端，客户端将加密后的对称密钥返回给代理抓包服务端，这个服务端获取到密钥之后，就可以读取到后续客户端和服务端之间的通讯</p>
+<blockquote>
+<p>浏览器是不能辨别真实的服务端和代理服务端的</p>
+<p>但是之前配置证书时，还需要信任证书，提示不安全什么的。</p>
+<p>浏览器检验的是证书路径&#x2F;证书链</p>
+<p>最后找到这个根证书，就是自己给自己颁发的一个证书。那么为什么这个证书安全呢</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008092716033.png" alt="image-20241008092716033"></p>
+<p>就是因为在受信任的根证书颁发机构下，如果这个系统库有的证书，浏览器就认为是安全的，就不会有提示</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008110949000.png" alt="image-20241008110949000"></p>
+</blockquote>
+<p>但是呢，如果APP端和服务端是同一个团队开发的，开发过程中一般会设置双向验证来验证证书</p>
+<h4 id="为什么不直接替换证书信息呢"><a href="#为什么不直接替换证书信息呢" class="headerlink" title="为什么不直接替换证书信息呢"></a>为什么不直接替换证书信息呢</h4><p>这个就涉及到证书的签名信息了</p>
+<p>数字证书包含信息：使用者、颁发者、有效期、公钥、指纹、&#x3D;&#x3D;签名信息&#x3D;&#x3D;</p>
+<p>用户发送信息的时候会使用数字签名算法 如：<code>md5withrsa、sha1withrsa、sha256withrsa</code> ，在是把两个算法组合在一起</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">使用：</span><br><span class="line">String signStr = Signature_.getSignature(&quot;hello world&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008113055431.png" alt="image-20241008113055431"></p>
+<p>在服务端的视角上，因为服务端签发的证书嘛。</p>
+<p>这个会输出一个值，这个值是字符串先进行sha256的一个加密，然后进行的RSA私钥加密。发送数据的时候发送的是明文+数字签名加密后的数据。如果更改了明文，使用公钥解密后，在对明文sha256比对结果，会比对失败。</p>
+<p>因此，证书是不能够伪造的，不能改变，否则sha256的值也变，校验就会失败，无法正常通信</p>
+<p>这个的重点在于，RSA的加密签名信息无法更改，这就断绝了更改证书的可行性，除非你能拿到服务端的私钥</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241008114414345.png" alt="image-20241008114414345"></p>
+<h4 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h4><h5 id="常规协议头"><a href="#常规协议头" class="headerlink" title="常规协议头"></a>常规协议头</h5><p>协议头有请求头和响应头两种</p>
+<p>协议头包含起始行、首部字段、包体</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">//访问方式资源路径和GET参数 协议/版本号</span><br><span class="line">GET /v2/getpublickey?x=100&amp;y=200 HTTP/1.1</span><br><span class="line">//主机名</span><br><span class="line">Host: passport.xxxxx.com</span><br><span class="line">//浏览器接受数据类型</span><br><span class="line">Accept: */*</span><br><span class="line">//表示长连接</span><br><span class="line">Connection: keep-alive</span><br><span class="line">//浏览器接受的语言</span><br><span class="line">Accept-Language: zh-CN, zh; q=0.8,en-US; q=0.5,en; q=0.3 </span><br><span class="line">//浏览器支持的编码，一般附加协议头的时候删掉</span><br><span class="line">Accept-Encoding: gzip, deflate, br</span><br><span class="line">//用户代理，服务器可以根据这个来识别是哪个浏览器</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 6.1; w0W64; rv:48.0) Gecko/20100101 Firefox/48.0</span><br><span class="line">//来路，GET和POST中都会出现，表示这个请求是从哪个页面发出的，可能会有会变化的值要特别注意</span><br><span class="line">Referer: https://www. xxxxx. com/?user=123456&amp;pwd=1212121</span><br><span class="line">// cookie在安卓端很少见，表示身份信息的在get或者post请求内</span><br><span class="line">Cookie:XXXXXID=4A89DBBC382B25D9A43D12C4AB0151FD:FG=1</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>GET /v2/getpublickey?x=100&amp;y=200 HTTP/1.1 </code> ：就是起始行包含了一个GET传参方式和HTTP协议以及版本号，中间的资源路径是相对路径，要和下方的Host拼接成完整的路径</p>
+<p><code>Accept: */*</code> ：如果是 <code>*/*</code> 表示所有的数据都能接收</p>
+<p><code>Accept-Language</code> ：这个包含的q值越大表示比重越大</p>
+<p><code>User-Agent: Mozilla/5.0 (Windows NT 6.1; w0W64; rv:48.0) Gecko/20100101 Firefox/48.0</code> ：以下的表示为浏览器的返回，和apk返回不太一样，如果apk返回了这样的代理可能是app是个H5app，内置了html页面。这也是一个判断小技巧</p>
+<p>上面是GET，POST比GET多几个东西</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//提交的数据包的长度不能多也不能少一个字节winhttp自动生成可以不附加</span><br><span class="line">Content-Length: 22</span><br><span class="line">//提交数据的类型</span><br><span class="line">Content-Type: application/x-www-form-ur lencoded; charset=UTF-8</span><br><span class="line">//POST提交的数据和协议头之间有一个空行</span><br><span class="line">user=123456&amp;pwd=654321</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="自定义协议头"><a href="#自定义协议头" class="headerlink" title="自定义协议头"></a>自定义协议头</h5><p>这里的sign、t、qyid都是自定义的协议头，如果要更改的话，不要更改他的位置。有些网站会在协议头里传递重要数据，并且一般是会变化的。如果网站监测，就要找到来源，附加协议头提交</p>
+<img src="../图片/image-20241008144745638.png" alt="image-20241008144745638" style="zoom:50%;" />
+
+
+
+<h5 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h5><p>这个简单了解一下进行，因为安卓中cookie使用不多。了解即可，最后没办法再考虑这个</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">1、cookie的分类</span><br><span class="line">	服务器返回  Set-cookie</span><br><span class="line">	本地代码生成</span><br><span class="line">	</span><br><span class="line">2、cookie的作用</span><br><span class="line">	识别身份(验证码)</span><br><span class="line">	判断是否登录状态</span><br><span class="line">	</span><br><span class="line">3、cookie的结构</span><br><span class="line">	名1=值1; 名2=值2; 名3=值3</span><br><span class="line">	</span><br><span class="line">4、合并更新步骤</span><br><span class="line">	a、新cookie，去除无效cookie</span><br><span class="line">	b、在新cookie里，寻找是否存在旧cookie的名字，存在就用新的，丢掉旧的</span><br><span class="line">	c、两cookie组合到一个文本型变量中</span><br><span class="line">	</span><br><span class="line">5、前端会用JS生成很多cookie，但是并非所有cookie都会检测</span><br><span class="line">	比如Hm_lvt开头的一般没啥用</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x01%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80/" rel="prev" title="逆向学习 0x01安卓基础">
+      <i class="fa fa-chevron-left"></i> 逆向学习 0x01安卓基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x03%E7%AE%80%E5%8D%95%E9%80%86%E5%90%91apk/" rel="next" title="逆向学习 0x03简单逆向apk">
+      逆向学习 0x03简单逆向apk <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7"><span class="nav-number">1.</span> <span class="nav-text">抓包工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8A%93%E5%8C%85%E5%B7%A5%E5%85%B7%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">抓包工具的分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Charles"><span class="nav-number">1.2.</span> <span class="nav-text">Charles</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85%E6%BF%80%E6%B4%BB"><span class="nav-number">1.2.1.</span> <span class="nav-text">下载安装激活</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8A%93%E5%8C%85%E6%89%8B%E6%9C%BA"><span class="nav-number">1.2.2.</span> <span class="nav-text">抓包手机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6%E4%B8%8D%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.3.</span> <span class="nav-text">证书不安全问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HttpCanary"><span class="nav-number">1.3.</span> <span class="nav-text">HttpCanary</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#r0capture"><span class="nav-number">1.4.</span> <span class="nav-text">r0capture</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEhook"><span class="nav-number">1.4.1.</span> <span class="nav-text">配置hook</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BDfrida"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">下载frida</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEfrida-server"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">配置frida-server</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">使用方式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%93%E5%8C%85%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">抓包原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%9B%B4%E6%8E%A5%E6%9B%BF%E6%8D%A2%E8%AF%81%E4%B9%A6%E4%BF%A1%E6%81%AF%E5%91%A2"><span class="nav-number">2.1.</span> <span class="nav-text">为什么不直接替换证书信息呢</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTP%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.2.</span> <span class="nav-text">HTTP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B8%B8%E8%A7%84%E5%8D%8F%E8%AE%AE%E5%A4%B4"><span class="nav-number">2.2.1.</span> <span class="nav-text">常规协议头</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8D%8F%E8%AE%AE%E5%A4%B4"><span class="nav-number">2.2.2.</span> <span class="nav-text">自定义协议头</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#cookie"><span class="nav-number">2.2.3.</span> <span class="nav-text">cookie</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="没事数命的猫"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">没事数命的猫</p>
+  <div class="site-description" itemprop="description">学而不思则罔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">没事数命的猫</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+-->
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
