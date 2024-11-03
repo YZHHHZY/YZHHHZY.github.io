@@ -4187,7 +4187,7 @@
 
 <p>执行成功后生成一个和名称相同的文件夹，文件夹内的Scripts文件夹内是启动虚拟环境的脚本，lin文件夹内是环境依赖</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20240707162341789.png" alt="image-20240707162341789"></p>
-<h4 id="启动虚拟环境"><a href="#启动虚拟环境" class="headerlink" title="启动虚拟环境"></a>启动虚拟环境</h4><p>启动脚本来启动虚拟环境，脚本需要在Windows PowerShell中允许，默认的命令行，只能打开这个记事本</p>
+<h4 id="启动虚拟环境"><a href="#启动虚拟环境" class="headerlink" title="启动虚拟环境"></a>启动虚拟环境</h4><p>通过启动脚本，来启动虚拟环境，脚本不能在Windows PowerShell中启动，需要使用默认的命令行</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[虚拟环境的名称]\Scripts\Activate.ps1</span><br></pre></td></tr></table></figure>
 
 
