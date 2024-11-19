@@ -6880,6 +6880,8 @@
 <p>之前了解到NOPadding的填充是在明文前面填充字节0，如果我想实现的话就可以进行手动填充</p>
 <p>打个断点进去</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241118201358518.png" alt="image-20241118201358518"></p>
+<span id="more"></span>
+
 <p>结果在这直接return了，从这里进去</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241118201651343.png" alt="image-20241118201651343"></p>
 <p>导出了一个方法,这个方法是用来将 hex 的十六进制数据转换成 base64 编码</p>
@@ -6916,7 +6918,26 @@
 <p>验证一下</p>
 <p>无需多言，还有解密</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241119145500510.png" alt="image-20241119145500510"></p>
-<p>—END—</p>
+<p>接下来写NOPadding的解密</p>
+<p>和加密的套路差不多，先检验是否有私钥，然后获取 base64转hex 的方法，将密文转成hex</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119153831614.png" alt="image-20241119153831614"></p>
+<p>然后就是重点了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119154429072.png" alt="image-20241119154429072"></p>
+<p>这个C是处理hex数据的和解密无关，m我也看了一下直接用就行，真正处理的在 return上，这样也省事了，开始微操</p>
+<p>加一个判断，通过打断点发现，这个m比较短，也就是说很可能就是明文的一种编码，反复实验之后先将这个 BigInteger 类型的数据转换成 byte 数组，然后将byte数组转换成utf-8的数据，有点弯弯绕。</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119165204122.png" alt="image-20241119165204122"></p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;return m;</span><br><span class="line">&gt;BigInteger &#123; &#x27;0&#x27;: 53753142, &#x27;1&#x27;: 201507, s: 0, t: 2 &#125;</span><br><span class="line"></span><br><span class="line">&gt;return m.toByteArray();</span><br><span class="line">&gt;[ 49, 50, 51, 52, 53, 54 ]</span><br><span class="line"></span><br><span class="line">&gt;return String.fromCharCode.apply(null, m.toByteArray());</span><br><span class="line">&gt;123456</span><br></pre></td></tr></table></figure>
+
+
+</blockquote>
+<p>需要更改的位置有</p>
+<p>这个是调试视图，去那一堆没解析的乱码里去改！就不放图片了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119165810685.png" alt="image-20241119165810685"></p>
+<p>如此这般，NOPadding填充模式就完成了</p>
 ]]></content>
+      <tags>
+        <tag>JS</tag>
+      </tags>
   </entry>
 </search>

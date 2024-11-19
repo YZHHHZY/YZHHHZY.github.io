@@ -22,12 +22,12 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="JSEncrypt添加NOPadding填充JSEncrypt是一个加密库，支持RSA加密，但是只有PKCS1的填充模式 之前了解到NOPadding的填充是在明文前面填充字节0，如果我想实现的话就可以进行手动填充 打个断点进去  结果在这直接return了，从这里进去  导出了一个方法,这个方法是用来将 hex 的十六进制数据转换成 base64 编码  继续进,getkey 方法是检验之前是否">
+  <meta name="description" content="JSEncrypt添加NOPadding填充JSEncrypt是一个加密库，支持RSA加密，但是只有PKCS1的填充模式 之前了解到NOPadding的填充是在明文前面填充字节0，如果我想实现的话就可以进行手动填充 打个断点进去">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JSEncrypt添加NOPadding填充">
 <meta property="og:url" content="http://example.com/2024/11/19/JSEncrypt%E6%B7%BB%E5%8A%A0NOPadding%E5%A1%AB%E5%85%85/index.html">
 <meta property="og:site_name" content="妙妙屋">
-<meta property="og:description" content="JSEncrypt添加NOPadding填充JSEncrypt是一个加密库，支持RSA加密，但是只有PKCS1的填充模式 之前了解到NOPadding的填充是在明文前面填充字节0，如果我想实现的话就可以进行手动填充 打个断点进去  结果在这直接return了，从这里进去  导出了一个方法,这个方法是用来将 hex 的十六进制数据转换成 base64 编码  继续进,getkey 方法是检验之前是否">
+<meta property="og:description" content="JSEncrypt添加NOPadding填充JSEncrypt是一个加密库，支持RSA加密，但是只有PKCS1的填充模式 之前了解到NOPadding的填充是在明文前面填充字节0，如果我想实现的话就可以进行手动填充 打个断点进去">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241118201358518.png">
 <meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241118201651343.png">
@@ -39,9 +39,14 @@
 <meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241118211817786.png">
 <meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241119144624973.png">
 <meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241119145500510.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241119153831614.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241119154429072.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241119165204122.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241119165810685.png">
 <meta property="article:published_time" content="2024-11-19T07:16:25.000Z">
-<meta property="article:modified_time" content="2024-11-19T07:30:00.704Z">
+<meta property="article:modified_time" content="2024-11-19T09:01:30.041Z">
 <meta property="article:author" content="没事数命的猫">
+<meta property="article:tag" content="JS">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241118201358518.png">
 
@@ -226,7 +231,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2024-11-19 15:16:25 / 修改时间：15:30:00" itemprop="dateCreated datePublished" datetime="2024-11-19T15:16:25+08:00">2024-11-19</time>
+              <time title="创建时间：2024-11-19 15:16:25 / 修改时间：17:01:30" itemprop="dateCreated datePublished" datetime="2024-11-19T15:16:25+08:00">2024-11-19</time>
             </span>
 
           <br>
@@ -235,14 +240,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>860</span>
+              <span>1.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -258,6 +263,8 @@
 <p>之前了解到NOPadding的填充是在明文前面填充字节0，如果我想实现的话就可以进行手动填充</p>
 <p>打个断点进去</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241118201358518.png" alt="image-20241118201358518"></p>
+<span id="more"></span>
+
 <p>结果在这直接return了，从这里进去</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241118201651343.png" alt="image-20241118201651343"></p>
 <p>导出了一个方法,这个方法是用来将 hex 的十六进制数据转换成 base64 编码</p>
@@ -294,7 +301,23 @@
 <p>验证一下</p>
 <p>无需多言，还有解密</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241119145500510.png" alt="image-20241119145500510"></p>
-<p>—END—</p>
+<p>接下来写NOPadding的解密</p>
+<p>和加密的套路差不多，先检验是否有私钥，然后获取 base64转hex 的方法，将密文转成hex</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119153831614.png" alt="image-20241119153831614"></p>
+<p>然后就是重点了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119154429072.png" alt="image-20241119154429072"></p>
+<p>这个C是处理hex数据的和解密无关，m我也看了一下直接用就行，真正处理的在 return上，这样也省事了，开始微操</p>
+<p>加一个判断，通过打断点发现，这个m比较短，也就是说很可能就是明文的一种编码，反复实验之后先将这个 BigInteger 类型的数据转换成 byte 数组，然后将byte数组转换成utf-8的数据，有点弯弯绕。</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119165204122.png" alt="image-20241119165204122"></p>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;return m;</span><br><span class="line">&gt;BigInteger &#123; &#x27;0&#x27;: 53753142, &#x27;1&#x27;: 201507, s: 0, t: 2 &#125;</span><br><span class="line"></span><br><span class="line">&gt;return m.toByteArray();</span><br><span class="line">&gt;[ 49, 50, 51, 52, 53, 54 ]</span><br><span class="line"></span><br><span class="line">&gt;return String.fromCharCode.apply(null, m.toByteArray());</span><br><span class="line">&gt;123456</span><br></pre></td></tr></table></figure>
+
+
+</blockquote>
+<p>需要更改的位置有</p>
+<p>这个是调试视图，去那一堆没解析的乱码里去改！就不放图片了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119165810685.png" alt="image-20241119165810685"></p>
+<p>如此这般，NOPadding填充模式就完成了</p>
 
     </div>
 
@@ -303,6 +326,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JS/" rel="tag"># JS</a>
+          </div>
 
         
 
@@ -395,7 +421,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
