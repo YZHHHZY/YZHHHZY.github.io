@@ -7607,4 +7607,465 @@
         <tag>安卓逆向</tag>
       </tags>
   </entry>
+  <entry>
+    <title>逆向学习 0x09NDK开发</title>
+    <url>/2024/12/06/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x09NDK%E5%BC%80%E5%8F%91/</url>
+    <content><![CDATA[<h2 id="SO入门"><a href="#SO入门" class="headerlink" title="SO入门"></a>SO入门</h2><p>先自己测一下这个案例</p>
+<p>抓个包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">POST /user/api/v1/login/app/mobile HTTP/1.1</span><br><span class="line">pa: MTczMjAxNzY1MzAzMyxhMTZhM2ZmOWVmYzU0M2IxYjlkMTBiMGI3NjY3NTk4MiwzZjg3MjNlMWNiMzBhYzYwM2RiYjY1ZGQ4N2QxMTA3Miw=</span><br><span class="line">appInfo: &#123;&quot;IMEI&quot;:&quot;bf1821d5634d0ec8&quot;,&quot;appBuild&quot;:&quot;21070602&quot;,&quot;appVersion&quot;:&quot;6.2.0&quot;,&quot;deviceId&quot;:&quot;bf1821d5634d0ec8&quot;,&quot;deviceName&quot;:&quot;NX627J&quot;,&quot;osType&quot;:&quot;android&quot;,&quot;osVersion&quot;:&quot;9&quot;,&quot;phoneName&quot;:&quot;NX627J&quot;,&quot;phoneSystemVersion&quot;:&quot;9&quot;,&quot;vendor&quot;:&quot;nubia&quot;&#125;</span><br><span class="line">User-Agent: PocketFans201807/6.2.0_21070602 (NX627J:Android 9;nubia PQ3B.190801.03191204 release-keys)</span><br><span class="line">Content-Type: application/json; charset=UTF-8</span><br><span class="line">Content-Length: 43</span><br><span class="line">Host: pocketapi.48.cn</span><br><span class="line">Connection: Keep-Alive</span><br><span class="line">Accept-Encoding: gzip</span><br><span class="line"></span><br><span class="line">&#123;&quot;mobile&quot;:&quot;13112345678&quot;,&quot;pwd&quot;:&quot;a123123123&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="../图片/image-20241119200211946.png" alt="image-20241119200211946" style="zoom: 50%;" />
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">感觉只有 pa 字段值得注意， MT ey 开头的一般是base64</span><br><span class="line">MTczMjAxNzY1MzAzMyxhMTZhM2ZmOWVmYzU0M2IxYjlkMTBiMGI3NjY3NTk4MiwzZjg3MjNlMWNiMzBhYzYwM2RiYjY1ZGQ4N2QxMTA3Miw=</span><br><span class="line"></span><br><span class="line">base64解码</span><br><span class="line">1732017653033,a16a3ff9efc543b1b9d10b0b76675982,3f8723e1cb30ac603dbb65dd87d11072,</span><br><span class="line">看到有三节数据，第一节感觉像是时间戳</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119201034054.png" alt="image-20241119201034054"></p>
+<p>那么直觉告诉我剩下两个就是账号和密码了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a16a3ff9efc543b1b9d10b0b76675982</span><br><span class="line">3f8723e1cb30ac603dbb65dd87d11072</span><br><span class="line">32位密文感觉和MD5有关，但是不完全是，可能加了什么东西</span><br></pre></td></tr></table></figure>
+
+
+
+<p>hook了一下加密方法，出现了SHA1，不理解，进去看看</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119201744331.png" alt="image-20241119201744331"></p>
+<p>native表示调用SO层的方法</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119202129315.png" alt="image-20241119202129315"></p>
+<p>这有个libcipher.so可能有加密的方法，逆一下</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119202254016.png" alt="image-20241119202254016"></p>
+<p>打开IDA就麻爪了</p>
+<p>视频是从base64开始入手，因为已经知道是Base64编码了，就hook base64的方法，尝试四个类</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">java.<span class="property">net</span>.<span class="property">URLEncoder</span></span><br><span class="line">java.<span class="property">util</span>.<span class="property">Base64</span></span><br><span class="line">okio.<span class="property">Base64</span></span><br><span class="line">okio.<span class="property">ByteString</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> base64 = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;android.util.Base64&quot;</span>) ;</span><br><span class="line">base64.<span class="property">encodeToString</span>.<span class="title function_">overload</span>(<span class="string">&#x27;[B&#x27;</span>, <span class="string">&#x27;int&#x27;</span>).<span class="property">implementation</span> = <span class="keyword">function</span> (<span class="params">a, b</span>)&#123;</span><br><span class="line">	<span class="title function_">showStacks</span>();</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;base64.encodeToString:&quot;</span>, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(a));</span><br><span class="line">	<span class="keyword">var</span> result = <span class="variable language_">this</span>.<span class="title function_">encodeToString</span>(a, b);</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;base64.encodeToString result: &quot;</span>, result)</span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>两个数据，要找的在下面</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119204315093.png" alt="image-20241119204315093"></p>
+<p>去反编译找 com.pocket.snh48.base.core.kotlin.net.KTokenHeaderInterceptor.intercept 方法</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119204536583.png" alt="image-20241119204536583"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">str = String.valueOf(System.currentTimeMillis()) + <span class="string">&#x27;,&#x27;</span> + StringsKt__StringsJVMKt.replace$<span class="keyword">default</span>(UUID.randomUUID().toString(), <span class="string">&quot;-&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">false</span>, <span class="number">4</span>, (Object) <span class="literal">null</span>) + <span class="string">&#x27;,&#x27;</span> + ((Object) EncryptlibUtils.MD5(AbstractC9602.m21775(), valueOf, replace$<span class="keyword">default</span>, postkey)) + <span class="string">&#x27;,&#x27;</span> + ((Object) postkeyVersion);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">第一个是时间戳实锤了</span><br><span class="line"></span><br><span class="line">第二部分</span><br><span class="line">StringsKt__StringsJVMKt.replace$<span class="keyword">default</span>(UUID.randomUUID().toString(), <span class="string">&quot;-&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="literal">false</span>, <span class="number">4</span>, (Object) <span class="literal">null</span>)</span><br><span class="line">这个东西是生成一个UUID，然后进行一些操作，这个东西看起来像MD5其实不是，只是一个随机数</span><br><span class="line">   </span><br><span class="line">    </span><br><span class="line">最后一个是空值不管他</span><br><span class="line">    </span><br><span class="line"> </span><br><span class="line">第三部分</span><br><span class="line">((Object) EncryptlibUtils.MD5(AbstractC9602.m21775(), valueOf, replace$<span class="keyword">default</span>, postkey))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>进入MD5方法</p>
+<p>看到没有代码，这个时候有两种情况，1、被加固了，或者被加密了（详见消失的钥匙）2、代码在SO层</p>
+<p>这里有native关键字，那就是SO层</p>
+<p>上面有提到加载了那个SO文件  encryptlib</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119205122099.png" alt="image-20241119205122099"></p>
+<p>对比一下这两个流程，很显然下面这个更有逻辑，从base64入手。我自己就没什么逻辑了想到加密就hook一下。</p>
+<p>IDA逆向，找到了MD5，这个 Java_+包名的 是jni的静态注册</p>
+<p>空格切换视图，F5查看伪C代码</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119205946687.png" alt="image-20241119205946687"></p>
+<p>hook一下这个方法就好了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119210326618.png" alt="image-20241119210326618"></p>
+<p>至于这么hook这个步子迈大了，先老老实实看一下SO的东西，再说hook</p>
+<h3 id="so中通常会解除到的东西"><a href="#so中通常会解除到的东西" class="headerlink" title="so中通常会解除到的东西"></a>so中通常会解除到的东西</h3><blockquote>
+<p>&#x3D;&#x3D;jni调用&#x3D;&#x3D;</p>
+<p>jni相关的代码可以理解成so层的系统函数，下面这些就是jni的调用</p>
+<p>这个调用名字固定，功能固定</p>
+<p>GetStringUTFChars ：将Java的字符串转换为C的字符串</p>
+<p>NewStringUTF ：将C语言字符串转换成Java字符串</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119210640338.png" alt="image-20241119210640338"></p>
+<p>关于jni还要学习的东西还很多，比如为什么调用的就是这个函数呢，是这么实现转换的呢，C是这么调用Java函数的，Java是这么调用C函数的，为什么传进去四个参数，接收了六个参数</p>
+<p>&#x3D;&#x3D;系统库函数&#x3D;&#x3D;</p>
+<p>比如这些 strlen 、memcpy C语言函数，来自libc.so，由libc.so来实现</p>
+<p>比如 std::  这样的C++函数，来自libC++.so</p>
+<p>这些系统函数也是可以hook的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241119211616336.png" alt="image-20241119211616336"></p>
+<p>&#x3D;&#x3D;加密算法&#x3D;&#x3D;</p>
+<p>&#x3D;&#x3D;魔改算法&#x3D;&#x3D;</p>
+<p>这俩没啥好说的，学好基础就能看，熟能生巧</p>
+<p>&#x3D;&#x3D;系统调用&#x3D;&#x3D;</p>
+<p>所谓的Linux内核的东西了，app是有四层，最上方是第三方的app，然后是Java层，然后是so层，最后是Linux内核，在其他层的操作最终都是由Linux内核来实现的。那么有些app就直接对Linux内核进行调用，这个时候是hook不到的，除非魔改内核</p>
+<p>&#x3D;&#x3D;自定义算法&#x3D;&#x3D;</p>
+<p>自己写的算法，这个时候就要有汇编基础了</p>
+<p>&#x3D;&#x3D;SO加固、混淆&#x3D;&#x3D;</p>
+<p>SO有一个头表SHT，IDA就是从这个表开始，解析so文件，有的app运行起来会把这个表删掉，这个时候IDA就解析不了了，就需要去手机中进行 &#x3D;&#x3D;SO的dump&#x3D;&#x3D; 就是将SO从内存中保存下来，保存的SO是损坏的，需要使用工具进行 &#x3D;&#x3D;SO的修复&#x3D;&#x3D; ，想要理解就需要去了解 &#x3D;&#x3D;SO的文件结构&#x3D;&#x3D; ，这个东西就很复杂了，如果工具解析不出来，说明进行了 &#x3D;&#x3D;自定义linker&#x3D;&#x3D; ，否则工具一般没问题</p>
+<p>自定义linker 是自己定义了SO的加载和解析</p>
+</blockquote>
+<h3 id="NDK介绍"><a href="#NDK介绍" class="headerlink" title="NDK介绍"></a>NDK介绍</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1、app为什么会把代码放到SO中</span><br><span class="line">	a C语言历史悠久，有很多现成的代码可用</span><br><span class="line">	b C代码的执行效率比Java高</span><br><span class="line">	c java代码容易被反编译，而且反编译以后逻辑比较清晰，C语言反编译的伪代码扣出来是难运行的</span><br><span class="line"></span><br><span class="line">2、为什么学NDK开发</span><br><span class="line">	在安卓的so开发中，其他基本跟C/C++开发一致，而与Java交互需要用到jni</span><br><span class="line">	学习NDK的jni相关的内容</span><br><span class="line">	so中会接触到的：系统库调用、jni调用、加密算法、魔改算法、系统调用、自定义算法</span><br><span class="line">	</span><br><span class="line">3、什么是jni</span><br><span class="line">	jni是Java Native Interface的缩写。从Java1.1开始，jni标准成为Java平台的一部分，允许Java代码和其他语言写的代码进行交互</span><br><span class="line">	</span><br><span class="line">4、什么是NDK</span><br><span class="line">	交叉编译工具链，用来编译so代码的</span><br><span class="line">	NDK的配置</span><br><span class="line">	NDK、CMake、LLDB</span><br><span class="line">	NDK是原生开发套件，可以让app中使用C/C++代码</span><br><span class="line">	CMake是外部构建工具，与Gradle搭配构建原生库</span><br><span class="line">	LLDB可以调试原生代码（stuid默认存在）</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241120110704561.png" alt="image-20241120110704561"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">5、ABI与指令集</span><br><span class="line">	https://developer.android.com/ndk/guides/abis</span><br></pre></td></tr></table></figure>
+
+
+
+<table>
+<thead>
+<tr>
+<th>ABI</th>
+<th>支持的指令集</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>armeabi-v7a<br>arm32<br>32位汇编</td>
+<td>armeabi<br>Thumb-2<br>VFPv3-D16</td>
+<td></td>
+</tr>
+<tr>
+<td>arm64-v8a<br>64位</td>
+<td>AArch64</td>
+<td></td>
+</tr>
+<tr>
+<td>x86<br>x86主要是来支持模拟器</td>
+<td>x86(IA-32)<br>MMX<br>SSE&#x2F;2&#x2F;3<br>SSSE3</td>
+<td></td>
+</tr>
+<tr>
+<td>x86_64<br>如果没有模拟器的支持<br>就需要模拟器来模拟<br>arm的指令来运行app</td>
+<td>x86_64<br>MMX<br>SSE&#x2F;2&#x2F;3<BR>SSSE3<br>SSE4.1、4.2<br>POPCNT</td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="NDK和Java工程的区别"><a href="#NDK和Java工程的区别" class="headerlink" title="NDK和Java工程的区别"></a>NDK和Java工程的区别</h4><p>C工程比Java工程多静态代码块用于加载SO</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241120120506984.png" alt="image-20241120120506984"></p>
+<p>需要有声明，声明完就可以使用了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">public native String stringFromJNI();</span><br></pre></td></tr></table></figure>
+
+
+
+<p>C的代码是写在cpp文件夹下的，有个同名的cpp</p>
+<p>build.gradle.kts 文件中指明了CMake的路径和C语言的版本，这个CMake是指导编译的文件，C语言版本下面可以选择支持的SOABI，默认是四种都支持</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241120120857752.png" alt="image-20241120120857752"></p>
+<p>这些是C工程比Java工程多出来的东西，在Java工程中加上这些就是一个C工程了</p>
+<h4 id="jni注册"><a href="#jni注册" class="headerlink" title="jni注册"></a>jni注册</h4><p>这里是一种静态注册，jni还有动态注册，这里默认是给SO层的方法传了两个参数，只要是跟Java对接的函数，都有这两个参数  JNIEnv 和 jobject&#x2F;jclass</p>
+<p>JNIEnv 后面再说，还是比较重要的</p>
+<p>jobject是指的调用方法的对象，用 jclass是当方法为静态方法时使用</p>
+<p>NewStringUTF 是将C语言的字符串转化为Java的字符串</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241121132114713.png" alt="image-20241121132114713"></p>
+<p>extern “C” 是表示函数以C的形式解析，可能会给函数名加上一些东西</p>
+<p>JNICALL 中没有什么东西</p>
+<p>JNIEXPORT 这里定义了方法是否需要导出，默认是 default ，如果是hidden 之后这个函数名就不会出现在so的导出表内，如果是静态注册是必须要出现在导出表内的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241121133627556.png" alt="image-20241121133627556"></p>
+<h4 id="so中常见的log输出"><a href="#so中常见的log输出" class="headerlink" title="so中常见的log输出"></a>so中常见的log输出</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;android/log.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">__android_log_print(ANDROID_LOG_DEBUG, <span class="string">&quot;demo&quot;</span>, <span class="string">&quot;xxxxxx jni native %d %d&quot;</span>, <span class="number">100</span>, <span class="number">200</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>需要最少传入三个值，第一个是枚举类型，第二个是TAG，和安卓里面的tag一样，第三个是输出的结果，但是支持占位符，可以传超过三个的参数</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241121140105082.png" alt="image-20241121140105082"></p>
+<p>这么写有点麻烦一般是使用 define 进行一个预先的声明</p>
+<p>这个定义之后，再调用就方便很多</p>
+<p>编译之后这俩东西就是一样的，预编译会将这个参数替换上去</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;android/log.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TAG <span class="string">&quot;demo hello&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__);</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__);</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LOGE(...) __android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__);</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> JNIEXPORT jstring JNICALL</span><br><span class="line"><span class="title function_">Java_com_example_demo_MainActivity_stringFromJNI</span><span class="params">(</span></span><br><span class="line"><span class="params">        JNIEnv* env,</span></span><br><span class="line"><span class="params">        jobject <span class="comment">/* this */</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> hello = <span class="string">&quot;Hello from C++&quot;</span>;</span><br><span class="line">    __android_log_print(ANDROID_LOG_DEBUG, <span class="string">&quot;demo&quot;</span>, <span class="string">&quot;xxxxxx jni native %d %d&quot;</span>, <span class="number">100</span>, <span class="number">200</span>);</span><br><span class="line">    LOGD(<span class="string">&quot;xxxxxx jni native %d %d&quot;</span>, <span class="number">100</span>, <span class="number">200</span>);</span><br><span class="line">    <span class="keyword">return</span> env-&gt;NewStringUTF(hello.c_str());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="NDK多线程"><a href="#NDK多线程" class="headerlink" title="NDK多线程"></a>NDK多线程</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;jni.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;android/log.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TAG <span class="string">&quot;demo hello&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__);</span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">myThread</span><span class="params">()</span> &#123;</span><br><span class="line">    LOGD(<span class="string">&quot;this is from myThread&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> JNIEXPORT jstring JNICALL</span><br><span class="line"><span class="title function_">Java_com_example_demo_MainActivity_stringFromJNI</span><span class="params">(</span></span><br><span class="line"><span class="params">        JNIEnv* env,</span></span><br><span class="line"><span class="params">        jobject <span class="comment">/* this */</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> hello = <span class="string">&quot;Hello from C++&quot;</span>;</span><br><span class="line">    __android_log_print(ANDROID_LOG_DEBUG, <span class="string">&quot;demo&quot;</span>, <span class="string">&quot;xxxxxx jni native %d %d&quot;</span>, <span class="number">100</span>, <span class="number">200</span>);</span><br><span class="line">	<span class="comment">//LOGD(&quot;xxxxxx jni native %d %d&quot;, 100, 200);</span></span><br><span class="line"></span><br><span class="line">    <span class="type">pthread_t</span> thread;</span><br><span class="line">    <span class="comment">// int pthread_create(pthread_t*--pthread_ptr,pthread_attr_t const*__attr,void*(*__start_routine)(void*),void*);</span></span><br><span class="line">    pthread_create(&amp;thread, nullptr, reinterpret_cast&lt;<span class="type">void</span> *(*)(<span class="type">void</span> *)&gt;(myThread), nullptr);</span><br><span class="line">    <span class="keyword">return</span> env-&gt;NewStringUTF(hello.c_str());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>&#x3D;&#x3D;pthread_t   thread&#x3D;&#x3D;</p>
+<p>线程ID，其实就是long</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241128193959939.png" alt="image-20241128193959939"></p>
+<p>pthread_create(&amp;thread, nullptr, reinterpret_cast&lt;void *(*)(void *)&gt;(myThread), nullptr);</p>
+<p>&#x2F;&#x2F; 线程ID（传刚刚定义的long类型的指针）、线程属性、函数（传递函数指针）、传给函数的参数</p>
+<p>&#x2F;&#x2F; 等待线程执行完毕</p>
+<p>&#x2F;&#x2F; 默认的线程属性是 joinable 随着主线程结束而结束</p>
+<p>pthread_join(thread, nullpyr)</p>
+<p>&#x2F;&#x2F; 线程属性是 dettach 可以分离执行</p>
+<p>pthread_exit(0)</p>
+<p>&#x2F;&#x2F; 子线程中使用它来退出线程</p>
+</blockquote>
+<h4 id="JNI-OnLoad"><a href="#JNI-OnLoad" class="headerlink" title="JNI_OnLoad"></a>JNI_OnLoad</h4><p>so中各种函数的执行时机</p>
+<p>init、init_array、JNI_OnLoad</p>
+<p>JNI_OnLoad 的执行是比定义的普通函数还要早，init 比 init_array 早， init_array 比 JNI_OnLoad 早</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241128200003818.png" alt="image-20241128200003818"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这两个参数是固定的，第一个JavaVM是一个结构体，第二个暂时没啥用</span></span><br><span class="line"><span class="comment">// 返回值类型是JNI版本</span></span><br><span class="line">JNIEXPORT jint <span class="title function_">JNI_OnLoad</span><span class="params">(JavaVM *vm, <span class="keyword">void</span> *reserved)</span> &#123;</span><br><span class="line">    JNIEnv *env = nullptr;</span><br><span class="line">    <span class="comment">// JavaVM中有一个方法GetEnv</span></span><br><span class="line">    <span class="keyword">if</span> (vm-&gt;GetEnv((<span class="keyword">void</span> **) &amp;env, JNI_VERSION_1_6) != JNI_OK) &#123;</span><br><span class="line">        LOGD(<span class="string">&quot;getenv failed&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> JNI_VERSION_1_6;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>一个so中可以不定义JNI_OnLoad</p>
+<p>一旦定义了JNI_OnLoad，在so被加载的时候会自动执行</p>
+<p>必须返回JNI版本 JNI_VERSION_1_6，否则报错</p>
+</blockquote>
+<p>JNIEnv</p>
+<p>里面定义了很多的API，创建对象数组什么的，所以需要先获取这个JNIEnv对象，而这个对象的获取就需要用到 JavaVM 这个结构体中的 GetEnv 方法，所以，上面的代码还是很常用的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241128204059608.png" alt="image-20241128204059608"></p>
+<p>状态信息，判断是否支持JNI版本</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241128204423521.png" alt="image-20241128204423521"></p>
+<h4 id="JavaVM"><a href="#JavaVM" class="headerlink" title="JavaVM"></a>JavaVM</h4><p>结构体，注意这个是C++版本的</p>
+<p>东西也不多，一个属性，五个函数</p>
+<p>比较常用的只有两个方法，GetEnv 和 AttachCurrentThread 一个是在主线程获得 JNIEnv ，一个是在子线程获得 JNIEnv</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241128204627408.png" alt="image-20241128204627408"></p>
+<p>点 DestroyJavaVM 查看C语言版本，其实就在上面翻一下就到了</p>
+<p>C++版本只是对C版本的封装，其实还是调用的C中的方法，真正反编译看到的是C语言版本的</p>
+<p>注意一下，参数个数是不一样的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241128205145656.png" alt="image-20241128205145656"></p>
+<blockquote>
+<p>JavaVM的获取</p>
+<p>​	JNI_OnLoad 的第一个参数</p>
+<p>​	JNI_OnUnload的第一个参数</p>
+<p>​	env-&gt;GetJavaVM</p>
+<p>​	对比各种方式获取的JavaVM指针是否一致</p>
+<p>​		%p 打印地址，地址是一样的</p>
+<p>因为 &#x3D;&#x3D;JavaVM每个进程中只有一份&#x3D;&#x3D;（一个地址值）</p>
+</blockquote>
+<h4 id="JNIEnv"><a href="#JNIEnv" class="headerlink" title="JNIEnv"></a>JNIEnv</h4><p>也是结构体，但是这个很常用</p>
+<p>里面定义了很多的API，创建对象数组什么的，所以需要先获取这个JNIEnv对象，而这个对象的获取就需要用到 JavaVM 这个结构体中的 GetEnv 方法，具体的API后面再学，先简单知道有这个东西就好了</p>
+<blockquote>
+<p>JNIEnv的获取方式</p>
+<p>​	函数静态&#x2F;动态注册，传的第一个参数（不光JNIEnv的函数）</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241128211740416.png" alt="image-20241128211740416"></p>
+<p>​	vm-&gt;GetEnv</p>
+<p>​	globalIVM-&gt;AttachCurrentThread（在子线程中使用的，和上面的同理）</p>
+<p>​	主线程和子线程中取得的JNIEnv的地址是不一样的</p>
+<p>与JavaVM不同的是，&#x3D;&#x3D;JNIEnv是每个线程中都有一份&#x3D;&#x3D;（每个线程一个地址值）</p>
+</blockquote>
+<h4 id="so的基本概念"><a href="#so的基本概念" class="headerlink" title="so的基本概念"></a>so的基本概念</h4><p>导出表、导入表</p>
+<p>反编译后这个Exports就是导出表，也可以在编写的时候使用hidden这样对应的函数就不会出现在导出表中</p>
+<p>导入表在旁边的imports中，是程序依赖的函数</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241129112947458.png" alt="image-20241129112947458"></p>
+<p>出现在导出表，导入表中的函数，一般可以通过frida相关的API获取函数地址，也可以自己计算</p>
+<p>没有出现在导出表、导入表、符号表中的函数，都需要自己计算函数地址</p>
+<p>所谓的符号表就是能看见名字的，都在符号表内，有的名字是IDA自己生成的，这个就需要自己计算，为什么一定要获取函数地址呢，因为So函数的hook需要函数地址</p>
+<h3 id="SO函数注册"><a href="#SO函数注册" class="headerlink" title="SO函数注册"></a>SO函数注册</h3><p>有静态注册和动态注册两种方式</p>
+<h4 id="JNI函数的静态注册"><a href="#JNI函数的静态注册" class="headerlink" title="JNI函数的静态注册"></a>JNI函数的静态注册</h4><p>静态注册的命名必须遵循一定的命名规则，一般是 Java_包名_类名_方法名</p>
+<p>系统会通过dlopen加载对应的so，通过dlsym来获取指定名字的函数地址，然后调用静态注册的jni函数</p>
+<p>静态注册的函数必然在导出表内</p>
+<h4 id="JNI动态注册"><a href="#JNI动态注册" class="headerlink" title="JNI动态注册"></a>JNI动态注册</h4><blockquote>
+<p>通过 env -&gt; RegisterNatives 注册函数，通常在 JNI_OnLoad 中注册</p>
+<p>​	RegisterNatives：意思是注册本地</p>
+<p>​	JNINativeMethod：指定C函数和Java调用的对应关系</p>
+<p>​	函数签名：指定调用哪一个C函数</p>
+<p>可以给同一个Java函数注册多个native函数，以最后一次为准</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这个FindClass的作用类似于frida的Java.use，也是注册函数传入的第一个参数</span></span><br><span class="line">jclass MainActivityClazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// JNINativeMethod是一个结构体，分别为 name 函数名，signature 存放函数签名，fnRtr 函数指针</span></span><br><span class="line"><span class="comment">// 这个结构体规定了Java和C函数的对应关系</span></span><br><span class="line"><span class="comment">// JNINativeMethod中是可以注册多个函数的</span></span><br><span class="line"><span class="comment">// 第二个参数 () 内是传入的参数，后面是返回值的类型，因为String是对象，不是基本数据类型，所以需要用 L; 来包围，中间填写对象的具体路径。基本数据类型 int 就用I表示了，byte 数组用 [B</span></span><br><span class="line"><span class="comment">// 第三个参数是指定函数在C层对应的方法</span></span><br><span class="line">JNINativeMethod method[] = &#123;</span><br><span class="line">    &#123;<span class="string">&quot;stringFromJNI3&quot;</span>, <span class="string">&quot;(Ljava/lang/String;I[B)Ljava/lang/String;&quot;</span>, (<span class="type">void</span> *)test&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// jint其实就是int，是指明注册函数的个数</span></span><br><span class="line"><span class="comment">// jint RegisterNatives(jclass clazz, const JNINativeMethod* method, jint nMethods)</span></span><br><span class="line"><span class="comment">// 最后这个参数可以之间给数字，但是如果在开发中最好计算一下 sizeof(method)/sizeof(JNINativeMethod) 。</span></span><br><span class="line">env-&gt;RegisterNatives(MainActivityClazz, method, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<img src="../图片/image-20241129164315798.png" alt="image-20241129164315798" style="zoom: 50%;" />
+
+<p>完整代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这个时候就可以自定义方法名了，传参什么的不能少</span></span><br><span class="line">jstring <span class="title function_">test</span><span class="params">(JNIEnv* env, jobject that, jstring a, jint b, jbyteArray c)</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> env-&gt;NewStringUTF(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 在JNI_OnLoad中进行 env-&gt;RegisterNatives 的动态注册</span></span><br><span class="line">JNIEXPORT jint <span class="title function_">JNI_OnLoad</span><span class="params">(JavaVM *vm, <span class="type">void</span> *reserved)</span> &#123;</span><br><span class="line">	JNIEnv *env = nullptr;</span><br><span class="line">	<span class="keyword">if</span> (vm-&gt;GetEnv((<span class="type">void</span> **) &amp;env, JNI_VERSION_1_6) != JNI_OK) &#123;</span><br><span class="line">		LOGD(<span class="string">&quot;getenv failed&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"> 	jclass MainActivityClazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line"> 	JNINativeMethod method[] = &#123;</span><br><span class="line">     	&#123;<span class="string">&quot;stringFromJNI3&quot;</span>, <span class="string">&quot;(Ljava/lang/String;I[B)Ljava/lang/String;&quot;</span>, (<span class="type">void</span> *)test&#125;</span><br><span class="line"> 	&#125;;</span><br><span class="line"> 	<span class="comment">// jint RegisterNatives(jclass clazz, const JNINativeMethod* method, jint nMethods)</span></span><br><span class="line"> env-&gt;RegisterNatives(MainActivityClazz, method, <span class="keyword">sizeof</span>(method)/<span class="keyword">sizeof</span>(JNINativeMethod));</span><br><span class="line"></span><br><span class="line"> 	<span class="keyword">return</span> JNI_VERSION_1_6;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">test</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.loadLibrary(<span class="string">&quot;native-lib&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">native</span> String <span class="title function_">stringFromJNI3</span><span class="params">(String a, <span class="type">int</span> b, <span class="type">byte</span>[] c)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：如果有重名的调用的是后面的，以最后一个为准。如：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">JNINativeMethod method[] = &#123;</span><br><span class="line">    &#123;<span class="string">&quot;stringFromJNI3&quot;</span>, <span class="string">&quot;(Ljava/lang/String;IB)Ljava/lang/String;&quot;</span>, (<span class="type">void</span> *)test&#125;;</span><br><span class="line">    &#123;<span class="string">&quot;stringFromJNI3&quot;</span>, <span class="string">&quot;(Ljava/lang/String;IB)Ljava/lang/String;&quot;</span>, (<span class="type">void</span> *)test0x1&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个时候在Java端调用 stringFromJNI3 时，执行的C函数是 test0x1</p>
+<h3 id="SO之间的相互调用"><a href="#SO之间的相互调用" class="headerlink" title="SO之间的相互调用"></a>SO之间的相互调用</h3><h4 id="多个cpp编译成一个so文件"><a href="#多个cpp编译成一个so文件" class="headerlink" title="多个cpp编译成一个so文件"></a>多个cpp编译成一个so文件</h4><p>创建一个c的源文件，将要编译成一个so文件的cpp写在配置文件中</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241202202608155.png" alt="image-20241202202608155"></p>
+<p>调用另一个cpp中的方法时，不需要再使用下面的方法调用，省去这个步骤，在前面声明一下方法名，然后在需要调用的时候直接函数名调用即可</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &quot;&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241202203340209.png" alt="image-20241202203340209"></p>
+<p>测试成功，只有一个so，且可以正常使用cpp内的方法</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241202202406481.png" alt="image-20241202202406481"><img src="/../%E5%9B%BE%E7%89%87/image-20241202202457604.png" alt="image-20241202202457604"></p>
+<h4 id="编译多个SO"><a href="#编译多个SO" class="headerlink" title="编译多个SO"></a>编译多个SO</h4><p>这个需要的操作用小脑想一下，创建cpp文件，修改CMakeLists文件。最重要的当然是CMakeLists文件。</p>
+<p>新加上一个add_library和target_link_libraries</p>
+<p>一个值得so的名称和so内的cpp文件，另一个进行链接</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241202204854659.png" alt="image-20241202204854659"></p>
+<h4 id="SO路径的动态获取"><a href="#SO路径的动态获取" class="headerlink" title="SO路径的动态获取"></a>SO路径的动态获取</h4><p>so在手机中的data&#x2F;app&#x2F;包名+随机名&#x2F;lib&#x2F;  目录下</p>
+<p>包名这个目录后面的数是随机的，每次安装都不一样</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241202210143999.png" alt="image-20241202210143999"></p>
+<p>我们需要用代码来找到这个目录中的SO文件</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这个Context是安卓一个常用的对象，里面有很多API</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">getPath</span><span class="params">(Context cxt)</span> &#123;</span><br><span class="line">       <span class="comment">// .getPackageManager 得到包管理器</span></span><br><span class="line">       <span class="type">PackageManager</span> <span class="variable">pm</span> <span class="operator">=</span> cxt.getPackageManager();</span><br><span class="line">       <span class="comment">// .getInstalledPackages 获取已经安装的app</span></span><br><span class="line">       List&lt;PackageInfo&gt; pkgList = pm.getInstalledPackages(<span class="number">0</span>);</span><br><span class="line">       <span class="comment">// 过滤</span></span><br><span class="line">       <span class="keyword">if</span> (pkgList == <span class="literal">null</span> || pkgList.size() == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">       </span><br><span class="line">       <span class="comment">// 循环查找</span></span><br><span class="line">       <span class="keyword">for</span> (PackageInfo pi : pkgList) &#123;</span><br><span class="line">           <span class="comment">// .applicationInfo.nativeLibraryDir 就是获取本地so保存的地方</span></span><br><span class="line">           <span class="comment">// 然后判断是 /data/app 开头，内容包含包名的so文件</span></span><br><span class="line">           <span class="keyword">if</span> (pi.applicationInfo.nativeLibraryDir.startsWith(<span class="string">&quot;/data/app/&quot;</span>)</span><br><span class="line">               &amp;&amp; pi.packageName.startsWith(<span class="string">&quot;com.example.demo&quot;</span>)) &#123;</span><br><span class="line">               <span class="keyword">return</span> pi.applicationInfo.nativeLibraryDir;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Context对象通过 getApplicationContext() 方法来获取，可以看到输出了so所在的路径，但是还差了一个so的名字，自行补充一下就好了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241202212101582.png" alt="image-20241202212101582"></p>
+<h4 id="SO的动态调用"><a href="#SO的动态调用" class="headerlink" title="SO的动态调用"></a>SO的动态调用</h4><p>既然已经能够获取到SO的路径了，那么就可以实现so之间的相互调用了</p>
+<p>在cpp文件中使用 dlopen 方法来获得</p>
+<p>需要给两个参数，一个是SO的文件名，这个地方要给出全路径，一个是指定对SO的操着是立即解析还是懒加载等，常用的是 now和 lazy，RTLD_NOW是立即解析</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241203132351488.png" alt="image-20241203132351488"></p>
+<p>注册的时候加上一个这玩意，调用的时候多加一个参数，jstring</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241203133033340.png" alt="image-20241203133033340"></p>
+<p>人要的是 char * ，你给的是Java的字符串jstring，需要一个转换</p>
+<p>使用 GetStringUTFChars 将 jstring 转换成 cstring，两个参数第一个是Java字符串，第二个是选择是否拷贝，一般用nullptr</p>
+<p>然后使用 void* 来接收</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">char</span>* cPath = env-&gt;GetStringUTFChars(SoPath, nullptr);</span><br><span class="line"><span class="type">void</span>* soInfo = dlopen(cPath, RTLD_NOW);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>有了这个 void* 的指针就可以使用 dlsym 函数来获取so文件中的符号，不是cpp文件中的函数名，而是函数名经过符号修饰之后的结果，这个结果可以通过反编译查看，或者使用 extren “C” 修饰函数，如此函数名就不会被修饰。</p>
+<p>返回值是一个函数指针</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 先进行一个函数声明，声明一个可以代表任意一个没有返回值和没有参数的函数</span></span><br><span class="line">   <span class="type">void</span> (*ref)();</span><br><span class="line"><span class="comment">// 使用 dlsym 函数获取指定函数名的地址值，然后使用 reinterpret_cast 强转成函数指针，然后就可以直接调用方法了</span></span><br><span class="line">   ref = reinterpret_cast&lt;<span class="type">void</span> (*)()&gt; (dlsym(soInfo ,<span class="string">&quot;_Z4testv&quot;</span>));</span><br><span class="line">   ref();</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241203174733741.png" alt="image-20241203174733741"></p>
+<p>调用成功</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241203180532224.png" alt="image-20241203180532224"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241203182405188.png" alt="image-20241203182405188"></p>
+<p>这中方式调用so是不用在Java层加载so的，执行代码的时候就自己给加载上了，如果要卸载so使用dlclose 函数</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dlclose(soInfo);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>SO的动态调用了解一下，逆向的时候可能会碰到。</p>
+<p>这个的hook也和普通的不一样，因为这个地址是在一定时间内存在的</p>
+</blockquote>
+<p>还有一种方式</p>
+<p>给需要调用的SO方法 extern ”C“，然后在调用cpp的文件中使用 <code>extern &quot;C&quot; </code> 进行声明</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241203191333495.png" alt="image-20241203191333495"></p>
+<h3 id="通过JNI创建Java对象"><a href="#通过JNI创建Java对象" class="headerlink" title="通过JNI创建Java对象"></a>通过JNI创建Java对象</h3><p>在使用so层的方法时，难免需要Java对象，有两种创建Java对象的方式</p>
+<h4 id="NewObject"><a href="#NewObject" class="headerlink" title="NewObject"></a>NewObject</h4><p>很像Java中的反射，找类，找方法，调方法</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   <span class="comment">// NewObject创建对象，通过FindClass获取相应的类</span></span><br><span class="line">   jclass clazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line"><span class="comment">// init这个函数名代表构造函数，找到对象的构造方法，这个示例是无参构造</span></span><br><span class="line">   jmethodID methodId = env-&gt;GetMethodID(clazz, <span class="string">&quot;&lt;init&gt;&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line"><span class="comment">// 获取object对象，如果需要传参数，就从第三个开始</span></span><br><span class="line">   jobject ReflectDemoObj = env-&gt;NewObject(clazz, methodId);</span><br><span class="line">   LOGD(<span class="string">&quot;ReflectDemoObj %p&quot;</span>, ReflectDemoObj);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>ReflectDemoObj 是Java中的一个对象，输出的是这个对象在虚拟机中的一个唯一标识</p>
+<p>这个地址是在虚拟机内，和外部的内存地址不在一个位置，因为在JNI中需要区分Java的东西和C的东西，本质就是因为存放的位置不一样。所以需要来回的转换</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241203210850623.png" alt="image-20241203210850623"></p>
+<h4 id="AllocObject"><a href="#AllocObject" class="headerlink" title="AllocObject"></a>AllocObject</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// AllocObject创建对象</span></span><br><span class="line">   jclass jclass1 = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line">   jmethodID jmethodId = env-&gt;GetMethodID(clazz, <span class="string">&quot;&lt;init&gt;&quot;</span>, <span class="string">&quot;(Ljava/lang/String;)V&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 前两步是一样的，这里 AllocObject 是给函数分配内存，但是不进行初始化，可以看到只传递了类</span></span><br><span class="line">   jobject ReflectDemoObj2 = env-&gt;AllocObject(jclass1);</span><br><span class="line"><span class="comment">// 定义一个字符串</span></span><br><span class="line">   jstring jstr = env-&gt;NewStringUTF(<span class="string">&quot;from jni str&quot;</span>);</span><br><span class="line"><span class="comment">// 进行初始化，传入内存地址，类，构造方法，传入值</span></span><br><span class="line">   env-&gt;CallNonvirtualVoidMethod(ReflectDemoObj2, jclass1, jmethodId, jstr);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241203212934398.png" alt="image-20241203212934398"></p>
+<h3 id="通过JNI访问Java属性"><a href="#通过JNI访问Java属性" class="headerlink" title="通过JNI访问Java属性"></a>通过JNI访问Java属性</h3><p>Java属性分为静态和非静态的，两种属性获取的方法不同</p>
+<h4 id="获取静态字段"><a href="#获取静态字段" class="headerlink" title="获取静态字段"></a>获取静态字段</h4><p>使用 <code>GetStatic****Field</code> 来设置非静态字段</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   jclass clazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line"><span class="comment">// 获取类之后，通过 GetStaticFieldID 函数来获取静态成员的ID， GetFieldID 是获取非静态成员的ID</span></span><br><span class="line"><span class="comment">// 给三个参数，第一个是 jclass ，第二个是字段名，第三个是字段签名（数据类型）</span></span><br><span class="line">   jfieldID privateStaticStringField = </span><br><span class="line">       env-&gt;GetStaticFieldID(clazz, <span class="string">&quot;age&quot;</span>, <span class="string">&quot;Ljava/lang/String;&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后使用 GetStatic+数据类型+Field 这个函数来获取字段的具体内容</span></span><br><span class="line"><span class="comment">// 一共是8+1，八个基本数据类型+object</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticBooleanField();</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticIntField();</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticShortField();</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticByteField();</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticCharField();</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticFloatField();</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticDoubleField();</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticLongField();</span></span><br><span class="line"><span class="comment">// env-&gt;GetStaticObjectField();</span></span><br><span class="line"><span class="comment">// 已知是字符串的情况下，可以直接强转从object转成字符串</span></span><br><span class="line"><span class="comment">// 根据类名和字段名以及数据类型可以找到这个静态字段，但是注意，这个时候的age还是在虚拟机中，是Java的字符串，需要进行一个转换</span></span><br><span class="line">   jstring age = </span><br><span class="line">       static_cast&lt;jstring&gt; (env-&gt;GetStaticObjectField(clazz, privateStaticStringField));</span><br><span class="line"><span class="comment">// 将Java字符串转换成C字符串</span></span><br><span class="line">   <span class="type">const</span> <span class="type">char</span>* privatecstr = env-&gt;GetStringUTFChars(age, nullptr);</span><br><span class="line">   LOGD(<span class="string">&quot;age: %s&quot;</span>, age);</span><br><span class="line"><span class="comment">// 使用完毕后需要释放内存</span></span><br><span class="line">   env-&gt;ReleaseStringUTFChars(age, privatecstr);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="获取对象字段"><a href="#获取对象字段" class="headerlink" title="获取对象字段"></a>获取对象字段</h4><p>这个和获取静态字段大差不差，就几个函数不一样</p>
+<p>使用 <code>Get****Field</code> 来获取非静态字段</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   jclass clazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line">   jmethodID methodId = env-&gt;GetMethodID(clazz, <span class="string">&quot;&lt;init&gt;&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line">   jobject ReflectDemoObj = env-&gt;NewObject(clazz, methodId);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 上面创建实例化对象，非静态的东西用之前new一下很合理吧</span></span><br><span class="line">   jfieldID nameID = env-&gt;GetFieldID(clazz, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;Ljava/lang/String;&quot;</span>);</span><br><span class="line"><span class="comment">// 除了API上没有static之外，只有这里，传入的是实例化之后的对象，其他的都和上面的差不多</span></span><br><span class="line">   jstring name = static_cast&lt;jstring&gt; (env-&gt;GetObjectField(ReflectDemoObj, nameID));</span><br><span class="line">   <span class="type">const</span> <span class="type">char</span>* nameContent = env-&gt;GetStringUTFChars(name, nullptr);</span><br><span class="line">   LOGD(<span class="string">&quot;name: %s&quot;</span>, nameContent);</span><br><span class="line">   env-&gt;ReleaseStringUTFChars(name, nameContent);</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241204114753473.png" alt="image-20241204114753473"></p>
+<h4 id="设置非静态字段"><a href="#设置非静态字段" class="headerlink" title="设置非静态字段"></a>设置非静态字段</h4><p>使用 <code>Set****Field</code> 来设置非静态字段</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   jclass clazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line">   jmethodID methodId = env-&gt;GetMethodID(clazz, <span class="string">&quot;&lt;init&gt;&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line">   jobject ReflectDemoObj = env-&gt;NewObject(clazz, methodId);   </span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取对象字段</span></span><br><span class="line">   jfieldID nameID = env-&gt;GetFieldID(clazz, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;Ljava/lang/String;&quot;</span>);</span><br><span class="line">   jstring name = static_cast&lt;jstring&gt; (env-&gt;GetObjectField(ReflectDemoObj, nameID));</span><br><span class="line">   <span class="type">const</span> <span class="type">char</span>* nameContent = env-&gt;GetStringUTFChars(name, nullptr);</span><br><span class="line">   LOGD(<span class="string">&quot;name: %s&quot;</span>, nameContent);</span><br><span class="line">   env-&gt;ReleaseStringUTFChars(name, nameContent);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置非静态字段</span></span><br><span class="line"><span class="comment">// 直接使用 SetObjectField 来更改字段，传入的是实例化之后的对象和要更改的字段ID，以及要更改为的数据</span></span><br><span class="line">   env-&gt;SetObjectField(ReflectDemoObj, nameID, env-&gt;NewStringUTF(<span class="string">&quot;呓语&quot;</span>));</span><br><span class="line"><span class="comment">// 重新获取Java类型的数据</span></span><br><span class="line">   name = static_cast&lt;jstring&gt; (env-&gt;GetObjectField(ReflectDemoObj, nameID));</span><br><span class="line"><span class="comment">// 将Java类型的数据转换成C类型输出</span></span><br><span class="line">   nameContent = env-&gt;GetStringUTFChars(name, nullptr);</span><br><span class="line">   LOGD(<span class="string">&quot;name new: %s&quot;</span>, nameContent);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241204172804519.png" alt="image-20241204172804519"></p>
+<h3 id="通过JNI访问Java数组"><a href="#通过JNI访问Java数组" class="headerlink" title="通过JNI访问Java数组"></a>通过JNI访问Java数组</h3><h4 id="获取数组"><a href="#获取数组" class="headerlink" title="获取数组"></a>获取数组</h4><p>通过 <code>Get****ArrayElements</code> 获取数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   jclass clazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line">   jmethodID methodId = env-&gt;GetMethodID(clazz, <span class="string">&quot;&lt;init&gt;&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line">   jobject ReflectDemoObj = env-&gt;NewObject(clazz, methodId);   </span><br><span class="line"></span><br><span class="line">   <span class="comment">// 获取数组字段ID，同字段ID的获取方式一样</span></span><br><span class="line">   jfieldID byteArrayID = env-&gt;GetFieldID(clazz, <span class="string">&quot;byteArray&quot;</span>, <span class="string">&quot;[B&quot;</span>);</span><br><span class="line"><span class="comment">// 这里也是获取数组内容，使用Object来接收，然后再转换成jbyteArray的类型</span></span><br><span class="line">   jbyteArray byteArray1 = </span><br><span class="line">       static_cast&lt;jbyteArray&gt; (env-&gt;GetObjectField(ReflectDemoObj, byteArrayID));</span><br><span class="line"><span class="comment">// 使用 GetArrayLength 方法获取数组的长度</span></span><br><span class="line">   <span class="type">int</span> _byteArrayLength = env-&gt;GetArrayLength(byteArray1);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这个时候还不能直接遍历数组，需要一个转换，将Java类型的数据转换成 jbyte*</span></span><br><span class="line"><span class="comment">// 不光是 byte数组，其他数组遍历的时候也需要一个转换，对应的api为 Get+类型+ArrayElements。一共九个</span></span><br><span class="line">   jbyte* cByte = env-&gt;GetByteArrayElements(byteArray1, nullptr);</span><br><span class="line">   <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _byteArrayLength; i++) &#123;</span><br><span class="line">       LOGD(<span class="string">&quot;byteArray: %d&quot;</span>, cByte[i])</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 释放</span></span><br><span class="line">env-&gt;ReleaseByteArrayElements(byteArray1, cByte, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241204174959021.png" alt="image-20241204174959021"></p>
+<h4 id="修改数组"><a href="#修改数组" class="headerlink" title="修改数组"></a>修改数组</h4><p>通过 <code>Get****ArrayRegion</code> 修改数组内容，Region是一次性设置完成，即使是数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   <span class="comment">// 修改数组</span></span><br><span class="line"><span class="comment">// 先创建一个C的数组，C的char相当于Java的byte </span></span><br><span class="line">   <span class="type">char</span> javaByte[<span class="number">10</span>];</span><br><span class="line">   <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">       javaByte[i] = static_cast&lt;<span class="type">char</span>&gt;(<span class="number">100</span>-i);</span><br><span class="line">   &#125;</span><br><span class="line"><span class="comment">// 将这个char数组转换成jbyte的类型</span></span><br><span class="line">   <span class="type">const</span> jbyte *java_array = reinterpret_cast&lt;<span class="type">const</span> jbyte*&gt;(javaByte);</span><br><span class="line"><span class="comment">// 使用 Region 的这一套API进行数组的修改</span></span><br><span class="line">   env-&gt;SetByteArrayRegion(byteArray1, <span class="number">0</span>, _byteArrayLength, java_array);</span><br><span class="line"><span class="comment">// 修改完之后，可以重新获取数组来遍历</span></span><br><span class="line">   byteArray1 = </span><br><span class="line">       static_cast&lt;jbyteArray&gt; (env-&gt;GetObjectField(ReflectDemoObj, byteArrayID));</span><br><span class="line">   cByte = env-&gt;GetByteArrayElements(byteArray1, nullptr);</span><br><span class="line">   <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _byteArrayLength; i++) &#123;</span><br><span class="line">       LOGD(<span class="string">&quot;byteArray: %d&quot;</span>, cByte[i])</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241204180039225.png" alt="image-20241204180039225"></p>
+<h3 id="通过JNI来访问Java方法"><a href="#通过JNI来访问Java方法" class="headerlink" title="通过JNI来访问Java方法"></a>通过JNI来访问Java方法</h3><h4 id="调用静态函数"><a href="#调用静态函数" class="headerlink" title="调用静态函数"></a>调用静态函数</h4><p>调用静态函数的API和使用构造方法的API相似，但是不一样</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   <span class="comment">// 调用静态函数</span></span><br><span class="line"><span class="comment">// 创建类</span></span><br><span class="line">   jclass clazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line"><span class="comment">// 构造方法使用 NewObject 或者 AllocObject 两个API来找到方法，其他的函数就不一样了，是 GetStaticMethodID</span></span><br><span class="line">   jmethodID staticFunID = env-&gt;GetStaticMethodID(clazz, <span class="string">&quot;StaticFunction&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line"><span class="comment">// 找到这个方法ID之后，使用 Call 系列的API CallStatic+返回值类型+Method，这个组合API有十个</span></span><br><span class="line">   env-&gt;CallStaticVoidMethod(clazz, staticFunID);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="调用对象函数"><a href="#调用对象函数" class="headerlink" title="调用对象函数"></a>调用对象函数</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   <span class="comment">// 调用对象函数</span></span><br><span class="line"><span class="comment">// 找到对象函数的方法ID</span></span><br><span class="line">   jmethodID FunID =</span><br><span class="line">           env-&gt;GetMethodID(clazz, <span class="string">&quot;functional&quot;</span>, <span class="string">&quot;(Ljava/lang/String;)Ljava/lang/String;&quot;</span>);</span><br><span class="line">   jstring str = env-&gt;NewStringUTF(<span class="string">&quot;this is from JNI&quot;</span>);</span><br><span class="line"><span class="comment">// 因为是对象函数调用需要一个实例化对象，使用前面已经创建过的实例化对象 ReflectDemoObj，然后传入方法ID和方法参数，因为返回值是String，将Object转换成string</span></span><br><span class="line">   jstring str2 = reinterpret_cast&lt;jstring&gt;(static_cast&lt;jstring&gt; (env-&gt;CallObjectMethod(ReflectDemoObj, FunID, str)));</span><br><span class="line"><span class="comment">// 将返回值的Java类型的字符串转换成C中的char*字符串</span></span><br><span class="line">   <span class="type">const</span> <span class="type">char</span>* retval_cstr = env-&gt;GetStringUTFChars(str2, nullptr);</span><br><span class="line">   LOGD(<span class="string">&quot;retval_cstr: %s&quot;</span>, retval_cstr);</span><br><span class="line">   env-&gt;ReleaseStringUTFChars(str2,retval_cstr);</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241204191017506.png" alt="image-20241204191017506"></p>
+<h4 id="CallObjectMethodA"><a href="#CallObjectMethodA" class="headerlink" title="CallObjectMethodA"></a>CallObjectMethodA</h4><p>CallObjectMethod这个API是用来调用执行函数的，同系列的还有 CallObjectMethodA 和 CallObjectMethodV</p>
+<p>CallObjectMethod 执行的时候调用了 CallObjectMethodV，也就是说 CallObjectMethod 可以完美替代 CallObjectMethodV 在调用的时候的使用了，因为 CallObjectMethod 支持接收多个参数，如果不使用 CallObjectMethod 还得自行处理参数，传入 CallObjectMethodV</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241204191718523.png" alt="image-20241204191718523"></p>
+<p>CallObjectMethodA 的使用需要传入一个 jvalue，这个jvalue是一个联合体</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> <span class="title">jvalue</span> &#123;</span></span><br><span class="line">    jboolean    z;</span><br><span class="line">    jbyte       b;</span><br><span class="line">    jchar       c;</span><br><span class="line">    jshort      s;</span><br><span class="line">    jint        i;</span><br><span class="line">    jlong       j;</span><br><span class="line">    jfloat      f;</span><br><span class="line">    jdouble     d;</span><br><span class="line">    jobject     l;</span><br><span class="line">&#125; jvalue;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 后面的字母代表数据类型的简写，定义参数的时候可以使用以下方式</span></span><br><span class="line">jvalue args[<span class="number">3</span>];</span><br><span class="line">args[<span class="number">0</span>].i = <span class="number">100</span>;</span><br><span class="line">args[<span class="number">1</span>].c = str2;</span><br><span class="line">args[<span class="number">2</span>].z = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="传递数组作为参数"><a href="#传递数组作为参数" class="headerlink" title="传递数组作为参数"></a>传递数组作为参数</h4><p>稍微升级一下，调用传入值为数组，返回值也是数组的方法</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">   <span class="comment">// 传入数组参数</span></span><br><span class="line"><span class="comment">// 先创建一个字符串数组</span></span><br><span class="line"><span class="comment">// 下面的操作就相当于Java中</span></span><br><span class="line"><span class="comment">// String StringArr[] = new String[3]</span></span><br><span class="line"><span class="comment">// for (int i = 0; i &lt; 3; i++) &#123;</span></span><br><span class="line"><span class="comment">//    StringArr[i] = &quot;NB666&quot;;</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line">   jclass StringClazz = env-&gt;FindClass(<span class="string">&quot;java/lang/String&quot;</span>);</span><br><span class="line">   jobjectArray StringArr = env-&gt;NewObjectArray(<span class="number">3</span>, StringClazz, nullptr);</span><br><span class="line">   <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; ++i) &#123;</span><br><span class="line">       env-&gt;SetObjectArrayElement(StringArr, i, env-&gt;NewStringUTF(<span class="string">&quot;NB666&quot;</span>));</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取方法ID GetStaticMethodID</span></span><br><span class="line">   jmethodID StringArrayID =</span><br><span class="line">           env-&gt;GetStaticMethodID(clazz, <span class="string">&quot;functionTest&quot;</span>, <span class="string">&quot;([Ljava/lang/String;)[I&quot;</span>);</span><br><span class="line"><span class="comment">// 执行函数，使用 jintArray 接收返回值，对返回值进行强转</span></span><br><span class="line">   jintArray jint = static_cast&lt;jintArray&gt;</span><br><span class="line">           (env-&gt;CallStaticObjectMethod(clazz, StringArrayID, StringArr));</span><br><span class="line"><span class="comment">// 处理返回值，将Java的数组转换成C的数组</span></span><br><span class="line">   <span class="type">int</span> *cinArr = env-&gt;GetIntArrayElements(jint, nullptr);</span><br><span class="line">   LOGD(<span class="string">&quot;cintArr[0]=%d&quot;</span>, cinArr[<span class="number">0</span>]);</span><br><span class="line">   env-&gt;ReleaseIntArrayElements(jint, cinArr, JNI_ABORT);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241204201627997.png" alt="image-20241204201627997"></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">jstring <span class="title function_">demoHelloWorld</span><span class="params">(JNIEnv* env, jobject that, jstring a, jint b, jbyteArray c)</span> &#123;</span><br><span class="line">    <span class="comment">// NewObject创建对象</span></span><br><span class="line">    jclass clazz = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line">    jmethodID methodId = env-&gt;GetMethodID(clazz, <span class="string">&quot;&lt;init&gt;&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line">    jobject ReflectDemoObj = env-&gt;NewObject(clazz, methodId);</span><br><span class="line">    LOGD(<span class="string">&quot;ReflectDemoObj %p&quot;</span>, ReflectDemoObj);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// AllocObject创建对象</span></span><br><span class="line">    jclass jclass1 = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line">    jmethodID jmethodId = env-&gt;GetMethodID(clazz, <span class="string">&quot;&lt;init&gt;&quot;</span>, <span class="string">&quot;(Ljava/lang/String;)V&quot;</span>);</span><br><span class="line">    jobject ReflectDemoObj2 = env-&gt;AllocObject(jclass1);</span><br><span class="line">    jstring jstr = env-&gt;NewStringUTF(<span class="string">&quot;from jni str&quot;</span>);</span><br><span class="line">    env-&gt;CallNonvirtualVoidMethod(ReflectDemoObj2, jclass1, jmethodId, jstr);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取静态字段</span></span><br><span class="line">    jfieldID privateStaticStringField = env-&gt;GetStaticFieldID(clazz, <span class="string">&quot;age&quot;</span>, <span class="string">&quot;Ljava/lang/String;&quot;</span>);</span><br><span class="line">    jstring age = static_cast&lt;jstring&gt; (env-&gt;GetStaticObjectField(clazz, privateStaticStringField));</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>* privatecstr = env-&gt;GetStringUTFChars(age, nullptr);</span><br><span class="line">    LOGD(<span class="string">&quot;age: %s&quot;</span>, privatecstr);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(age, privatecstr);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取对象字段</span></span><br><span class="line">    jfieldID nameID = env-&gt;GetFieldID(clazz, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;Ljava/lang/String;&quot;</span>);</span><br><span class="line">    jstring name = static_cast&lt;jstring&gt; (env-&gt;GetObjectField(ReflectDemoObj, nameID));</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>* nameContent = env-&gt;GetStringUTFChars(name, nullptr);</span><br><span class="line">    LOGD(<span class="string">&quot;name: %s&quot;</span>, nameContent);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(name, nameContent);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置非静态字段</span></span><br><span class="line">    env-&gt;SetObjectField(ReflectDemoObj, nameID, env-&gt;NewStringUTF(<span class="string">&quot;呓语&quot;</span>));</span><br><span class="line">    name = static_cast&lt;jstring&gt; (env-&gt;GetObjectField(ReflectDemoObj, nameID));</span><br><span class="line">    nameContent = env-&gt;GetStringUTFChars(name, nullptr);</span><br><span class="line">    LOGD(<span class="string">&quot;name new: %s&quot;</span>, nameContent);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(name, nameContent);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取数组字段ID</span></span><br><span class="line">    jfieldID byteArrayID = env-&gt;GetFieldID(clazz, <span class="string">&quot;byteArray&quot;</span>, <span class="string">&quot;[B&quot;</span>);</span><br><span class="line">    jbyteArray byteArray1 = static_cast&lt;jbyteArray&gt; (env-&gt;GetObjectField(ReflectDemoObj, byteArrayID));</span><br><span class="line">    <span class="type">int</span> _byteArrayLength = env-&gt;GetArrayLength(byteArray1);</span><br><span class="line"></span><br><span class="line">    jbyte* cByte = env-&gt;GetByteArrayElements(byteArray1, nullptr);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _byteArrayLength; i++) &#123;</span><br><span class="line">        LOGD(<span class="string">&quot;byteArray: %d&quot;</span>, cByte[i])</span><br><span class="line">    &#125;</span><br><span class="line">    env-&gt;ReleaseByteArrayElements(byteArray1, cByte, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 修改数组</span></span><br><span class="line">    <span class="type">char</span> javaByte[<span class="number">10</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        javaByte[i] = static_cast&lt;<span class="type">char</span>&gt;(<span class="number">100</span>-i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">const</span> jbyte *java_array = reinterpret_cast&lt;<span class="type">const</span> jbyte*&gt;(javaByte);</span><br><span class="line">    env-&gt;SetByteArrayRegion(byteArray1, <span class="number">0</span>, _byteArrayLength, java_array);</span><br><span class="line"></span><br><span class="line">    byteArray1 = static_cast&lt;jbyteArray&gt; (env-&gt;GetObjectField(ReflectDemoObj, byteArrayID));</span><br><span class="line">    cByte = env-&gt;GetByteArrayElements(byteArray1, nullptr);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; _byteArrayLength; i++) &#123;</span><br><span class="line">        LOGD(<span class="string">&quot;byteArray: %d&quot;</span>, cByte[i])</span><br><span class="line">    &#125;</span><br><span class="line">    env-&gt;ReleaseByteArrayElements(byteArray1, cByte, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用静态函数</span></span><br><span class="line">    jmethodID staticFunID = env-&gt;GetStaticMethodID(clazz, <span class="string">&quot;StaticFunction&quot;</span>, <span class="string">&quot;()V&quot;</span>);</span><br><span class="line">    env-&gt;CallStaticVoidMethod(clazz, staticFunID);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用对象函数</span></span><br><span class="line">    jmethodID FunID =</span><br><span class="line">            env-&gt;GetMethodID(clazz, <span class="string">&quot;functional&quot;</span>, <span class="string">&quot;(Ljava/lang/String;)Ljava/lang/String;&quot;</span>);</span><br><span class="line">    jstring str = env-&gt;NewStringUTF(<span class="string">&quot;this is from JNI&quot;</span>);</span><br><span class="line">    jstring str2 = reinterpret_cast&lt;jstring&gt;(static_cast&lt;jstring&gt;</span><br><span class="line">            (env-&gt;CallObjectMethod(ReflectDemoObj, FunID, str)));</span><br><span class="line">    <span class="type">const</span> <span class="type">char</span>* retval_cstr = env-&gt;GetStringUTFChars(str2, nullptr);</span><br><span class="line">    LOGD(<span class="string">&quot;retval_cstr: %s&quot;</span>, retval_cstr);</span><br><span class="line">    env-&gt;ReleaseStringUTFChars(str2,retval_cstr);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 传入数组参数</span></span><br><span class="line">    jclass StringClazz = env-&gt;FindClass(<span class="string">&quot;java/lang/String&quot;</span>);</span><br><span class="line">    jobjectArray StringArr = env-&gt;NewObjectArray(<span class="number">3</span>,StringClazz, nullptr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; ++i) &#123;</span><br><span class="line">        env-&gt;SetObjectArrayElement(StringArr, i, env-&gt;NewStringUTF(<span class="string">&quot;NB666&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    jmethodID StringArrayID =</span><br><span class="line">            env-&gt;GetStaticMethodID(clazz, <span class="string">&quot;functionTest&quot;</span>, <span class="string">&quot;([Ljava/lang/String;)[I&quot;</span>);</span><br><span class="line">    jintArray jint = static_cast&lt;jintArray&gt;</span><br><span class="line">            (env-&gt;CallStaticObjectMethod(clazz, StringArrayID, StringArr));</span><br><span class="line">    <span class="type">int</span> *cinArr = env-&gt;GetIntArrayElements(jint, nullptr);</span><br><span class="line">    LOGD(<span class="string">&quot;cintArr[0]=%d&quot;</span>, cinArr[<span class="number">0</span>]);</span><br><span class="line">    env-&gt;ReleaseIntArrayElements(jint, cinArr, JNI_ABORT);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> env-&gt;NewStringUTF(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="通过JNI访问Java父类方法"><a href="#通过JNI访问Java父类方法" class="headerlink" title="通过JNI访问Java父类方法"></a>通过JNI访问Java父类方法</h3><p>在Java中使用 super 来访问父类中的方法，现在就需要在CPP文件中实现类似的操作，就需要使用CallNonvirtual 系列的API</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241205085226582.png" alt="image-20241205085226582"></p>
+<p>先获取到调用的onCreate方法的父类，jclass，然后找到需要调用的父类方法的ID，再传入参数，参数是从Java层传过来的，直接放进去即可，这样就实现了一个简单的调用父类方法。</p>
+<p>也可以看出要将Java代码使用JNI转换成c代码还是很费事的</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span></span><br><span class="line">JNIEXPORT <span class="type">void</span> JNICALL</span><br><span class="line"><span class="title function_">Java_com_example_demo_MainActivity_onCreates</span><span class="params">(JNIEnv *env, jobject thiz,</span></span><br><span class="line"><span class="params">                                             jobject saved_instance_state)</span> &#123;</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> implement onCreates()</span></span><br><span class="line">    jclass fragmentClass = env-&gt;FindClass(<span class="string">&quot;androidx/fragment/app/FragmentActivity&quot;</span>);</span><br><span class="line">    jmethodID onCreateID = env-&gt;GetMethodID(fragmentClass, <span class="string">&quot;onCreate&quot;</span>, <span class="string">&quot;(Landroid/os/Bundle;)V&quot;</span>);</span><br><span class="line">    env-&gt;CallNonvirtualVoidMethod(thiz,fragmentClass ,onCreateID, saved_instance_state);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h3><p>之前使用的 ReleaseIntArrayElements、ReleaseStringUTFChars 等方法也算是一种吧，这里主要介绍的是局部引用和全局引用的相关API</p>
+<h4 id="局部引用"><a href="#局部引用" class="headerlink" title="局部引用"></a>局部引用</h4><p>之前创建的 jclass、jmethodID、jstring 什么的就是一个局部引用，在函数运行完毕后消失，看起来和局部变量是差不多的，但是不一样的。可以用全局变量来实验一下</p>
+<p>IDE也没有报错，运行直接崩溃了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241205103603926.png" alt="image-20241205103603926"></p>
+<p>在函数中使用JNI函数，在函数执行完毕之后全部进行回收，不管是不是全局变量还是局部变量，也就是因为JNI_OnLoad函数执行完毕之后，clazz被回收了，所有在 demoHelloWorld 函数中没有获得正确的 clazz。这也就是局部引用和局部变量、全局变量的区别</p>
+<blockquote>
+<p>大多数的jni函数，调用以后返回的结果都是局部引用</p>
+<p>因此，env-&gt;NewLocalRef（创建一个局部引用） 基本不用</p>
+<p>一个函数内的局部引用数量是有限制的，在早期的安卓系统中，十分的明显，现在基本够用，因此可能不太会见到这几个函数，早期的时候的so可能会有</p>
+<p>当函数体内需要大量使用局部引用时，比如大循环中，最好及时删除不用的局部引用</p>
+<p>可以使用env-&gt;DeleteLocalRef 来删除局部引用</p>
+</blockquote>
+<p>局部引用还有一些函数</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">env-&gt;EnsureLocalCapacity(num)</span><br><span class="line">// 判断是否有足够的局部引用可以使用，足够则返回0</span><br><span class="line"></span><br><span class="line">需要大量使用局部引用时，手动删除太过麻烦，可以使用下面两个函数来批量管理局部引用</span><br><span class="line">env-&gt;PushLocalFrame(num)</span><br><span class="line">env-&gt;PopLocalFrame(nullptr)</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="全局引用"><a href="#全局引用" class="headerlink" title="全局引用"></a>全局引用</h4><p>在jni开发中，需要跨函数使用变量时，直接定义全局变量是没啥用的，需要两个方法，来创建、删除全局引用</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">env-&gt;NewGlobalRef</span><br><span class="line">env-&gt;DeleteGlobalRef</span><br></pre></td></tr></table></figure>
+
+
+
+<p>env-&gt;NewGlobalRef 是创建全局引用，需要传入一个 jobject ，然后返回一个jobject</p>
+<p>现在就可以正常运行了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241205110707267.png" alt="image-20241205110707267"></p>
+<p>全局引用使用完毕之后使用 env-&gt;DeleteGlobalRef 删除</p>
+<p>还有两个函数，是弱全局引用，什么叫弱全局引用呢，就是内存充足的时候就是全局引用，内存紧张的时候，可能会被回收。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">env-&gt;NewWeakGlobalRef</span><br><span class="line">env-&gt;DeleteWeakGlobalRef</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="子线程中获取Java类"><a href="#子线程中获取Java类" class="headerlink" title="子线程中获取Java类"></a>子线程中获取Java类</h3><p>常规的手段在子线程中是不能获取到Java类的，获取值为nullptr。获取方法会导致系统崩溃</p>
+<p>但是可以使用FindClass来获取系统类，可以看到自己的Java类是没有获取到地址的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241205112914772.png" alt="image-20241205112914772"></p>
+<p>如果想在子线程中获取自己定义的类，也是可以的，可以用到全局引用，在主线程中获取类，使用全局引用来传递到子线程中去。</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241205135936157.png" alt="image-20241205135936157"></p>
+<p>还有一种方式就是，在主线程中获取正确的ClassLoader，在子线程中去加载类</p>
+<p>之前在Java学习过程中，出现了一些方法已经加载，但是无法hook的情况，那是因为不在同一个 ClassLoader 中，C可以先获取到对应方法所在的 ClassLoader，将ClassLoader给到子线程</p>
+<blockquote>
+<p>在Java中想要获取ClassLoader，可以先获取类字节码，然后时候 getClassLoader() 来获取</p>
+<p>​	Demo.class.getClassLoader();</p>
+<p>​	new Demo().getClassLoader();</p>
+<p>​	Class.forName(……).getClassLoader();</p>
+<p>这三种方法，多少跟反射沾点边，其实FindClass就相当于Demo.class</p>
+<p>这个时候只需要在主线程中调用一下getClassLoader() 然后在子线程中调用 loadClass() 就ojbk了</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">在JNI_OnLoad中</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这些操作就相当于 Demo.class.getClassLoader()</span></span><br><span class="line">    <span class="comment">// 然后将返回的 jobject 设置为全局引用，在子线程中引用</span></span><br><span class="line">    jclass text = env-&gt;FindClass(<span class="string">&quot;com/example/demo/test&quot;</span>);</span><br><span class="line">    clazz = static_cast&lt;jclass&gt; (env-&gt;NewGlobalRef(text));</span><br><span class="line"></span><br><span class="line">    jclass javaClass = env-&gt;FindClass(<span class="string">&quot;java/lang/Class&quot;</span>);</span><br><span class="line">    jmethodID jmethodId = env-&gt;GetMethodID(javaClass, <span class="string">&quot;getClassLoader&quot;</span>, <span class="string">&quot;()Ljava/lang/ClassLoader;&quot;</span>);</span><br><span class="line">    jobject obj = env-&gt;CallObjectMethod(text, jmethodId);</span><br><span class="line">    object1 = env-&gt;NewGlobalRef(obj);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在子线程中</span><br><span class="line">    </span><br><span class="line">    jclass ClassLoaderClazz = env-&gt;FindClass(<span class="string">&quot;java/lang/ClassLoader&quot;</span>);</span><br><span class="line">    jmethodID loadClassID = env-&gt;GetMethodID(ClassLoaderClazz, <span class="string">&quot;loadClass&quot;</span>, <span class="string">&quot;(Ljava/lang/String;)Ljava/lang/Class;&quot;</span>);</span><br><span class="line">	<span class="comment">// 主要传到Java的字符串包名分割不少/，而是.</span></span><br><span class="line">    jclass test = static_cast&lt;jclass&gt; (env-&gt;CallObjectMethod(object1, loadClassID, env-&gt;NewStringUTF(<span class="string">&quot;com.example.demo.test&quot;</span>)));</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 上面的操作就相当于 .loadClass(&quot;com.example.demo.test&quot;)</span></span><br><span class="line">    <span class="comment">// 上面那么多代码，就相当于在Java中写</span></span><br><span class="line">	<span class="comment">// test.class.getClassLoader().loadClass(&quot;com.example.demo.test&quot;);</span></span><br><span class="line">	<span class="comment">// 获取到这个类之后就可以进行一些其他的操作了</span></span><br><span class="line">    jmethodID jmethodId = </span><br><span class="line">        env-&gt;GetStaticMethodID(test, <span class="string">&quot;functionTest&quot;</span>, <span class="string">&quot;([Ljava/lang/String;)[I&quot;</span>);</span><br><span class="line">    LOGD(<span class="string">&quot;myThread jmthodID: %p&quot;</span>, jmethodId);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241205153112644.png" alt="image-20241205153112644"></p>
+<blockquote>
+<p>这种方法挺麻烦的，不如 在主线程中获取类，使用全局引用来传递到子线程中来的方便，如果系统类在子线程中 findClass 更好。所以只做了解</p>
+</blockquote>
+<h3 id="init与initarray"><a href="#init与initarray" class="headerlink" title="init与initarray"></a>init与initarray</h3><p>JNI_OnLoad 在其他函数执行之前执行，还有俩个执行的时机比他早，一个是init，一个是initarray</p>
+<p>init和initarray的存在就是处理so的加固解密什么的</p>
+<h4 id="init定义"><a href="#init定义" class="headerlink" title="init定义"></a>init定义</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> <span class="type">void</span> _init() &#123;</span><br><span class="line">	<span class="comment">// 函数名必须为 _init，在C++中需要extern &quot;C&quot; 来防止修饰</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="initarray定义"><a href="#initarray定义" class="headerlink" title="initarray定义"></a>initarray定义</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__attribute__ ((constructor)) <span class="type">void</span> <span class="title function_">initArrayTest1</span><span class="params">()</span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>init函数定义只能是这一个，名字为 <code>_init</code> ，而initarray可以有多个，如果 <code>constructor</code> 后面不指定数字的话，就按照在cpp文件中的前后顺序执行，指定数字之后按照数字从小到大执行，不写数字的在带有数字的执行完毕之后执行，不建议使用 0-100，这些系统可能会用。这些执行完毕之后再执行 <code>JNI_OnLoad</code> </p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241206103125764.png" alt="image-20241206103125764"></p>
+<p>可以加上一个 hidden 属性，这样so反编译的时候，这个函数就不会出现</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241206104625809.png" alt="image-20241206104625809"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241206104913974.png" alt="image-20241206104913974"></p>
+<p>在 IDA View-A 中使用快捷键 ctrl +S，找到这个 .init_array</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241206105000980.png" alt="image-20241206105000980"></p>
+<p>可以看到有这三个函数，按照给定的顺序排列执行，2被隐藏了，函数名无法解析，IDA就给自动生成了一个名字，sub_+函数地址</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241206105208277.png" alt="image-20241206105208277"></p>
+<p>这个函数地址其实是这个函数在So中的偏移量，一般so中的hook都是hook地址，很少hook函数名，因为符号会被各种的修饰，去除，但是地址值是不变的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241206105419586.png" alt="image-20241206105419586"></p>
+<p><code>_init</code> 编译之后，符号会变为 <code>.init_proc</code>，但是定义的时候必须是 <code>_init</code></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241206105651028.png" alt="image-20241206105651028"></p>
+<h3 id="onCreate函数native化"><a href="#onCreate函数native化" class="headerlink" title="onCreate函数native化"></a>onCreate函数native化</h3><p>一般情况下app实现先执行MainActivity中的onCreate方法</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ActivityMainBinding.inflate()</span><br><span class="line">这个是和页面绑定的，具体的类是编译之后自己生成的，将鼠标放上面找打具体的类</span><br><span class="line"></span><br><span class="line">// ActivityMainBinding</span><br><span class="line">com.example.demo.databinding</span><br><span class="line">public final class com.example.demo.databinding.ActivityMainBinding</span><br><span class="line">extends androidx.viewbinding.ViewBinding</span><br><span class="line"></span><br><span class="line">// inflate</span><br><span class="line">com.example.demo.databinding.ActivityMainBinding</span><br><span class="line">public static @NonNull com.example.demo.databinding.ActivityMainBinding inflate(     @NonNull android.view.LayoutInflater inflater )</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241206112301132.png" alt="image-20241206112301132"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// getRoot</span><br><span class="line">com.example.demo.databinding.ActivityMainBinding</span><br><span class="line">public androidx.constraintlayout.widget.ConstraintLayout getRoot()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>尝试实现native化</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span></span><br><span class="line">JNIEXPORT <span class="type">void</span> JNICALL</span><br><span class="line"><span class="title function_">Java_com_example_demo_MainActivity_onCreates</span><span class="params">(JNIEnv *env, jobject thiz,</span></span><br><span class="line"><span class="params">                                             jobject saved_instance_state)</span> &#123;</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> implement onCreates()</span></span><br><span class="line">    <span class="comment">// super.onCreate(savedInstanceState);</span></span><br><span class="line">    jclass fragmentClass = env-&gt;FindClass(<span class="string">&quot;androidx/fragment/app/FragmentActivity&quot;</span>);</span><br><span class="line">    jmethodID onCreateID = env-&gt;GetMethodID(fragmentClass, <span class="string">&quot;onCreate&quot;</span>, <span class="string">&quot;(Landroid/os/Bundle;)V&quot;</span>);</span><br><span class="line">    env-&gt;CallNonvirtualVoidMethod(thiz,fragmentClass ,onCreateID, saved_instance_state);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// binding = ActivityMainBinding.inflate(getLayoutInflater());</span></span><br><span class="line">    <span class="comment">// getLayoutInflater()</span></span><br><span class="line">    jclass aClass = env-&gt;FindClass(<span class="string">&quot;android/app/Activity&quot;</span>);</span><br><span class="line">    jmethodID getLayoutInflaterID =</span><br><span class="line">            env-&gt;GetMethodID(aClass, <span class="string">&quot;getLayoutInflater&quot;</span>, <span class="string">&quot;()Landroid/view/LayoutInflater;&quot;</span>);</span><br><span class="line">    <span class="comment">// 这里需要的对象是那个对象调用这个方法，在Java中getLayoutInflater方法没有前缀，说明就是MainActivity调用了这个方法</span></span><br><span class="line">    jobject LayoutInflater = env-&gt;CallObjectMethod(thiz, getLayoutInflaterID);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ActivityMainBinding.inflate()</span></span><br><span class="line">    jclass ActivityMainBindingClazz =</span><br><span class="line">            env-&gt;FindClass(<span class="string">&quot;com/example/demo/databinding/ActivityMainBinding&quot;</span>);</span><br><span class="line">    jmethodID inflateID =</span><br><span class="line">            env-&gt;GetStaticMethodID(ActivityMainBindingClazz, <span class="string">&quot;inflate&quot;</span>,</span><br><span class="line">                <span class="string">&quot;(Landroid/view/LayoutInflater;)Lcom/example/demo/databinding/ActivityMainBinding;&quot;</span>);</span><br><span class="line">    jobject Binding = env-&gt;CallStaticObjectMethod(ActivityMainBindingClazz,</span><br><span class="line">                                                  inflateID, LayoutInflater);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// setContentView(binding.getRoot());</span></span><br><span class="line">    jmethodID getRootID =</span><br><span class="line">            env-&gt;GetMethodID(ActivityMainBindingClazz, <span class="string">&quot;getRoot&quot;</span>,</span><br><span class="line">                             <span class="string">&quot;()Landroidx/constraintlayout/widget/ConstraintLayout;&quot;</span>);</span><br><span class="line">    jobject ConstraintLayout = env-&gt;CallObjectMethod(ActivityMainBindingClazz, getRootID);</span><br><span class="line"></span><br><span class="line">    jclass AppCompatActivityClazz = env-&gt;FindClass(<span class="string">&quot;androidx/appcompat/app/AppCompatActivity&quot;</span>);</span><br><span class="line">    jmethodID setContentViewID =</span><br><span class="line">            env-&gt;GetMethodID(AppCompatActivityClazz, <span class="string">&quot;setContentView&quot;</span>, <span class="string">&quot;(Landroid/view/View;)V&quot;</span>);</span><br><span class="line">    env-&gt;CallVoidMethod(thiz, setContentViewID, ConstraintLayout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>调了那么一串，其实才执行了三句话，后面的实现其实也大差不差，都是这个流程。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(Bundle savedInstanceState)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    binding = ActivityMainBinding.inflate(getLayoutInflater());</span><br><span class="line">    setContentView(binding.getRoot());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>——-END——-</p>
+]]></content>
+      <tags>
+        <tag>安卓逆向</tag>
+      </tags>
+  </entry>
 </search>
