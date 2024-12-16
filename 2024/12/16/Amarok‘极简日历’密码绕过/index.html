@@ -22,25 +22,28 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="crypto-js利用crypto-js这个Java包来实现数据的加密解密 引入Java包 1npm install crypto-js">
+  <meta name="description" content="这个软件Amarok经常取证的大佬故意已经了如指掌了，一个可以伪装成极简日历的隐藏文件夹和软件的软件，密码绕过可能用处不大，因为他的equals比较简单，就是将你输入的东西计算MD5然后和设定好的密码的MD5进行比较，hook一下equals方法就差不多了，但是这个方法比较邪门，就写个博客记录一下。  设备：雷电九模拟器 工具：frida 我设置了一个三位数的密码，使用四位数的密码来测试。 起因就">
 <meta property="og:type" content="article">
-<meta property="og:title" content="微信小程序对称加密">
-<meta property="og:url" content="http://example.com/2024/07/13/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/index.html">
+<meta property="og:title" content="Amarok“极简日历”密码绕过">
+<meta property="og:url" content="http://example.com/2024/12/16/Amarok%E2%80%98%E6%9E%81%E7%AE%80%E6%97%A5%E5%8E%86%E2%80%99%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87/index.html">
 <meta property="og:site_name" content="妙妙屋">
-<meta property="og:description" content="crypto-js利用crypto-js这个Java包来实现数据的加密解密 引入Java包 1npm install crypto-js">
+<meta property="og:description" content="这个软件Amarok经常取证的大佬故意已经了如指掌了，一个可以伪装成极简日历的隐藏文件夹和软件的软件，密码绕过可能用处不大，因为他的equals比较简单，就是将你输入的东西计算MD5然后和设定好的密码的MD5进行比较，hook一下equals方法就差不多了，但是这个方法比较邪门，就写个博客记录一下。  设备：雷电九模拟器 工具：frida 我设置了一个三位数的密码，使用四位数的密码来测试。 起因就">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240519204321372.png">
-<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240519204355653.png">
-<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240519204449695.png">
-<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240713213602201.png">
-<meta property="article:published_time" content="2024-07-13T13:30:29.000Z">
-<meta property="article:modified_time" content="2024-10-28T12:06:45.499Z">
+<meta property="og:image" content="http://example.com/2024/%E6%96%B0%E6%A1%8C%E9%9D%A2/MC%E5%B0%8F%E6%9D%A8%E7%9A%84python%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%AC%94%E8%AE%B0/%E5%9B%BE%E7%89%87/image-20241216213615163.png">
+<meta property="og:image" content="http://example.com/2024/%E6%96%B0%E6%A1%8C%E9%9D%A2/MC%E5%B0%8F%E6%9D%A8%E7%9A%84python%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%AC%94%E8%AE%B0/%E5%9B%BE%E7%89%87/image-20241216203438934.png">
+<meta property="og:image" content="http://example.com/2024/12/16/%E5%9B%BE%E7%89%87/image-20241216203629429.png">
+<meta property="og:image" content="http://example.com/2024/12/16/%E5%9B%BE%E7%89%87/image-20241216212903362.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241216213013621.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241216213106621.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241216213121111.png">
+<meta property="article:published_time" content="2024-12-16T13:39:32.000Z">
+<meta property="article:modified_time" content="2024-12-16T13:41:54.558Z">
 <meta property="article:author" content="没事数命的猫">
-<meta property="article:tag" content="-微信小程序">
+<meta property="article:tag" content="安卓逆向">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20240519204321372.png">
+<meta name="twitter:image" content="http://example.com/2024/%E6%96%B0%E6%A1%8C%E9%9D%A2/MC%E5%B0%8F%E6%9D%A8%E7%9A%84python%E5%AD%A6%E4%B9%A0%E6%96%87%E4%BB%B6%E5%A4%B9/%E7%AC%94%E8%AE%B0/%E5%9B%BE%E7%89%87/image-20241216213615163.png">
 
-<link rel="canonical" href="http://example.com/2024/07/13/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/">
+<link rel="canonical" href="http://example.com/2024/12/16/Amarok%E2%80%98%E6%9E%81%E7%AE%80%E6%97%A5%E5%8E%86%E2%80%99%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87/">
 
 
 <script id="page-configurations">
@@ -53,7 +56,7 @@
   };
 </script>
 
-  <title>微信小程序对称加密 | 妙妙屋</title>
+  <title>Amarok“极简日历”密码绕过 | 妙妙屋</title>
   
 
 
@@ -197,7 +200,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/13/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/16/Amarok%E2%80%98%E6%9E%81%E7%AE%80%E6%97%A5%E5%8E%86%E2%80%99%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -210,7 +213,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          微信小程序对称加密
+          Amarok“极简日历”密码绕过
         </h1>
 
         <div class="post-meta">
@@ -219,16 +222,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2024-07-13 21:30:29" itemprop="dateCreated datePublished" datetime="2024-07-13T21:30:29+08:00">2024-07-13</time>
+              <time title="创建时间：2024-12-16 21:39:32 / 修改时间：21:41:54" itemprop="dateCreated datePublished" datetime="2024-12-16T21:39:32+08:00">2024-12-16</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-10-28 20:06:45" itemprop="dateModified" datetime="2024-10-28T20:06:45+08:00">2024-10-28</time>
-              </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -236,14 +233,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>189</span>
+              <span>435</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -255,39 +252,31 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="crypto-js"><a href="#crypto-js" class="headerlink" title="crypto-js"></a>crypto-js</h1><p>利用crypto-js这个Java包来实现数据的加密解密</p>
-<p>引入Java包</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install crypto-js</span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<p><img src="/../%E5%9B%BE%E7%89%87/image-20240519204321372.png" alt="image-20240519204321372"></p>
-<p>然后小程序中就有这么一个文件夹</p>
-<p><img src="/../%E5%9B%BE%E7%89%87/image-20240519204355653.png" alt="image-20240519204355653"></p>
-<p>将文件夹内的crypto-js.js复制到需要用到加密的页面下，如：</p>
-<p><img src="/../%E5%9B%BE%E7%89%87/image-20240519204449695.png" alt="image-20240519204449695"></p>
-<h2 id="加密解密"><a href="#加密解密" class="headerlink" title="加密解密"></a>加密解密</h2><p>先引用crypto-js</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const CryptoJs = require(&#x27;crypto-js&#x27;);</span><br></pre></td></tr></table></figure>
+        <p>这个软件Amarok经常取证的大佬故意已经了如指掌了，一个可以伪装成极简日历的隐藏文件夹和软件的软件，密码绕过可能用处不大，因为他的equals比较简单，就是将你输入的东西计算MD5然后和设定好的密码的MD5进行比较，hook一下equals方法就差不多了，但是这个方法比较邪门，就写个博客记录一下。</p>
+<p><img src="../../../新桌面/MC小杨的python学习文件夹/笔记/图片/image-20241216213615163.png" alt="image-20241216213615163" style="zoom:30%;" /><img src="../../../新桌面/MC小杨的python学习文件夹/笔记/图片/image-20241216203438934.png" alt="image-20241216203438934" style="zoom: 30%;" /><img src="../图片/image-20241216203629429.png" alt="image-20241216203629429" style="zoom: 30%;" /></p>
+<p>设备：雷电九模拟器</p>
+<p>工具：frida</p>
+<p>我设置了一个三位数的密码，使用四位数的密码来测试。</p>
+<p>起因就是hook equals准备筛选MD5的结果进行定位堆栈的时候，菜，漏打了一个双引号</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">showStacks</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">        	<span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;android.util.Log&quot;</span>)</span><br><span class="line">            	.<span class="title function_">getStackTraceString</span>(</span><br><span class="line">                	<span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;java.lang.Throwable&quot;</span>).$new()</span><br><span class="line">                )</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// hook equals 方法</span></span><br><span class="line">    <span class="keyword">var</span> equalsMethod = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;java.lang.String&quot;</span>)</span><br><span class="line">    equalsMethod.<span class="property">equals</span>.<span class="title function_">overload</span>(<span class="string">&quot;java.lang.Object&quot;</span>).<span class="property">implementation</span> = <span class="keyword">function</span>(<span class="params">obj</span>) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;equals called with &quot;</span> + <span class="variable language_">this</span> + <span class="string">&quot; and obj &quot;</span> + obj);</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">this</span> == b59c67bf196a4758191e42f76670ceba) &#123;</span><br><span class="line">            <span class="title function_">showStacks</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">equals</span>(obj);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 
 
-<p>AES加密存在一个key值和一个iv值</p>
-<p>定义密钥和初始化向量</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var key = CryptoJS.enc.Utf8.parse(&#x27;0123456789abcdef&#x27;); // 定义密钥</span><br><span class="line">var iv = CryptoJS.enc.Utf8.parse（&#x27;abcdef0123456789&#x27;)；// 定义初始化向量</span><br></pre></td></tr></table></figure>
+<img src="../图片/image-20241216212903362.png" alt="image-20241216212903362" style="zoom:50%;" />
 
 
 
-<p>进行加密</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var encrypted = CryptoJs.AEs.encrypt(&#x27;hello world&#x27;, key, &#123; iv: iv );</span><br><span class="line">var date = encrypted.tostring()</span><br><span class="line">//date就是加密后的数据</span><br></pre></td></tr></table></figure>
+<p>密码错误的状态，注入代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida -UF -l .\1.js -o log.txt</span><br></pre></td></tr></table></figure>
 
 
 
-<p>数据拿回来的时候同样需要解密</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var decrypted = CryptoJs.AES.decrypt(date, key, &#123; iv: iv &#125;);</span><br><span class="line">console.log(decrypted.toString(CryptoJs.enc.Utf8))； // 输出解密后的数据</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="/../%E5%9B%BE%E7%89%87/image-20240713213602201.png" alt="image-20240713213602201"></p>
+<p>成功之后，点击解锁</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241216213013621.png" alt="image-20241216213013621"></p>
+<p>东西也是可以正常看到的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241216213106621.png" alt="image-20241216213106621"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241216213121111.png" alt="image-20241216213121111"></p>
+<p>PS：注入之前点一次解锁，否则会一开始就弹出很多报错，我的流程在二次点击解锁之前是没有任何飘红的。然后就是进入之后尽快 exit 退出脚本，否则可能导致软件闪退。东西就图一乐呵，弄起来还挺麻烦的</p>
 
     </div>
 
@@ -297,7 +286,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag"># -微信小程序</a>
+              <a href="/tags/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/" rel="tag"># 安卓逆向</a>
           </div>
 
         
@@ -306,13 +295,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2024/07/13/Vue%E5%AE%9E%E8%B7%B5/" rel="prev" title="Vue实践">
-      <i class="fa fa-chevron-left"></i> Vue实践
+    <a href="/2024/12/06/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x09NDK%E5%BC%80%E5%8F%91/" rel="prev" title="逆向学习 0x09NDK开发">
+      <i class="fa fa-chevron-left"></i> 逆向学习 0x09NDK开发
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2024/09/19/%E6%8C%87%E9%92%88/" rel="next" title="指针">
-      指针 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -371,7 +357,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#crypto-js"><span class="nav-number">1.</span> <span class="nav-text">crypto-js</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">加密解密</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

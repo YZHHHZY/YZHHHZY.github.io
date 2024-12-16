@@ -188,6 +188,101 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/16/Amarok%E2%80%98%E6%9E%81%E7%AE%80%E6%97%A5%E5%8E%86%E2%80%99%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/16/Amarok%E2%80%98%E6%9E%81%E7%AE%80%E6%97%A5%E5%8E%86%E2%80%99%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87/" class="post-title-link" itemprop="url">Amarok“极简日历”密码绕过</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-12-16 21:39:32 / 修改时间：21:41:54" itemprop="dateCreated datePublished" datetime="2024-12-16T21:39:32+08:00">2024-12-16</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>435</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>这个软件Amarok经常取证的大佬故意已经了如指掌了，一个可以伪装成极简日历的隐藏文件夹和软件的软件，密码绕过可能用处不大，因为他的equals比较简单，就是将你输入的东西计算MD5然后和设定好的密码的MD5进行比较，hook一下equals方法就差不多了，但是这个方法比较邪门，就写个博客记录一下。</p>
+<p><img src="../../../新桌面/MC小杨的python学习文件夹/笔记/图片/image-20241216213615163.png" alt="image-20241216213615163" style="zoom:30%;"><img src="../../../新桌面/MC小杨的python学习文件夹/笔记/图片/image-20241216203438934.png" alt="image-20241216203438934" style="zoom: 30%;"><img src="../图片/image-20241216203629429.png" alt="image-20241216203629429" style="zoom: 30%;"></p>
+<p>设备：雷电九模拟器</p>
+<p>工具：frida</p>
+<p>我设置了一个三位数的密码，使用四位数的密码来测试。</p>
+<p>起因就是hook equals准备筛选MD5的结果进行定位堆栈的时候，菜，漏打了一个双引号</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">showStacks</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">        	<span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;android.util.Log&quot;</span>)</span><br><span class="line">            	.<span class="title function_">getStackTraceString</span>(</span><br><span class="line">                	<span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;java.lang.Throwable&quot;</span>).$new()</span><br><span class="line">                )</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// hook equals 方法</span></span><br><span class="line">    <span class="keyword">var</span> equalsMethod = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;java.lang.String&quot;</span>)</span><br><span class="line">    equalsMethod.<span class="property">equals</span>.<span class="title function_">overload</span>(<span class="string">&quot;java.lang.Object&quot;</span>).<span class="property">implementation</span> = <span class="keyword">function</span>(<span class="params">obj</span>) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;equals called with &quot;</span> + <span class="variable language_">this</span> + <span class="string">&quot; and obj &quot;</span> + obj);</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">this</span> == b59c67bf196a4758191e42f76670ceba) &#123;</span><br><span class="line">            <span class="title function_">showStacks</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">equals</span>(obj);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<img src="../图片/image-20241216212903362.png" alt="image-20241216212903362" style="zoom:50%;">
+
+
+
+<p>密码错误的状态，注入代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida -UF -l .\1.js -o log.txt</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/12/16/Amarok%E2%80%98%E6%9E%81%E7%AE%80%E6%97%A5%E5%8E%86%E2%80%99%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/06/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x09NDK%E5%BC%80%E5%8F%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -290,7 +385,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2024/11/19/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x08%E5%AF%86%E7%A0%81%E5%AD%A6%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">逆向学习-0x08密码学基础</a>
+            <a href="/2024/11/19/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x08%E5%AF%86%E7%A0%81%E5%AD%A6%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">逆向学习 0x08密码学基础</a>
         </h2>
 
         <div class="post-meta">
@@ -307,7 +402,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-06 11:53:38" itemprop="dateModified" datetime="2024-12-06T11:53:38+08:00">2024-12-06</time>
+                <time title="修改时间：2024-12-16 21:41:24" itemprop="dateModified" datetime="2024-12-16T21:41:24+08:00">2024-12-16</time>
               </span>
 
           <br>
@@ -464,7 +559,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2024/10/24/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x07%E5%85%8Droot%E4%BD%BF%E7%94%A8frida/" class="post-title-link" itemprop="url">0x07-免root使用frida</a>
+            <a href="/2024/10/24/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x07%E5%85%8Droot%E4%BD%BF%E7%94%A8frida/" class="post-title-link" itemprop="url">逆向学习 0x07免root使用frida</a>
         </h2>
 
         <div class="post-meta">
@@ -481,7 +576,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-19 19:47:01" itemprop="dateModified" datetime="2024-11-19T19:47:01+08:00">2024-11-19</time>
+                <time title="修改时间：2024-12-16 21:41:41" itemprop="dateModified" datetime="2024-12-16T21:41:41+08:00">2024-12-16</time>
               </span>
 
           <br>
@@ -490,14 +585,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>14k</span>
+              <span>4.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>49 分钟</span>
+              <span>17 分钟</span>
             </span>
 
         </div>
@@ -1014,93 +1109,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x01-%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="没事数命的猫">
-      <meta itemprop="description" content="学而不思则罔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="妙妙屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x01-%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">逆向学习 0x01安卓基础</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-10-09 15:34:55" itemprop="dateCreated datePublished" datetime="2024-10-09T15:34:55+08:00">2024-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-10-28 20:01:03" itemprop="dateModified" datetime="2024-10-28T20:01:03+08:00">2024-10-28</time>
-              </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>18 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>windows配置</p>
-<p>开启开发者人员模式</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/10/09/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x01-%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1172,7 +1180,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1215,7 +1223,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">141k</span>
+    <span title="站点总字数">133k</span>
 </div>
 
 <!--
