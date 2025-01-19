@@ -8113,4 +8113,143 @@
         <tag>安卓逆向</tag>
       </tags>
   </entry>
+  <entry>
+    <title>pixel XL初体验</title>
+    <url>/2025/01/20/pixel-XL%E5%88%9D%E4%BD%93%E9%AA%8C/</url>
+    <content><![CDATA[<h1 id="pixel-XL体验"><a href="#pixel-XL体验" class="headerlink" title="pixel XL体验"></a>pixel XL体验</h1><h2 id="先刷个机"><a href="#先刷个机" class="headerlink" title="先刷个机"></a>先刷个机</h2><p>整了个低于市场价的pixel XL，到手一看是个安卓8，还不如雷电模拟器安卓版本高，真是废，整个升级先（理论上来说如果是安卓10就不用刷机，直接恢复出厂设置不就行了）</p>
+<p>点击7次版本号，进入开发者模式，在开发者选项中，打开USB调试</p>
+<p>刷机包：<a href="https://developers.google.com/android/ota?hl=zh-cn#marlin">https://developers.google.com/android/ota?hl=zh-cn#marlin</a></p>
+<p>下第一个，剩下三个都不是</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119222002724.png" alt="image-20250119222002724"></p>
+<p>下载解压是这样的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119224403853.png" alt="image-20250119224403853"></p>
+<p>我已经有adb和谷歌驱动了，下面直接让安卓重伤倒地</p>
+<p>重启进入bl模式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">adb reboot bootloader</span><br></pre></td></tr></table></figure>
+
+
+
+<p>执行，如果没输出说明没谷歌驱动，自行下载安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fastboot devices</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119224136405.png" alt="image-20250119224136405"></p>
+<p>确定可以连接之后，直接执行 flash-all.bat 全刷了算了</p>
+<p>有特殊需求可以将这些东西分开执行</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119224640933.png" alt="image-20250119224640933"></p>
+<p>完事了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119224833172.png" alt="image-20250119224833172"></p>
+<h2 id="开启root"><a href="#开启root" class="headerlink" title="开启root"></a>开启root</h2><p>重启后重新打开USB调试</p>
+<p>提示没有root</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119230306041.png" alt="image-20250119230306041"></p>
+<p>root需要用到一个软件Magisk</p>
+<p>下载 <a href="https://github.com/topjohnwu/Magisk/releases">https://github.com/topjohnwu/Magisk/releases</a></p>
+<p>这里用v23.0的刷</p>
+<p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">adb install 路径</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后将刷机包中的 boot.img 推到手机 sdcard文件夹中</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">adb push 镜像路径 手机路径</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119231114808.png" alt="image-20250119231114808"></p>
+<p>打开这个软件，进行操作，完事点开始，等着刷完</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119231436049.png" alt="image-20250119231436049"></p>
+<p>看完成信息，将加工完的img文件弄出来</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119231607083.png" alt="image-20250119231607083"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">adb pull /storage/emulated/0/Download/magisk_patched-23000_M214L.img</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119232151404.png" alt="image-20250119232151404"></p>
+<p>拿出来新的镜像文件之后，再将其刷入。</p>
+<p>再次重伤倒地</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">adb reboot bootloader</span><br></pre></td></tr></table></figure>
+
+
+
+<p>刷入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fastboot flash boot bootnew.img</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119232634935.png" alt="image-20250119232634935"></p>
+<p>直接重启即可</p>
+<p>永久同意获取权限之后，直接拿下</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250119232851717.png" alt="image-20250119232851717"></p>
+<p>还有一点小瑕疵，这俩东西有点恶心。</p>
+<img src="../图片/image-20250119233118051.png" alt="image-20250119233118051" style="zoom:50%;" />
+
+
+
+<p>解决WiFi上面的问号</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">adb shell settings put global captive_portal_mode 0</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120000238766.png" alt="image-20250120000238766"></p>
+<p>解决谷歌向导</p>
+<p>设置&gt;应用和通知&gt;查看全部应用&gt;显示系统程序&gt;找到安卓设置向导&gt;停用&gt;完事了</p>
+<img src="../图片/image-20250120000533229.png" alt="image-20250120000533229" style="zoom:50%;" />
+
+
+
+<h2 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h2><p>Charles，之前模拟器也弄个，主要就是更改WiFi的IP地址和端口，然后弄个证书，在电脑上用软件抓包就完事了。</p>
+<p>Charles软件是之前配置好了的，就光配置手机，Charles配置看我之前的抓包的博客</p>
+<p>最好手机和电脑连接的是同一个网络，这样就可以ping同，如果不是一个网络，ping不通也就没法转发抓包了。用Charles还得下载一个软件 socksdroid ，可以方便更改</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120003915648.png" alt="image-20250120003915648"></p>
+<p>配上IP和端口，开始转发</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120004422566.png" alt="image-20250120004422566"></p>
+<p>配置好重新开始的时候会提示一个这玩楞，选 Allow</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120005719862.png" alt="image-20250120005719862"></p>
+<p>下面就是安装证书，没证书解析不了抓包的内容</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120005752851.png" alt="image-20250120005752851"></p>
+<p>将证书下载到电脑上，也可以选择第三个，根据提示在手机上访问地址去下载</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120010451254.png" alt="image-20250120010451254"></p>
+<p>然后推到手机上</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">adb push Charles.pem /sdcard</span><br></pre></td></tr></table></figure>
+
+
+
+<p>设置&gt;安全&gt;加密与凭据&gt;从存储设备安装&gt;选择证书安装</p>
+<p>这个时候能抓https，但是还是有一部分不能解析，在将用户安装的这张证书，放到系统证书目录下即可正常抓包。</p>
+<p>两种方法，一种是用面具，从模块那个地方搜索，move安装</p>
+<p>安装完毕之后手机重启</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120020216177.png" alt="image-20250120020216177"></p>
+<p>重启之后就发现，用户凭据去系统凭据里面了非常的好用。现在就可以正常抓包了。</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120020423059.png" alt="image-20250120020423059"></p>
+<p>第两种方法，直接挪。</p>
+<p>在&#x2F;data&#x2F;misc&#x2F;user&#x2F;0&#x2F;cacerts-added 这个目录下找到自己安装的证书，名字是和哈希值有关，相同哈希值用 .0 .1 .2区分</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120012336858.png" alt="image-20250120012336858"></p>
+<p>将证书拿出来放到&#x2F;system&#x2F;etc&#x2F;security&#x2F;cacert 目录下和上面效果一样。</p>
+<p>小黄鸟抓包，这个简单，已经root了，根据提示按步骤来就可以将证书自动放到信任区。</p>
+<p>平时还是小黄鸟用的多</p>
+<img src="../图片/image-20250120022804407.png" alt="image-20250120022804407" style="zoom:50%;" />
+
+
+
+<h2 id="frida环境"><a href="#frida环境" class="headerlink" title="frida环境"></a>frida环境</h2><p>终于最后一步了</p>
+<p>本机下载frida 下载frida-tools会自动下载frida</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">pip install frida-tools</span><br><span class="line">pip install loguru click</span><br><span class="line">pip install hexdump</span><br></pre></td></tr></table></figure>
+
+
+
+<p>先看看本机下载frida之后查看本机frida版本和手机cpu类型</p>
+<p>其实一般都是arm64 看不看都一样，64位的，重要的是frida版本</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">frida --version</span><br><span class="line"></span><br><span class="line">adb shell</span><br><span class="line">getprop ro.product.cpu.abi</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120023151356.png" alt="image-20250120023151356"></p>
+<p>下载frida-server</p>
+<p><a href="https://github.com/frida/frida/releases">https://github.com/frida/frida/releases</a></p>
+<p>找到对应frida版本的还有对应手机cpu的frida-server</p>
+<p>照我的应该是这个</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120023658473.png" alt="image-20250120023658473"></p>
+<p>解压出来push到手机里</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">进入手机端命令：adb shell</span><br><span class="line">切换获取手机的root权限：su</span><br><span class="line">查找文件是否在手机中：cd/data/local/tmp/</span><br><span class="line">4查看路径下的文件并看文件的权限：ls -l</span><br><span class="line">拥有root权限更改文件的权限为777：chmod 777 frida-server-16.5.2-android-x86</span><br><span class="line">在手机中启动运行该文件：·/frida-server-14.0.5-android-x86 &amp;</span><br><span class="line">电脑运行检查手机端服务是否开启成功：frida-ps -U</span><br><span class="line">windows运行端口转发到PC：adb forward tcp:27043 tcp:27043</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120024718459.png" alt="image-20250120024718459"></p>
+<p>frida-ps -U执行结果如下</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120025436884.png" alt="image-20250120025436884"></p>
+<p>再拿之前的hook脚本测试一下，没毛病，完事了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250120030043346.png" alt="image-20250120030043346"></p>
+<p>END</p>
+]]></content>
+      <tags>
+        <tag>安卓逆向</tag>
+      </tags>
+  </entry>
 </search>
