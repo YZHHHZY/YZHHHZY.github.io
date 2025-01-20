@@ -8119,6 +8119,8 @@
     <content><![CDATA[<h1 id="pixel-XL体验"><a href="#pixel-XL体验" class="headerlink" title="pixel XL体验"></a>pixel XL体验</h1><h2 id="先刷个机"><a href="#先刷个机" class="headerlink" title="先刷个机"></a>先刷个机</h2><p>整了个低于市场价的pixel XL，到手一看是个安卓8，还不如雷电模拟器安卓版本高，真是废，整个升级先（理论上来说如果是安卓10就不用刷机，直接恢复出厂设置不就行了）</p>
 <p>点击7次版本号，进入开发者模式，在开发者选项中，打开USB调试</p>
 <p>刷机包：<a href="https://developers.google.com/android/ota?hl=zh-cn#marlin">https://developers.google.com/android/ota?hl=zh-cn#marlin</a></p>
+<span id="more"></span>
+
 <p>下第一个，剩下三个都不是</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20250119222002724.png" alt="image-20250119222002724"></p>
 <p>下载解压是这样的</p>
@@ -8250,6 +8252,51 @@
 ]]></content>
       <tags>
         <tag>安卓逆向</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2025/01/20/Untitled/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>配置centos静态IP</title>
+    <url>/2025/01/20/%E9%85%8D%E7%BD%AEcentos%E9%9D%99%E6%80%81IP/</url>
+    <content><![CDATA[<h1 id="配置centos静态IP"><a href="#配置centos静态IP" class="headerlink" title="配置centos静态IP"></a>配置centos静态IP</h1><p>水一篇博客。</p>
+<p>为啥要配置静态IP</p>
+<p>平时我们会通过一些远程链接软件链接虚拟机，一般链接都需要输入IP地址，但是每次重启虚拟机IP地址随机分配一个新的，每次都要链接很不方便。</p>
+<p>设置静态ip的必要性：一般我们的虚拟机默认使用的是dhcp协议（根据网段自动分配ip），所以如果我们不设置静态ip的话，虚拟机会自动分配一个IP，虽然可以联网，但当网络断开或者电脑关机后ip地址就会随机改变，这显然不是我们想要的。而设置静态ip，ip会一直不变，方便我们连接虚拟机。</p>
+<span id="more"></span>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vim /etc/sysconfig/network-spcripts/ifcfg-enp33</span><br></pre></td></tr></table></figure>
+
+
+
+<p>打开文件，如下图所示，更改配置</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240421130439511.png" alt="image-20240421130439511"></p>
+<p>将 <code>BOOTTROPO</code> 更改为static(静态)</p>
+<p>在BOOTTROPO下方加入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">IPADDR=</span><br><span class="line">//输入自己指定固定的IP地址</span><br><span class="line"></span><br><span class="line">NETMASK=</span><br><span class="line">//代表子网掩码，一般为255.255.255.0</span><br><span class="line"></span><br><span class="line">GATEWAY=</span><br><span class="line">//代表网关，如我是192.168.0网段，网关为192.168.0.1</span><br></pre></td></tr></table></figure>
+
+<p>输入之后保存退出</p>
+<p>然后reboot重启，或者 <code>service network restart</code> 重启网卡</p>
+<p>重要的是这个配置网卡，一般在取证的时候，给到的服务器有固定IP，这时候需要我们配置一张同网段的网卡才能联网使用。</p>
+<p>需要将网络模式设置为NAT模式，然后更改默认NAT的网卡VMnet8的子网IP，起始IP，结束IP，网关</p>
+<img src="../图片/image-20240508213751983.png" alt="image-20240508213751983" style="zoom: 33%;" />
+
+<img src="../图片/image-20240508213834626.png" alt="image-20240508213834626" style="zoom:33%;" />
+
+<img src="../图片/image-20240508213917167.png" alt="image-20240508213917167" style="zoom:33%;" />
+
+
+
+<p>使用主机ping一下检查网络是否联通</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20240508214505599.png" alt="image-20240508214505599"></p>
+]]></content>
+      <tags>
+        <tag>-Linux</tag>
       </tags>
   </entry>
 </search>
