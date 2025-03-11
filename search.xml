@@ -8393,7 +8393,9 @@
 <p>演示检材：2025獬豸杯PC镜像</p>
 <p>环境：python3.12</p>
 <p>​			FTK</p>
-<h3 id="获取基本信息"><a href="#获取基本信息" class="headerlink" title="获取基本信息"></a>获取基本信息</h3><p>照例需要获取计算机的Build版本，计算机名称，系统名称、安装时间、时区、最后一次关机时间、上次登录用户，这些基本信息，这些信息可以直接从注册表中拿到，不需要进行特殊处理（除了时间戳）</p>
+<h3 id="获取基本信息"><a href="#获取基本信息" class="headerlink" title="获取基本信息"></a>获取基本信息</h3><span id="more"></span>
+
+<p>照例需要获取计算机的Build版本，计算机名称，系统名称、安装时间、时区、最后一次关机时间、上次登录用户，这些基本信息，这些信息可以直接从注册表中拿到，不需要进行特殊处理（除了时间戳）</p>
 <p>收集一下这些信息在注册表中的位置，以及对应的键值</p>
 <p>因为只有在我本机和镜像中找到了，就放在了这里，未进行多次实验，有不当支持欢迎斧正。</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Build信息  SOFTWARE  SOFTWARE\Microsoft\Windows NT\CurrentVersion  BuildLabEx</span><br><span class="line">Build版本  SOFTWARE  SOFTWARE\Microsoft\Windows NT\CurrentVersion  CurrentBuildNumber</span><br><span class="line">计算机名称  SYSTEM  SYSTEM\ControlSet001\Control\ComputerName\ComputerName  ComputerName</span><br><span class="line">系统名称  SOFTWARE  SOFTWARE\Microsoft\Windows NT\CurrentVersion  ProductName</span><br><span class="line">系统安装时间  SOFTWARE  SOFTWARE\Microsoft\Windows NT\CurrentVersion  InstallDate </span><br><span class="line">系统时区  SYSTEM  SYSTEM\ControlSet001\Control\TimeZoneInformation  TimeZoneKeyName</span><br><span class="line">最后一次关机时间  SYSTEM  SYSTEM\ControlSet001\Control\Windows  ShutdownTime  </span><br><span class="line">上次登录用户  SOFTWARE  SOFTWARE\Microsoft\Windows\CurrentVersion\Authentication\LogonUI  LastLoggedOnUser</span><br></pre></td></tr></table></figure>
