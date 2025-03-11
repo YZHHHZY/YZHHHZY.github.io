@@ -544,10 +544,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-12-16 21:39:32 / 修改时间：21:41:54" itemprop="dateCreated datePublished" datetime="2024-12-16T21:39:32+08:00">2024-12-16</time>
+              <time title="创建时间：2024-12-16 21:39:32" itemprop="dateCreated datePublished" datetime="2024-12-16T21:39:32+08:00">2024-12-16</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-03-11 19:07:45" itemprop="dateModified" datetime="2025-03-11T19:07:45+08:00">2025-03-11</time>
+              </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -555,7 +561,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>435</span>
+              <span>436</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -575,21 +581,7 @@
 
       
           <p>这个软件Amarok经常取证的大佬故意已经了如指掌了，一个可以伪装成极简日历的隐藏文件夹和软件的软件，密码绕过可能用处不大，因为他的equals比较简单，就是将你输入的东西计算MD5然后和设定好的密码的MD5进行比较，hook一下equals方法就差不多了，但是这个方法比较邪门，就写个博客记录一下。</p>
-<p><img src="../../../新桌面/MC小杨的python学习文件夹/笔记/图片/image-20241216213615163.png" alt="image-20241216213615163" style="zoom:30%;"><img src="../../../新桌面/MC小杨的python学习文件夹/笔记/图片/image-20241216203438934.png" alt="image-20241216203438934" style="zoom: 30%;"><img src="../图片/image-20241216203629429.png" alt="image-20241216203629429" style="zoom: 30%;"></p>
-<p>设备：雷电九模拟器</p>
-<p>工具：frida</p>
-<p>我设置了一个三位数的密码，使用四位数的密码来测试。</p>
-<p>起因就是hook equals准备筛选MD5的结果进行定位堆栈的时候，菜，漏打了一个双引号</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">showStacks</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">        	<span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;android.util.Log&quot;</span>)</span><br><span class="line">            	.<span class="title function_">getStackTraceString</span>(</span><br><span class="line">                	<span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;java.lang.Throwable&quot;</span>).$new()</span><br><span class="line">                )</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// hook equals 方法</span></span><br><span class="line">    <span class="keyword">var</span> equalsMethod = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;java.lang.String&quot;</span>)</span><br><span class="line">    equalsMethod.<span class="property">equals</span>.<span class="title function_">overload</span>(<span class="string">&quot;java.lang.Object&quot;</span>).<span class="property">implementation</span> = <span class="keyword">function</span>(<span class="params">obj</span>) &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;equals called with &quot;</span> + <span class="variable language_">this</span> + <span class="string">&quot; and obj &quot;</span> + obj);</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">this</span> == b59c67bf196a4758191e42f76670ceba) &#123;</span><br><span class="line">            <span class="title function_">showStacks</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">equals</span>(obj);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-
-
-<img src="../图片/image-20241216212903362.png" alt="image-20241216212903362" style="zoom:50%;">
-
-
-
-<p>密码错误的状态，注入代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida -UF -l .\1.js -o log.txt</span><br></pre></td></tr></table></figure>
+<p><img src="../../../新桌面/MC小杨的python学习文件夹/笔记/图片/image-20241216213615163.png" alt="image-20241216213615163" style="zoom:30%;" /><img src="../../../新桌面/MC小杨的python学习文件夹/笔记/图片/image-20241216203438934.png" alt="image-20241216203438934" style="zoom: 30%;" /><img src="../图片/image-20241216203629429.png" alt="image-20241216203629429" style="zoom: 30%;" /></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/12/16/Amarok%E2%80%98%E6%9E%81%E7%AE%80%E6%97%A5%E5%8E%86%E2%80%99%E5%AF%86%E7%A0%81%E7%BB%95%E8%BF%87/#more" rel="contents">
@@ -735,7 +727,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-16 21:41:24" itemprop="dateModified" datetime="2024-12-16T21:41:24+08:00">2024-12-16</time>
+                <time title="修改时间：2025-03-11 19:08:14" itemprop="dateModified" datetime="2025-03-11T19:08:14+08:00">2025-03-11</time>
               </span>
 
           <br>
@@ -767,8 +759,6 @@
 <p>在逆向中，非常有必要了解一下密码学，在逆向过程中，有些参数不知道来源，可能是随机生成、标准算法、自写算法加密</p>
 <p>在安卓中，标准算法加密通常会 出现在Java、so(C\C++)、JS中</p>
 <p>对于标准算法，Java中有现成的API调用，如果要使用这些API就需要使用指定的方法，就有了hook的机会，这些前面已经操作过了</p>
-<p>C\C++中没有现成的系统API调用，开发者要么自己去实现算法，要么调用别人写好的模块，算法的运行就不依靠系统API，因此这些方法名可以进行混淆。我们需要根据各种标准算法的特征，去识别是否为标准算法</p>
-<p>JS中没有系统API但是有知名的第三方库：CryptoJS、jsencrypt等</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/11/19/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x08%E5%AF%86%E7%A0%81%E5%AD%A6%E5%9F%BA%E7%A1%80/#more" rel="contents">
