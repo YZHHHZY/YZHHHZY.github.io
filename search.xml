@@ -325,6 +325,9 @@
 <h2 id="封装图片验证码"><a href="#封装图片验证码" class="headerlink" title="封装图片验证码"></a>封装图片验证码</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;div class=&quot;img-verify&quot;&gt;</span><br><span class="line">		&lt;canvas ref=&quot;verify&quot; :width=&quot;state.width&quot; :height=&quot;state.height&quot; @click=&quot;handleDraw&quot;&gt;&lt;/canvas&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">	import &#123; ref,onMounted,reactive &#125; from &#x27;vue&#x27;;</span><br><span class="line">	</span><br><span class="line">	const verify = ref(null)</span><br><span class="line">	const emit = defineEmits([&quot;get-code&quot;])</span><br><span class="line">	const state = reactive(&#123;</span><br><span class="line">		pool:&quot;qwertyuiopasdfghjklzxcvbnm1234567890&quot;,</span><br><span class="line">		width:120,</span><br><span class="line">		height:40,</span><br><span class="line">		imgCode:&#x27;&#x27;,</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">	// 随机数字</span><br><span class="line">	const randomNum = (min,max) =&gt; &#123;</span><br><span class="line">		return parseInt(Math.random() * (max - min) + min)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	// 随机颜色</span><br><span class="line">	const randomColor = (min,max) =&gt; &#123;</span><br><span class="line">		const r = randomNum(min,max)</span><br><span class="line">		const g = randomNum(min,max)</span><br><span class="line">		const b = randomNum(min,max)</span><br><span class="line">		return `rgb($&#123;r&#125;,$&#123;g&#125;,$&#123;b&#125;)`</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	// 绘制图片</span><br><span class="line">	const draw = () =&gt; &#123;</span><br><span class="line">		// 填充背景颜色</span><br><span class="line">		const ctx = verify.value.getContext(&quot;2d&quot;)</span><br><span class="line">		// 填充颜色</span><br><span class="line">		ctx.fillStyle = randomColor(180,230)</span><br><span class="line">		// 填充位置</span><br><span class="line">		ctx.fillRect(0,0,state.width,state.width)</span><br><span class="line">		</span><br><span class="line">		// 定义paramText</span><br><span class="line">		let imgCode = &#x27;&#x27;;</span><br><span class="line">		</span><br><span class="line">		// 产生随机数字，并且随即旋转</span><br><span class="line">		for (let i = 0; i &lt; 4; i++) &#123;</span><br><span class="line">			// 产生随机数字</span><br><span class="line">			const text = state.pool[randomNum(0,state.pool.length)]</span><br><span class="line">			imgCode += text</span><br><span class="line">			</span><br><span class="line">			// 随机大小字体</span><br><span class="line">			const fontSize = randomNum(18,40);</span><br><span class="line">			</span><br><span class="line">			// 随机字体角度</span><br><span class="line">			const deg = randomNum(-30,30)</span><br><span class="line">			</span><br><span class="line">			ctx.font = fontSize + &#x27;px Simhei&#x27;;</span><br><span class="line">			ctx.textBaseline = &quot;top&quot;;</span><br><span class="line">			ctx.fillStyle = randomColor(80,150)</span><br><span class="line">			</span><br><span class="line">			</span><br><span class="line">			ctx.save()</span><br><span class="line">			ctx.translate(30 * i + 15,15);</span><br><span class="line">			ctx.rotate((deg * Math.PI) / 180)</span><br><span class="line">			</span><br><span class="line">			</span><br><span class="line">			ctx.fillText(text, -15 + 5, -15)</span><br><span class="line">			ctx.restore()</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		// 随机5条干扰线</span><br><span class="line">		for (var i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">			ctx.beginPath();</span><br><span class="line">			ctx.moveTo(randomNum(0,state.width),randomNum(0,state.height))</span><br><span class="line">			ctx.lineTo(randomNum(0,state.width),randomNum(0,state.height))</span><br><span class="line">			ctx.strokeStyle = randomColor(180,230);</span><br><span class="line">			ctx.closePath()</span><br><span class="line">			ctx.stroke()</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		// 产生40个干扰点</span><br><span class="line">		for (var i = 0; i &lt; 40; i++) &#123;</span><br><span class="line">			ctx.beginPath();</span><br><span class="line">			ctx.acr(</span><br><span class="line">				randomNum(0,state.width),</span><br><span class="line">				randomNum(0,state.height),</span><br><span class="line">				1,</span><br><span class="line">				0,</span><br><span class="line">				2 * Math.PI</span><br><span class="line">			);</span><br><span class="line">			ctx.closePath();</span><br><span class="line">			ctx.fillStyle = randomColor(150,200);</span><br><span class="line">			ctx.fill();</span><br><span class="line">		&#125;</span><br><span class="line">		return imgCode</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	// 点击切换图片</span><br><span class="line">	const handleDraw = () =&gt; &#123;</span><br><span class="line">		state.imgCode = draw();</span><br><span class="line">		emit(&quot;get-code&quot;,state.imgCode)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	// 初始化</span><br><span class="line">	onMounted(()=&gt;&#123;</span><br><span class="line">		state.imgCode = draw();</span><br><span class="line">		emit(&quot;get-code&quot;,state.imgCode)</span><br><span class="line">	&#125;)</span><br><span class="line">	</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">	.img-verify &#123;</span><br><span class="line">		height: 40px;</span><br><span class="line">		margin: 0 0.1rem;</span><br><span class="line">	&#125;</span><br><span class="line">	.img-verify canvas &#123;</span><br><span class="line">		cursor: pointer;</span><br><span class="line">	&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>VUE框架</category>
+      </categories>
       <tags>
         <tag>VUE</tag>
       </tags>
@@ -469,6 +472,9 @@
 <p>这样一个简陋的表单验证就完成了</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20240403081629036.png" alt="image-20240403081629036"></p>
 ]]></content>
+      <categories>
+        <category>小程序</category>
+      </categories>
       <tags>
         <tag>微信小程序</tag>
       </tags>
@@ -608,6 +614,9 @@
 
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20240713213602201.png" alt="image-20240713213602201"></p>
 ]]></content>
+      <categories>
+        <category>小程序</category>
+      </categories>
       <tags>
         <tag>-微信小程序</tag>
       </tags>
@@ -704,6 +713,9 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">page&#123;</span><br><span class="line">    width: 100vm;</span><br><span class="line">    height: 100vh;</span><br><span class="line">    background: linear-gradient(</span><br><span class="line">        to bottom skyblue #003462</span><br><span class="line">    );</span><br><span class="line">    display: flex;</span><br><span class="line">    justify-content: center;</span><br><span class="line">    align-items: center;</span><br><span class="line">&#125;</span><br><span class="line">.searchBar&#123;</span><br><span class="line">    width: 400px;</span><br><span class="line">    height: 60px;</span><br><span class="line">    background-color: #fff;</span><br><span class="line">    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);</span><br><span class="line">    border-radius: 60px;</span><br><span class="line">    position: absolute;</span><br><span class="line">    overflow: hidden;</span><br><span class="line">    transition: 0.5s;</span><br><span class="line">    z-index: 1;</span><br><span class="line">&#125;</span><br><span class="line">.icons&#123;</span><br><span class="line">    width: 60px;</span><br><span class="line">    height: 60px;</span><br><span class="line">    display: flex;</span><br><span class="line">    justify-content: center;</span><br><span class="line">    align-items: center;</span><br><span class="line">    cursor: pointer;</span><br><span class="line">&#125;</span><br><span class="line">.icons image&#123;</span><br><span class="line">    width: 30px;</span><br><span class="line">    height: 30px;</span><br><span class="line">    font-size: 30px;</span><br><span class="line">&#125;</span><br><span class="line">.textinput&#123;</span><br><span class="line">    width: 320px;</span><br><span class="line">    height: 60px;</span><br><span class="line">    position: absolute;</span><br><span class="line">    top: 0;</span><br><span class="line">    left: 60px;</span><br><span class="line">    right: 50px;</span><br><span class="line">    display: flex;</span><br><span class="line">    justify-content: center;</span><br><span class="line">    align-items: center;</span><br><span class="line">    background-color: rgb(255, 255, 255);</span><br><span class="line">&#125;</span><br><span class="line">.textinput input&#123;</span><br><span class="line">    width: 270px;</span><br><span class="line">    height: 100%;</span><br><span class="line">    border: none;</span><br><span class="line">    outline: none;</span><br><span class="line">    font-size: 18px;</span><br><span class="line">    padding: 0 90px 0 0;</span><br><span class="line">&#125;</span><br><span class="line">.clear&#123;</span><br><span class="line">    width: 20px;</span><br><span class="line">    height: 20px;</span><br><span class="line">    position: absolute;</span><br><span class="line">    right: 18%;</span><br><span class="line">    top: 50%;</span><br><span class="line">    transform: translateY(-50%);</span><br><span class="line">    cursor: pointer;</span><br><span class="line">    display: flex;</span><br><span class="line">    justify-content: center;</span><br><span class="line">    align-items: center;</span><br><span class="line">&#125;</span><br><span class="line">.clear image&#123;</span><br><span class="line">    width: 20px;</span><br><span class="line">    height: 20px;</span><br><span class="line">    color: #999;</span><br><span class="line">&#125;</span><br><span class="line">.goBtn&#123;</span><br><span class="line">    width: 14%;</span><br><span class="line">    height: 60%;</span><br><span class="line">    position: absolute;</span><br><span class="line">    top: 20%;</span><br><span class="line">    right: 0;</span><br><span class="line">    border-radius: 8px;</span><br><span class="line">    outline: none;</span><br><span class="line">    border: none;</span><br><span class="line">    color: rgb(80, 0, 0);</span><br><span class="line">    box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);</span><br><span class="line">    background: linear-gradient(</span><br><span class="line">        skblue,deepskyblue</span><br><span class="line">    );</span><br><span class="line">    cursor: pointer;</span><br><span class="line">    justify-content: center;</span><br><span class="line">    align-items: center;</span><br><span class="line">    display: flex;</span><br><span class="line">&#125;</span><br><span class="line">.searchBarchange-width&#123;</span><br><span class="line">    width: 60px;</span><br><span class="line">    height: 60px;</span><br><span class="line">    background-color: #fff;</span><br><span class="line">    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);</span><br><span class="line">    border-radius: 60px;</span><br><span class="line">    position: absolute;</span><br><span class="line">    overflow: hidden;</span><br><span class="line">    transition: 0.5s;</span><br><span class="line">    margin: -500px 0 0 0;</span><br><span class="line">    z-index: 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>小程序</category>
+      </categories>
       <tags>
         <tag>微信小程序</tag>
       </tags>
@@ -893,6 +905,9 @@
 
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20240916220146185.png" alt="image-20240916220146185"></p>
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -4594,6 +4609,9 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Demo02</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> state.WEIFUKUAN.toString();</span><br><span class="line">        System.out.println(<span class="string">&quot;s = &quot;</span> + s);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        state[] states = state.values();</span><br><span class="line">        <span class="keyword">for</span> (state state : states) &#123;</span><br><span class="line">            System.out.println(state);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">state</span> <span class="variable">s2</span> <span class="operator">=</span> state.valueOf(<span class="string">&quot;YIFAHUO&quot;</span>);</span><br><span class="line">        System.out.println(s2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>JAVA</tag>
       </tags>
@@ -5343,6 +5361,9 @@
 <p>土味情话网址：<a href="https://api.uomg.com/api/rand.qinghua?format=json">https://api.uomg.com/api/rand.qinghua?format=json</a></p>
 <p>随机狗子网址：<a href="https://dog.ceo/api/breed/pembroke/images/random">https://dog.ceo/api/breed/pembroke/images/random</a></p>
 ]]></content>
+      <categories>
+        <category>VUE框架</category>
+      </categories>
       <tags>
         <tag>VUE</tag>
       </tags>
@@ -5780,6 +5801,9 @@
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20240921165212598-1728459407957-40.png" alt="image-20240921165212598"></p>
 <p>这个进行的一些简单操作和TextView很相似，不再进行演示了</p>
 ]]></content>
+      <categories>
+        <category>逆向xue&#39;x</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -5956,6 +5980,9 @@
 <h5 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h5><p>这个简单了解一下进行，因为安卓中cookie使用不多。了解即可，最后没办法再考虑这个</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1、cookie的分类</span><br><span class="line">	服务器返回  Set-cookie</span><br><span class="line">	本地代码生成</span><br><span class="line">	</span><br><span class="line">2、cookie的作用</span><br><span class="line">	识别身份(验证码)</span><br><span class="line">	判断是否登录状态</span><br><span class="line">	</span><br><span class="line">3、cookie的结构</span><br><span class="line">	名1=值1; 名2=值2; 名3=值3</span><br><span class="line">	</span><br><span class="line">4、合并更新步骤</span><br><span class="line">	a、新cookie，去除无效cookie</span><br><span class="line">	b、在新cookie里，寻找是否存在旧cookie的名字，存在就用新的，丢掉旧的</span><br><span class="line">	c、两cookie组合到一个文本型变量中</span><br><span class="line">	</span><br><span class="line">5、前端会用JS生成很多cookie，但是并非所有cookie都会检测</span><br><span class="line">	比如Hm_lvt开头的一般没啥用</span><br></pre></td></tr></table></figure>
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -6151,6 +6178,9 @@
 
 
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -6216,6 +6246,9 @@
 <p>hook环境之前就搭建好了，开发js文件的话直接使用VScode，需要调试的话下载node.js</p>
 <h4 id="关键代码定位"><a href="#关键代码定位" class="headerlink" title="关键代码定位"></a>关键代码定位</h4><p>这个时候就需要hook了，因为无论你怎么加工包装，都是用了系统定义好了的 <code>MessageDigest.getInstance</code> 方法，将传入的内容打印一下，就可以直接到得明文</p>
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -6386,6 +6419,9 @@
 <h5 id="可hook点老多了"><a href="#可hook点老多了" class="headerlink" title="可hook点老多了"></a>可hook点老多了</h5><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">加密库相关的hook</span><br><span class="line">SSL相关的hook</span><br><span class="line">socket相关的hook</span><br><span class="line">	SocketOutputStream</span><br><span class="line">	SocketInputStream</span><br><span class="line">读写文件相关的 java.io.File</span><br><span class="line">证书双向验证 Keystore.load 通常有证书和密码</span><br><span class="line">安卓退出进程的方式</span><br><span class="line"></span><br><span class="line">// 快速定位协议头加密 okhttp3的addHeader 方法</span><br><span class="line">var okhttp_Builder = Java.use(&quot;okhttp3.Request$Builder&quot;);</span><br><span class="line">okhttp_Builder.addHeader.implementation = function(a, b) &#123;</span><br><span class="line">	showStacks();</span><br><span class="line">	return this.addHeader(a, b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 其实就是猜，猜app中使用了哪些方法，一般找一些底层的方法</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -6563,6 +6599,9 @@
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241023110937621.png" alt="image-20241023110937621"></p>
 <p>END</p>
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -6630,6 +6669,9 @@
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241119165810685.png" alt="image-20241119165810685"></p>
 <p>如此这般，NOPadding填充模式就完成了</p>
 ]]></content>
+      <categories>
+        <category>逆向实践</category>
+      </categories>
       <tags>
         <tag>JS</tag>
       </tags>
@@ -7294,6 +7336,9 @@
 <p>这个是调试视图，去那一堆没解析的乱码里去改！就不放图片了</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241119165810685-1732016006153-14.png" alt="image-20241119165810685"></p>
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
         <tag>密码学</tag>
@@ -7601,6 +7646,9 @@
 <p>还得整过滤什么的，麻烦</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241024171127315.png" alt="image-20241024171127315"></p>
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -8074,6 +8122,9 @@
 
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241208210424182.png" alt="image-20241208210424182"></p>
 ]]></content>
+      <categories>
+        <category>逆向学习</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -8111,6 +8162,9 @@
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20241216213121111.png" alt="image-20241216213121111"></p>
 <p>PS：注入之前点一次解锁，否则会一开始就弹出很多报错，我的流程在二次点击解锁之前是没有任何飘红的。然后就是进入之后尽快 exit 退出脚本，否则可能导致软件闪退。东西就图一乐呵，弄起来还挺麻烦的</p>
 ]]></content>
+      <categories>
+        <category>逆向实践</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -8252,6 +8306,9 @@
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20250120030043346.png" alt="image-20250120030043346"></p>
 <p>END</p>
 ]]></content>
+      <categories>
+        <category>逆向实践</category>
+      </categories>
       <tags>
         <tag>安卓逆向</tag>
       </tags>
@@ -8292,8 +8349,11 @@
 <p>使用主机ping一下检查网络是否联通</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20240508214505599.png" alt="image-20240508214505599"></p>
 ]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
       <tags>
-        <tag>-Linux</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -8384,8 +8444,11 @@
 <p>白马、蔚蓝、百度</p>
 <p><img src="/../%E5%9B%BE%E7%89%87/image-20250308164906429.png" alt="image-20250308164906429"></p>
 ]]></content>
+      <categories>
+        <category>电子取证</category>
+      </categories>
       <tags>
-        <tag>取证</tag>
+        <tag>电子取证</tag>
       </tags>
   </entry>
   <entry>
@@ -8467,6 +8530,10 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[&#123;&#x27;RID&#x27;: 500, &#x27;SID&#x27;: &#x27;S-1-1-500&#x27;, &#x27;username&#x27;: &#x27;Administrator&#x27;&#125;, &#123;&#x27;RID&#x27;: 501, &#x27;SID&#x27;: &#x27;S-1-1-501&#x27;, &#x27;username&#x27;: &#x27;Guest&#x27;&#125;, &#123;&#x27;RID&#x27;: 503, &#x27;SID&#x27;: &#x27;S-1-1-503&#x27;, &#x27;username&#x27;: &#x27;DefaultAccount&#x27;&#125;, &#123;&#x27;RID&#x27;: 504, &#x27;SID&#x27;: &#x27;S-1-1-504&#x27;, &#x27;username&#x27;: &#x27;WDAGUtilityAccount&#x27;&#125;, &#123;&#x27;RID&#x27;: 1000, &#x27;SID&#x27;: &#x27;S-1-5-21-1013533190-531092935-234414423-1000&#x27;, &#x27;username&#x27;: &#x27;TTT&#x27;&#125;]</span><br><span class="line"></span><br><span class="line">[&#123;&#x27;Build信息&#x27;: &#x27;18362.1.amd64fre.19h1_release.190318-1202&#x27;&#125;, &#123;&#x27;Build版本&#x27;: &#x27;18363&#x27;&#125;, &#123;&#x27;计算机名称&#x27;: &#x27;DESKTOP-SBTC549&#x27;&#125;, &#123;&#x27;系统名称&#x27;: &#x27;Windows 10 Education&#x27;&#125;, &#123;&#x27;系统安装时间&#x27;: &#x27;2024-06-12 19:02:06&#x27;&#125;, &#123;&#x27;系统时区&#x27;: &#x27;China Standard Time&#x27;&#125;, &#123;&#x27;最后一次关机时间&#x27;: &#x27;2025-02-10 16:15:30&#x27;&#125;, &#123;&#x27;上次登录用户&#x27;: &#x27;.\\TTT&#x27;&#125;]</span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>python脚本</category>
+        <category>电子取证</category>
+      </categories>
       <tags>
         <tag>python</tag>
         <tag>电子取证</tag>
@@ -8567,8 +8634,11 @@
 <figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vue-electron-app&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0.1.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;main&quot;</span><span class="punctuation">:</span> <span class="string">&quot;src/main/main.js&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite build&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;serve&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite preview&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;electron:build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite build &amp;&amp; electron-builder&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;electron:serve&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vite&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;devDependencies&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;@electron-forge/cli&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^7.7.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;@vitejs/plugin-vue&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^5.2.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;concurrently&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^8.2.2&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;electron&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^28.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;electron-builder&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^24.9.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;vite&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^5.0.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;vite-plugin-electron&quot;</span><span class="punctuation">:</span> <span class="string">&quot;^0.29.0&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;build&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;appId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;com.example.vue-electron&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;productName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;VueElectronApp&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;directories&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;output&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;files&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;dist/**/*&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;src/**/*&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;win&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;target&quot;</span><span class="punctuation">:</span> <span class="string">&quot;nsis&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;icon&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;nsis&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;oneClick&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;allowElevation&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;allowToChangeInstallationDirectory&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
 ]]></content>
+      <categories>
+        <category>VUE框架</category>
+      </categories>
       <tags>
-        <tag>vue</tag>
+        <tag>VUE</tag>
         <tag>electron</tag>
       </tags>
   </entry>
