@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%8D%9A%E5%AE%A2.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%8D%9A%E5%AE%A2-copy.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="frida0x1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向学习 0x0A frida labs练习">
+<meta property="og:url" content="http://example.com/2025/03/23/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0A-frida-labs%E7%BB%83%E4%B9%A0/index.html">
+<meta property="og:site_name" content="妙妙屋">
+<meta property="og:description" content="frida0x1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2025/03/23/%E5%9B%BE%E7%89%87/image-20241121204217780.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241121204208922.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241121205923154.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241121210327953.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241121210612960.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241121213348207.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122102209105.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122102745827.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122110030899.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122111056484.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122113325199.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122113847909.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122113253739.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122165516120.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122170222663.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122171748312.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122172459141.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122172440823.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122172648168.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241122173739595.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/6b6145653543c69ae5d635cd59f44e6.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/9ea9386ea48d3a12881d6cdc6f95cda.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124115843696.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124115829499.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124120618975.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124120926563.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124121316633.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124200221798.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124200209234.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124200351743.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124200843929.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20241124202410190.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250322222804674.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250322222712335.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250322223611434.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250322223545537.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323085023620.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323091841320.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323092759751.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323091825842.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323095014516.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323100554837.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323100756720.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323111108075.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323125423912.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323130802111.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323131921727.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323133958878.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250323134124190.png">
+<meta property="article:published_time" content="2025-03-23T05:45:56.000Z">
+<meta property="article:modified_time" content="2025-03-23T05:46:47.589Z">
+<meta property="article:author" content="没事数命的猫">
+<meta property="article:tag" content="安卓逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2025/03/23/%E5%9B%BE%E7%89%87/image-20241121204217780.png">
+
+<link rel="canonical" href="http://example.com/2025/03/23/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0A-frida-labs%E7%BB%83%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向学习 0x0A frida labs练习 | 妙妙屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">妙妙屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">思而不学则殆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/23/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0A-frida-labs%E7%BB%83%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向学习 0x0A frida labs练习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-03-23 13:45:56 / 修改时间：13:46:47" itemprop="dateCreated datePublished" datetime="2025-03-23T13:45:56+08:00">2025-03-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">逆向学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="frida0x1"><a href="#frida0x1" class="headerlink" title="frida0x1"></a>frida0x1</h3><span id="more"></span>
+
+<img src="../图片/image-20241121204217780.png" alt="image-20241121204217780" style="zoom:50%;" />
+
+<p>先进行反编译，找到 com.ad2001.frida0x1.MainActivity 方法了</p>
+<p>解读一下代码</p>
+<p>有一个生成100以内的随机数的方法，还有个一个check方法</p>
+<p>内涵一个判断，先hook产生随机数的方法，固定这个i 的值，然后输入正确的i2值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if ((i * 2) + 4 == i2)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241121204208922.png" alt="image-20241121204208922"></p>
+<p>先hook一下 check 方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 输出加载的类名</span></span><br><span class="line">    <span class="comment">// var classes = Java.enumerateLoadedClassesSync();</span></span><br><span class="line">    <span class="comment">// for (var i = 0; i &lt; classes.length; i++) &#123;</span></span><br><span class="line">    <span class="comment">//     var className = classes[i];</span></span><br><span class="line">    <span class="comment">//     console.log(&quot;className: &quot; + className);</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="title class_">MainActivity</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;com.ad2001.frida0x1.MainActivity&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="title class_">MainActivity</span>[<span class="string">&quot;get_random&quot;</span>].<span class="property">implementation</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`MainActivity.get_random is called`</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="title class_">MainActivity</span>[<span class="string">&quot;check&quot;</span>].<span class="property">implementation</span> = <span class="keyword">function</span> (<span class="params">i, i2</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`MainActivity.check is called: i=<span class="subst">$&#123;i&#125;</span>, i2=<span class="subst">$&#123;i2&#125;</span>`</span>);</span><br><span class="line">        <span class="variable language_">this</span>[<span class="string">&quot;check&quot;</span>](i, i2);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>看输出 i 的值为17，返回1之后还是17，说明这个方法没有执行，需要重启hook，问题不大，现在输入38 （17*2+4）就完成这个了，得到flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FRIDA&#123;BABY_HOOK_OX1&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241121205923154.png" alt="image-20241121205923154"></p>
+<p>猜测正确，每次重启会随机一个数，把这个数hook了，就固定了密码</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241121210327953.png" alt="image-20241121210327953"></p>
+<p>再来</p>
+<h3 id="frida0x2"><a href="#frida0x2" class="headerlink" title="frida0x2"></a>frida0x2</h3><p>反编译 AES加密突脸了</p>
+<p>key是 “HILLBILLWILLBINN” .getByte() 这个字节数组</p>
+<p>iv值是0字节数组，是个空数组</p>
+<p>2 表示解密方法</p>
+<p>解密的数据是  “q7mBQegjhpfIAr0OgfLvH0t&#x2F;D0Xi0ieG0vd+8ZVW+b4&#x3D;” 进行base64解码之后</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241121210612960.png" alt="image-20241121210612960"></p>
+<p>难说，直接薄纱了</p>
+<p>HILLBILLWILLBINN 用 hex编码一下，iv写32位0，解了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241121213348207.png" alt="image-20241121213348207"></p>
+<p>再用JS实现一下</p>
+<p>Base64解密之后是原始的数据格式，在网站上使用Raw来接收，在cryptoJS中选择 WordArray 这个类似于字节数组的格式来接收参数，解密成功，得到flag</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> cryptoJS = <span class="built_in">require</span>(<span class="string">&#x27;crypto-js&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// AES解密</span></span><br><span class="line"><span class="comment">// key值为字节数组</span></span><br><span class="line"><span class="keyword">var</span> key = cryptoJS.<span class="property">enc</span>.<span class="property">Hex</span>.<span class="title function_">parse</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;HILLBILLWILLBINN&quot;</span>, <span class="string">&quot;utf8&quot;</span>).<span class="title function_">toString</span>(<span class="string">&quot;hex&quot;</span>))</span><br><span class="line"><span class="comment">// iv值是0字节数组</span></span><br><span class="line"><span class="keyword">var</span> iv = cryptoJS.<span class="property">enc</span>.<span class="property">Hex</span>.<span class="title function_">parse</span>(<span class="string">&quot;00000000000000000000000000000000&quot;</span>)</span><br><span class="line"><span class="comment">// 待解密的密文</span></span><br><span class="line"><span class="keyword">var</span> decodeBase64 = <span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;q7mBQegjhpfIAr0OgfLvH0t/D0Xi0ieG0vd+8ZVW+b4=&quot;</span>, <span class="string">&quot;base64&quot;</span>)</span><br><span class="line"><span class="keyword">var</span> encrypted = cryptoJS.<span class="property">lib</span>.<span class="property">WordArray</span>.<span class="title function_">create</span>(decodeBase64)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> cfg = &#123;</span><br><span class="line">    <span class="attr">iv</span>: iv,</span><br><span class="line">    <span class="attr">mode</span>: cryptoJS.<span class="property">mode</span>.<span class="property">CBC</span>,</span><br><span class="line">    <span class="attr">padding</span>: cryptoJS.<span class="property">pad</span>.<span class="property">Pkcs7</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> decrypted = cryptoJS.<span class="property">AES</span>.<span class="title function_">decrypt</span>(&#123;<span class="attr">ciphertext</span>: encrypted&#125;, key, cfg);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(decrypted.<span class="title function_">toString</span>(cryptoJS.<span class="property">enc</span>.<span class="property">Utf8</span>));</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122102209105.png" alt="image-20241122102209105"></p>
+<p>使用frida的主动调用来实现，这个才是正题</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122102745827.png" alt="image-20241122102745827"></p>
+<p>因为这个方法找不到实现，现在主动调用这个方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// 主动调用</span></span><br><span class="line">    <span class="keyword">var</span> a = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;com.ad2001.frida0x2.MainActivity&quot;</span>);</span><br><span class="line">    a.<span class="title function_">get_flag</span>(<span class="number">4919</span>)  </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这种主动调用的方式很神奇啊，只有这样可以</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122110030899.png" alt="image-20241122110030899"></p>
+<p>我试了其他的方法</p>
+<p>这个方法不能够使用 -f 的方式，要使用 -F 直接调用</p>
+<p>在程序启动之后再主动调用方法，防止调用完，程序启动重新覆盖显示</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="title class_">MainActivity</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;com.ad2001.frida0x2.MainActivity&quot;</span>);</span><br><span class="line">    <span class="title class_">MainActivity</span>.<span class="title function_">get_flag</span>(<span class="number">4919</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">//主动调用</span></span><br><span class="line">    <span class="title class_">Java</span>.<span class="title function_">choose</span>(<span class="string">&quot;com.ad2001.frida0x2.MainActivity&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">onMatch</span>: <span class="keyword">function</span>(<span class="params">instance</span>) &#123;</span><br><span class="line">            <span class="keyword">var</span> a = <span class="number">4919</span>;</span><br><span class="line">            instance.<span class="title function_">get_flag</span>(a);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">onComplete</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122111056484.png" alt="image-20241122111056484"></p>
+<h3 id="frida0x3"><a href="#frida0x3" class="headerlink" title="frida0x3"></a>frida0x3</h3><p>看代码，一个点击方法，判断code是否等于512，但是increase方法没有被调用，说明光点是肯定不行的，hook将数值改成512，然后通过解密方法获取flag</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122113325199.png" alt="image-20241122113325199"></p>
+<p>主动更改数值之后，一点就出</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="title class_">Checker</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;com.ad2001.frida0x3.Checker&quot;</span>);</span><br><span class="line">    <span class="title class_">Checker</span>.<span class="property">code</span>.<span class="property">value</span> = <span class="number">512</span>;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122113847909.png" alt="image-20241122113847909"></p>
+<p>还可以看源码去网站解密</p>
+<p>glass123 进行hex解密</p>
+<p>没有添加iv值，更改位ECB模式，base64解码之后的数据类型为Raw</p>
+<p>good</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122113253739.png" alt="image-20241122113253739"></p>
+<p>就不用JS复现了，需要其他的库，流程和之前的AES解密差不多</p>
+<h3 id="frida0x4"><a href="#frida0x4" class="headerlink" title="frida0x4"></a>frida0x4</h3><p><img src="/../%E5%9B%BE%E7%89%87/image-20241122165516120.png" alt="image-20241122165516120"></p>
+<p>主动调用这个方法，这里踩了坑了，我试了两种主动调用的方法均没有输出</p>
+<p>第一、Java.use指定已经加载的类，<code>Check.get_flag(1337);</code> 这个形式只能主动调用静态方法，没有实例化的对象需要先实例化对象</p>
+<p>第二、使用 <code>Java.choose</code> 时，确保该类在当前上下文中有实例存在。如果当前没有可用的实例，<code>onMatch</code> 函数将不会被调用，从而没有输出。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// let Check = Java.use(&quot;com.ad2001.frida0x4.Check&quot;);</span></span><br><span class="line">    <span class="comment">// var result = Check.get_flag(1337);</span></span><br><span class="line">    <span class="comment">// console.log(result);</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Java.choose(&quot;com.ad2001.frida0x4.Check&quot;, &#123;</span></span><br><span class="line">    <span class="comment">//     onMatch: function(instance) &#123;</span></span><br><span class="line">    <span class="comment">//         console.log(&quot;Found instance: &quot; + instance);</span></span><br><span class="line">    <span class="comment">//         var a = 1337;</span></span><br><span class="line">    <span class="comment">//         var result = instance.get_flag(a);</span></span><br><span class="line">    <span class="comment">//         console.log(result);</span></span><br><span class="line">    <span class="comment">//     &#125;,</span></span><br><span class="line">    <span class="comment">//     onComplete: function() &#123;&#125;</span></span><br><span class="line">    <span class="comment">// &#125;)</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">var</span> <span class="title class_">MyClass</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.ad2001.frida0x4.Check&#x27;</span>);</span><br><span class="line">    <span class="comment">// 创建类的实例</span></span><br><span class="line">    <span class="keyword">var</span> myClassInstance = <span class="title class_">MyClass</span>.$new();</span><br><span class="line">    <span class="keyword">var</span> result = myClassInstance.<span class="title function_">get_flag</span>(<span class="number">1337</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(result.<span class="title function_">toString</span>());</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>先创建实例再主动调用，拿下flag</p>
+<p>FRIDA{XORED_INSTANCE}</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122170222663.png" alt="image-20241122170222663"></p>
+<p>打算用JS复现一下，先解读代码，创建一个byte数组，长度为44</p>
+<p>循环数组，对 <code>I]FKNtW@]JKPFA\\[NALJr</code> 这个字符串转字节数组的每一个元素和15（1111）进行异或操作，得到结果再使用hex解码返回字符串</p>
+<p>异或，相同为0 ，不同为1</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">decodeString</span>(<span class="params">input</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> hexBytes = <span class="keyword">new</span> <span class="title class_">Array</span>(input.<span class="property">length</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; input.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        <span class="comment">// 将输入的字符串转成Unicode编码，异或操作后转换成字符</span></span><br><span class="line">        hexBytes[i] = <span class="title class_">String</span>.<span class="title function_">fromCharCode</span>(input.<span class="title function_">charCodeAt</span>(i) ^ <span class="number">15</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 将字符合并成字符串返回</span></span><br><span class="line">    <span class="keyword">return</span> hexBytes.<span class="title function_">join</span>(<span class="string">&#x27;&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> input = <span class="string">&quot;I]FKNtW@]JKPFA\\[NALJr&quot;</span></span><br><span class="line"><span class="keyword">const</span> output = <span class="title function_">decodeString</span>(input);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(output);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122171748312.png" alt="image-20241122171748312"></p>
+<h3 id="frida0x5"><a href="#frida0x5" class="headerlink" title="frida0x5"></a>frida0x5</h3><p>反编译一下，真难绷</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122172459141.png" alt="image-20241122172459141"></p>
+<p>又是一个主动调用的，直接解了算了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122172440823.png" alt="image-20241122172440823"></p>
+<p>JS</p>
+<p>跟frida0x2的解密代码一模一样，就改一下key和密文</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122172648168.png" alt="image-20241122172648168"></p>
+<p>frida</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">// var MainActivity = Java.use(&#x27;com.ad2001.frida0x5.MainActivity&#x27;);</span></span><br><span class="line">    <span class="comment">// var myClass = MainActivity.$new();</span></span><br><span class="line">    <span class="comment">// myClass.flag(1337);</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// var MainActivity = Java.use(&#x27;com.ad2001.frida0x5.MainActivity&#x27;);</span></span><br><span class="line">    <span class="comment">// MainActivity.flag(1337);</span></span><br><span class="line">    </span><br><span class="line">    <span class="title class_">Java</span>.<span class="title function_">choose</span>(<span class="string">&quot;com.ad2001.frida0x5.MainActivity&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">onMatch</span>: <span class="keyword">function</span>(<span class="params">instance</span>) &#123;</span><br><span class="line">            <span class="keyword">var</span> a = <span class="number">1337</span>;</span><br><span class="line">            instance.<span class="title function_">flag</span>(a);</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;success&quot;</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">onComplete</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241122173739595.png" alt="image-20241122173739595"></p>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>这个时候我产生了一个问题，为什么同样是主动调用，在apk4中就不能使用 java.choose 要使用 $new()，而apk5中就不能使用 $new() ，而是使用Java.choose 呢</p>
+<p>这个和是否在MainActivity类中和是否是静态方法有关，比如apk4，要主动调用的方法是非MainActivity类的非静态方法，这样的方法在Java中要调用还得new一下呢</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Check</span> <span class="variable">ch</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Check</span>();</span><br><span class="line"><span class="type">String</span> <span class="variable">flag</span> <span class="operator">=</span> ch.get_flag(<span class="number">1337</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>那么就不难想象，frida的调用方法了</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="title class_">Check</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;com.ad2001.frida0x4.Check&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> ch = <span class="title class_">Check</span>.$new();</span><br><span class="line"><span class="keyword">var</span> flag = ch.<span class="title function_">get_flag</span>(<span class="number">1337</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用Java.choose方法来调用的话，没有这个实例化对象的，因为这个类就完全是没有调用加载的类，没有任何一个地方调用他了，根本就没有创建，不存在这个实例，既不输出也不执行。</p>
+<p>而面对MainActivity类中的非静态方法就不能使用 $new() 的方式了，会导致系统崩溃</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/6b6145653543c69ae5d635cd59f44e6.png" alt="6b6145653543c69ae5d635cd59f44e6"></p>
+<p>因为andriod的生命周期和线程规则，Android组件，如 <code>Activity</code>  的子类，依赖于应用程序上下文进行正确运行。在Frida中，您可能缺少必要的上下文。Android UI组件通常需要具有关联Looper的特定线程。如果涉及UI任务，请确保在具有活动Looper的主线程上执行。活动是较大的Android应用程序生命周期的一部分。创建MainActivity的实例可能需要应用处于特定状态，并且通过Frida管理整个生命周期可能并不直接。</p>
+<p>所以说不能直接来 new MainActivity 这个类，因为在Android程序启动的时候，系统就会创建 MainActivity 的实例，这个时候就可以直接使用 Java.choose 来指定Java的实例来进行主动调用了</p>
+<p>这种方式一般在非 MainActivity 类的，且有实例化对象的时候调用</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/9ea9386ea48d3a12881d6cdc6f95cda.png" alt="9ea9386ea48d3a12881d6cdc6f95cda"></p>
+<p>这个时候是应该使用 Java.choose 的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">choose</span>(<span class="string">&quot;&quot;</span>, &#123;</span><br><span class="line">       <span class="attr">onMatch</span>: <span class="keyword">function</span>(<span class="params">instance</span>) &#123;</span><br><span class="line">           <span class="keyword">var</span> result = instance.<span class="title function_">get_flag</span>(<span class="number">1337</span>);</span><br><span class="line">           <span class="variable language_">console</span>.<span class="title function_">log</span>(result);</span><br><span class="line">       &#125;,</span><br><span class="line">       <span class="attr">onComplete</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">   &#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="frida0x6"><a href="#frida0x6" class="headerlink" title="frida0x6"></a>frida0x6</h3><p>反编译看方法</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124115843696.png" alt="image-20241124115843696"></p>
+<p>这个主动调用需要中西结合，使用 $new 来获取Checker 类的实例化对象，更改num1和num2的值，再用Java.choose 来获取MainActivity类的实例化对象，来主动调用 get_flag 方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="title class_">Check</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.ad2001.frida0x6.Checker&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> <span class="title class_">Checker</span> = <span class="title class_">Check</span>.$new();</span><br><span class="line">    <span class="title class_">Checker</span>.<span class="property">num1</span>.<span class="property">value</span> = <span class="number">1234</span>;</span><br><span class="line">    <span class="title class_">Checker</span>.<span class="property">num2</span>.<span class="property">value</span> = <span class="number">4321</span>;</span><br><span class="line">    <span class="keyword">var</span> <span class="title class_">MainActivity</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.ad2001.frida0x6.MainActivity&#x27;</span>);</span><br><span class="line">    <span class="title class_">Java</span>.<span class="title function_">choose</span>(<span class="string">&quot;com.ad2001.frida0x6.MainActivity&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">onMatch</span>: <span class="keyword">function</span>(<span class="params">instance</span>) &#123;</span><br><span class="line">            instance.<span class="title function_">get_flag</span>(<span class="title class_">Checker</span>);</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="attr">onComplete</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124115829499.png" alt="image-20241124115829499"></p>
+<p>看代码是是一个AES的ECB加密</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124120618975.png" alt="image-20241124120618975"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> cryptoJS = <span class="built_in">require</span>(<span class="string">&#x27;crypto-js&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">get_flag</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> key = cryptoJS.<span class="property">enc</span>.<span class="property">Hex</span>.<span class="title function_">parse</span>(<span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;MySecureKey12345&quot;</span>, <span class="string">&quot;utf8&quot;</span>).<span class="title function_">toString</span>(<span class="string">&quot;hex&quot;</span>))</span><br><span class="line">    <span class="keyword">var</span> decodeBase64 = <span class="title class_">Buffer</span>.<span class="title function_">from</span>(<span class="string">&quot;QQzMj/JNaTblEHnIzgJAQkvWJV2oK9G2/UmrCs85fog=&quot;</span>, <span class="string">&quot;base64&quot;</span>)</span><br><span class="line">    <span class="keyword">var</span> encrypted = cryptoJS.<span class="property">lib</span>.<span class="property">WordArray</span>.<span class="title function_">create</span>(decodeBase64)</span><br><span class="line">    <span class="keyword">var</span> cfg = &#123;</span><br><span class="line">        <span class="attr">mode</span>: cryptoJS.<span class="property">mode</span>.<span class="property">ECB</span>,</span><br><span class="line">        <span class="attr">padding</span>: cryptoJS.<span class="property">pad</span>.<span class="property">Pkcs7</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> decrypted = cryptoJS.<span class="property">AES</span>.<span class="title function_">decrypt</span>(&#123;<span class="attr">ciphertext</span>: encrypted&#125;, key, cfg);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(decrypted.<span class="title function_">toString</span>(cryptoJS.<span class="property">enc</span>.<span class="property">Utf8</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">get_flag</span>();</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124120926563.png" alt="image-20241124120926563"></p>
+<h3 id="frida0x7"><a href="#frida0x7" class="headerlink" title="frida0x7"></a>frida0x7</h3><p>这个和上面的区别就是，这里不需要主动调用了，这里初始化了Checker这个类，传入了两个值，然后调用了 flag这个方法，现在需要hook Checker 这个类的构建方法，将传入值改变即可</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124121316633.png" alt="image-20241124121316633"><img src="/../%E5%9B%BE%E7%89%87/image-20241124200221798.png" alt="image-20241124200221798"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="title class_">Check</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.ad2001.frida0x7.Checker&#x27;</span>);</span><br><span class="line">    <span class="title class_">Check</span>.<span class="property">$init</span>.<span class="title function_">overload</span>(<span class="string">&#x27;int&#x27;</span>, <span class="string">&#x27;int&#x27;</span>).<span class="property">implementation</span> = <span class="keyword">function</span>(<span class="params">a, b</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> a1 = <span class="number">513</span>;</span><br><span class="line">        <span class="keyword">var</span> a2 = <span class="number">513</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.$init(a1, a2);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>出结果</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124200209234.png" alt="image-20241124200209234"></p>
+<p>JS解密方法和0x6一模一样</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124200351743.png" alt="image-20241124200351743"></p>
+<h3 id="frida0x8"><a href="#frida0x8" class="headerlink" title="frida0x8"></a>frida0x8</h3><p>难度飙升了，进so层了，可以看到关键的一个方法放到了SO层，找so文件反编译</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124200843929.png" alt="image-20241124200843929"></p>
+<p>找到这个方法</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20241124202410190.png" alt="image-20241124202410190"></p>
+<p>因为的对so层也了解不多，就逐行解读一下，就当加深印象了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">_BOOL8 __fastcall <span class="title function_">Java_com_ad2001_frida0x8_MainActivity_cmpstr</span><span class="params">(__int64 a1, __int64 a2, __int64 a3)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="type">int</span> v4; <span class="comment">// [rsp+30h] [rbp-C0h]</span></span><br><span class="line">  <span class="type">int</span> i; <span class="comment">// [rsp+34h] [rbp-BCh]</span></span><br><span class="line">  <span class="type">char</span> *s1; <span class="comment">// [rsp+40h] [rbp-B0h]</span></span><br><span class="line">  <span class="type">char</span> s2[<span class="number">104</span>]; <span class="comment">// [rsp+80h] [rbp-70h] BYREF</span></span><br><span class="line">  <span class="type">unsigned</span> __int64 v9; <span class="comment">// [rsp+E8h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v9 = __readfsqword(<span class="string">&#x27;(&#x27;</span>);</span><br><span class="line">  s1 = (<span class="type">char</span> *)_JNIEnv::GetStringUTFChars(a1, a3, <span class="number">0LL</span>);</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; (<span class="type">unsigned</span> __int64)__strlen_chk(<span class="string">&quot;GSJEB|OBUJWF`MBOE~&quot;</span>, <span class="number">-1LL</span>); ++i )</span><br><span class="line">    s2[i] = aGsjebObujwfMbo[i] - <span class="number">1</span>;</span><br><span class="line">  s2[__strlen_chk(<span class="string">&quot;GSJEB|OBUJWF`MBOE~&quot;</span>, <span class="number">-1LL</span>)] = <span class="number">0</span>;</span><br><span class="line">  v4 = <span class="built_in">strcmp</span>(s1, s2);</span><br><span class="line">  __android_log_print(<span class="number">3LL</span>, <span class="string">&quot;input &quot;</span>, &amp;unk_6B0, s1);</span><br><span class="line">  __android_log_print(<span class="number">3LL</span>, <span class="string">&quot;Password&quot;</span>, &amp;unk_6B0, s2);</span><br><span class="line">  _JNIEnv::ReleaseStringUTFChars(a1, a3, s1);</span><br><span class="line">  <span class="keyword">return</span> v4 == <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>GetStringUTFChars</code> 是JNI中的一个API（可以这样理解），这个 从 Java 字符串中获取 UTF-8 编码的字符数组。，也就是说 s1 存储的是我们输入框输入的信息</p>
+<p>for ( i &#x3D; 0; i &lt; (unsigned __int64)__strlen_chk(“GSJEB|OBUJWF`MBOE~”, -1LL); ++i )<br>    s2[i] &#x3D; aGsjebObujwfMbo[i] - 1;</p>
+<p>这里是利用了一个神秘的方法 aGsjebObujwfMbo 来处理出flag ，将flag赋值给S2</p>
+<p>使用 strcmp 方法比较两个字符串，输出两句，然后将s1转换成Java的字符串，然后返回0 ，无论是否正确都返回0 ，这个时候就需要hook  strcmp 方法了</p>
+<p>沉淀一下，继续hook</p>
+<p>hook一下 strcmp 方法，这个是系统方法，通过计算地址值进行hook</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Interceptor</span>.<span class="title function_">attach</span>(<span class="title class_">Module</span>.<span class="title function_">findBaseAddress</span>(<span class="string">&#x27;libfrida0x8.so&#x27;</span>).<span class="title function_">add</span>(<span class="number">0x9DD</span>), &#123;</span><br><span class="line">    <span class="attr">onEnter</span>: <span class="keyword">function</span>(<span class="params">args</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;onEnter: &#x27;</span>, <span class="title function_">hexdump</span>(args[<span class="number">0</span>]))</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;onEnter: &#x27;</span>, <span class="title function_">hexdump</span>(args[<span class="number">1</span>]))</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">onLeave</span>: <span class="keyword">function</span>(<span class="params">retval</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;onLeave: &#x27;</span>, retval)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>tab键查看地址</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250322222804674.png" alt="image-20250322222804674"></p>
+<p>直接打印出来 flag 了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250322222712335.png" alt="image-20250322222712335"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FRIDA&#123;NATIVE_LAND&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="frida0x9"><a href="#frida0x9" class="headerlink" title="frida0x9"></a>frida0x9</h3><p><img src="/../%E5%9B%BE%E7%89%87/image-20250322223611434.png" alt="image-20250322223611434"></p>
+<p>貌似只需要让这个so函数的返回值为1337即可，根本不需要so层的hook，直接Java层，改一下return结果即可</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="title class_">MainActivity</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&quot;com.ad2001.a0x9.MainActivity&quot;</span>);</span><br><span class="line">    <span class="title class_">MainActivity</span>[<span class="string">&quot;check_flag&quot;</span>].<span class="property">implementation</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1337</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250322223545537.png" alt="image-20250322223545537"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FRIDA&#123;NATIVE_LAND_0X2&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>静态分析直接梭也行</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323085023620.png" alt="image-20250323085023620"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">CryptoJS</span> = <span class="built_in">require</span>(<span class="string">&quot;crypto-js&quot;</span>);</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">AES_encrypt</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> key = <span class="title class_">CryptoJS</span>.<span class="property">enc</span>.<span class="property">Utf8</span>.<span class="title function_">parse</span>(<span class="string">&quot;3000300030003003&quot;</span>);</span><br><span class="line">    <span class="keyword">let</span> data = <span class="title class_">CryptoJS</span>.<span class="property">enc</span>.<span class="property">Base64</span>.<span class="title function_">parse</span>(<span class="string">&quot;hBCKKAqgxVhJMVTQS8JADelBUPUPyDiyO9dLSS3zho0=&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> decrypted = <span class="title class_">CryptoJS</span>.<span class="property">AES</span>.<span class="title function_">decrypt</span>(&#123;<span class="attr">ciphertext</span>: data&#125;, key, &#123;</span><br><span class="line">        <span class="attr">mode</span>: <span class="title class_">CryptoJS</span>.<span class="property">mode</span>.<span class="property">ECB</span>,</span><br><span class="line">        <span class="attr">padding</span>: <span class="title class_">CryptoJS</span>.<span class="property">pad</span>.<span class="property">NoPadding</span></span><br><span class="line">    &#125;).<span class="title function_">toString</span>(<span class="title class_">CryptoJS</span>.<span class="property">enc</span>.<span class="property">Utf8</span>);</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(decrypted);</span><br><span class="line">    <span class="keyword">return</span> decrypted;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="frida0xA"><a href="#frida0xA" class="headerlink" title="frida0xA"></a>frida0xA</h3><p>进so看看</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323091841320.png" alt="image-20250323091841320"></p>
+<p>好像也没有什么东西，这个so方法就是将这个东西设置到桌面显示上，返回值就是这个 hello hackers</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323092759751.png" alt="image-20250323092759751"></p>
+<p>翻了翻还有一个get_flag 方法，主动调用这个方法</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323091825842.png" alt="image-20250323091825842"></p>
+<p>so层的主动调用超纲了，百度一下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> addr = <span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="string">&quot;libfrida0xa.so&quot;</span>, <span class="string">&quot;_Z8get_flagii&quot;</span>)</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`addr=<span class="subst">$&#123;addr&#125;</span>`</span>)</span><br><span class="line">    <span class="keyword">let</span> get_flag_pointer = <span class="keyword">new</span> <span class="title class_">NativePointer</span>(addr)</span><br><span class="line">    <span class="keyword">let</span> get_flag = <span class="keyword">new</span> <span class="title class_">NativeFunction</span>(get_flag_pointer, <span class="string">&#x27;int&#x27;</span>, [<span class="string">&#x27;int&#x27;</span>, <span class="string">&#x27;int&#x27;</span>])</span><br><span class="line">    <span class="title function_">get_flag</span>(<span class="number">2</span>,<span class="number">1</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>再看一下代码，是输出成日志的形式，不是直接显示的，还需要查看一下日志</p>
+<p>因为使用了 flag 标签，过滤一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb logcat -s &quot;FLAG&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>结果如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FRIDA&#123;DONT_CALL_ME&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323095014516.png" alt="image-20250323095014516"></p>
+<p>也可以根据这个代码直接解密，源代码是将每个字符偏移，将字符转换成ASCCII码的形式进行计算还原</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">原始字符：F P E &gt; 9 q 8 A &gt; B K - ) 2 0 A - # Y</span><br><span class="line">偏移计算：0,2,4,6,8,...（每个字符的偏移量为 2*i）</span><br><span class="line">最终结果：F+0, P+2, E+4, &gt;+6, 9+8, q+10, 8+12, A+14, &gt;+16, B+18, K+20, -+22, )+24, 2+26, 0+28, A+30, -+32, #+34, Y+36</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="frida-0xB"><a href="#frida-0xB" class="headerlink" title="frida 0xB"></a>frida 0xB</h3><p>java层没东西，直接进so。end</p>
+<p>没找到，找博客：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/WXjzc/p/18231528">https://www.cnblogs.com/WXjzc/p/18231528</a></p>
+<p>直接进去没东西，原因是这里有一个永假判断，跳转到其他地址了，感觉比较偏CTF风格了</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323100554837.png" alt="image-20250323100554837"></p>
+<p>这里先将 var_24 赋值成 0xDEADBEEF</p>
+<p>然后再判断 var_24 是否等于 0x539</p>
+<p>不相等跳转到错误分支 loc_171A6 所有啥也没有</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323100756720.png" alt="image-20250323100756720"></p>
+<p>在IDA中右键jnz设置成nop，先看一下代码</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323111108075.png" alt="image-20250323111108075"></p>
+<p>这个时候就有两种修改方式了，第一种是将 <code>jnz loc_171A6</code> 修改成 <code>jz loc_171A6</code></p>
+<p>jnz 是结果为0（否）跳转指令，jz 是结果为1（是）跳转指令，改成jz就不会出现跳转</p>
+<p>或者是将这个指令Nop掉，不进行跳转</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> funcAddr = <span class="title class_">Module</span>.<span class="title function_">findExportByName</span>(<span class="string">&quot;libfrida0xb.so&quot;</span>, <span class="string">&#x27;Java_com_ad2001_frida0xb_MainActivity_getFlag&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> opaddr = funcAddr.<span class="title function_">add</span>(<span class="number">0x1E</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 模拟器行为，如果是真机应该是 Arm64Writer</span></span><br><span class="line">    <span class="keyword">var</span> writer = <span class="keyword">new</span> <span class="title function_">X86Writer</span>(opaddr);</span><br><span class="line">    <span class="title class_">Memory</span>.<span class="title function_">protect</span>(opaddr, <span class="number">0x10</span>, <span class="string">&#x27;rwx&#x27;</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        writer.<span class="title function_">puNop</span>();</span><br><span class="line">        writer.<span class="title function_">flush</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        writer.<span class="title function_">dispose</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323125423912.png" alt="image-20250323125423912"></p>
+<p>jnz -&gt; jz </p>
+<p>jnz的机器码是 0F 85，jz的机器码是 0F 84</p>
+<p>需要将这个改为 0F 84</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> funcAddr = <span class="title class_">Module</span>.<span class="title function_">findBaseAddress</span>(<span class="string">&quot;libfrida0xb.so&quot;</span>);</span><br><span class="line">    <span class="keyword">var</span> opaddr = funcAddr.<span class="title function_">add</span>(<span class="number">0x170CE</span>)</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(opaddr);</span><br><span class="line">    <span class="keyword">var</span> writer = <span class="keyword">new</span> <span class="title function_">X86Writer</span>(opaddr);</span><br><span class="line">    <span class="title class_">Memory</span>.<span class="title function_">protect</span>(opaddr, <span class="number">0x1000</span>, <span class="string">&#x27;rwx&#x27;</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0x0F</span>)</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0x84</span>)</span><br><span class="line">        writer.<span class="title function_">flush</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>( <span class="string">&quot;Error:&quot;</span>,error);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        writer.<span class="title function_">dispose</span>(); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323130802111.png" alt="image-20250323130802111"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FRIDA&#123;NATIVE_HACKER&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>第二种就是令 var_24 等于 0x539 ，使跳转指令不成立</p>
+<p>C7 45 DC EF BE AD DE</p>
+<p>后四个机器码是赋值的小端字节序，将这个改成 39 05 00 00，就可以使下方判断成立</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323131921727.png" alt="image-20250323131921727"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> funcAddr = <span class="title class_">Module</span>.<span class="title function_">findBaseAddress</span>(<span class="string">&quot;libfrida0xb.so&quot;</span>);</span><br><span class="line">    <span class="keyword">var</span> opaddr = funcAddr.<span class="title function_">add</span>(<span class="number">0x170CA</span>)</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(opaddr);</span><br><span class="line">    <span class="keyword">var</span> writer = <span class="keyword">new</span> <span class="title function_">X86Writer</span>(opaddr);</span><br><span class="line">    <span class="title class_">Memory</span>.<span class="title function_">protect</span>(opaddr, <span class="number">0x1000</span>, <span class="string">&#x27;rwx&#x27;</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0xEF</span>)</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0xBE</span>)</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0xAD</span>)</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0xDE</span>)</span><br><span class="line">        writer.<span class="title function_">flush</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>( <span class="string">&quot;Error:&quot;</span>,error);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        writer.<span class="title function_">dispose</span>(); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323133958878.png" alt="image-20250323133958878"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> funcAddr = <span class="title class_">Module</span>.<span class="title function_">findBaseAddress</span>(<span class="string">&quot;libfrida0xb.so&quot;</span>);</span><br><span class="line">    <span class="keyword">var</span> opaddr = funcAddr.<span class="title function_">add</span>(<span class="number">0x170C3</span>)</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(opaddr);</span><br><span class="line">    <span class="keyword">var</span> writer = <span class="keyword">new</span> <span class="title function_">X86Writer</span>(opaddr);</span><br><span class="line">    <span class="title class_">Memory</span>.<span class="title function_">protect</span>(opaddr, <span class="number">0x1000</span>, <span class="string">&#x27;rwx&#x27;</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0x39</span>)</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0x05</span>)</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0x00</span>)</span><br><span class="line">        writer.<span class="title function_">putU8</span>(<span class="number">0x00</span>)</span><br><span class="line">        writer.<span class="title function_">flush</span>();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>( <span class="string">&quot;Error:&quot;</span>,error);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        writer.<span class="title function_">dispose</span>(); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250323134124190.png" alt="image-20250323134124190"></p>
+<p>END</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/" rel="tag"># 安卓逆向</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/03/14/%E5%88%86%E6%9E%90%E6%9F%90%E8%BD%AF%E4%BB%B6%E7%99%BB%E5%BD%95%E9%80%BB%E8%BE%91%E4%BB%A5%E5%8F%8A%E5%8D%8F%E8%AE%AE%E5%A4%8D%E7%8E%B0/" rel="prev" title="分析某软件登录逻辑以及协议复现">
+      <i class="fa fa-chevron-left"></i> 分析某软件登录逻辑以及协议复现
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x1"><span class="nav-number">1.</span> <span class="nav-text">frida0x1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x2"><span class="nav-number">2.</span> <span class="nav-text">frida0x2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x3"><span class="nav-number">3.</span> <span class="nav-text">frida0x3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x4"><span class="nav-number">4.</span> <span class="nav-text">frida0x4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x5"><span class="nav-number">5.</span> <span class="nav-text">frida0x5</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">5.1.</span> <span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x6"><span class="nav-number">6.</span> <span class="nav-text">frida0x6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x7"><span class="nav-number">7.</span> <span class="nav-text">frida0x7</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x8"><span class="nav-number">8.</span> <span class="nav-text">frida0x8</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0x9"><span class="nav-number">9.</span> <span class="nav-text">frida0x9</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida0xA"><span class="nav-number">10.</span> <span class="nav-text">frida0xA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida-0xB"><span class="nav-number">11.</span> <span class="nav-text">frida 0xB</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="没事数命的猫"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">没事数命的猫</p>
+  <div class="site-description" itemprop="description">学而不思则罔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">没事数命的猫</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">151k</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+-->
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
+
+<!-- 点击效果 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/love-click.js"></script>
