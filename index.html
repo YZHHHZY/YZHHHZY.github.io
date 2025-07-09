@@ -188,6 +188,97 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/07/09/%E7%BB%95%E8%BF%87libmsaoaidsec-so%E7%9A%84frida%E6%A3%80%E6%B5%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/07/09/%E7%BB%95%E8%BF%87libmsaoaidsec-so%E7%9A%84frida%E6%A3%80%E6%B5%8B/" class="post-title-link" itemprop="url">绕过libmsaoaidsec.so的frida检测</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-07-09 15:10:20 / 修改时间：15:11:24" itemprop="dateCreated datePublished" datetime="2025-07-09T15:10:20+08:00">2025-07-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">逆向学习</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>788</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="绕过libmsaoaidsec-so的frida检测"><a href="#绕过libmsaoaidsec-so的frida检测" class="headerlink" title="绕过libmsaoaidsec.so的frida检测"></a>绕过libmsaoaidsec.so的frida检测</h2><p>学习文章：<a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-280754.htm">https://bbs.kanxue.com/thread-280754.htm</a></p>
+<p>根据大佬的文章，复现一次libmsaoaidsec.so frida检测的绕过</p>
+<p>首先是hook一下dlopen，查看程序是在哪里退出的，很显然是 libmsaoaidsec.so</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/07/09/%E7%BB%95%E8%BF%87libmsaoaidsec-so%E7%9A%84frida%E6%A3%80%E6%B5%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/26/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0B-%E5%AF%86%E7%A0%81%E5%AD%A6%E8%BF%9B%E9%98%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -213,7 +304,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2025-03-26 18:43:55 / 修改时间：18:44:21" itemprop="dateCreated datePublished" datetime="2025-03-26T18:43:55+08:00">2025-03-26</time>
+              <time title="创建时间：2025-03-26 18:43:55 / 修改时间：18:45:36" itemprop="dateCreated datePublished" datetime="2025-03-26T18:43:55+08:00">2025-03-26</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -253,14 +344,6 @@
           <h2 id="加密的C实现"><a href="#加密的C实现" class="headerlink" title="加密的C实现"></a>加密的C实现</h2><p>先学会怎么使用</p>
 <h3 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h3><h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>这里借用了一个MD5实现的cpp文件。</p>
 <p>这个结构包括三个count：数据长度、state：算法初始化常量、buffer：明文数据</p>
-<p>具体的先不管，用了再说</p>
-<img src="../图片/image-20241209205033927.png" alt="image-20241209205033927" style="zoom:33%;">
-
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里实现的MD5主要依靠一个结构体和三个方法</span></span><br><span class="line">	<span class="comment">// void MD5Init(MD5_CTX * context);</span></span><br><span class="line">	<span class="comment">// MD5Init方法需要一个MD5_CTX这个结构体的指针，就随便创建一个</span></span><br><span class="line">	MD5_CTX content;</span><br><span class="line">	MD5Init(&amp;content);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// void MD5Update(MD5_CTX * context, unsigned char* input, unsigned int inputlen);</span></span><br><span class="line">	<span class="comment">// MD5Updata方法需要传入结构体、明文数据、数据长度。两个都要是unsigned，无字符类型的</span></span><br><span class="line">	<span class="type">const</span> <span class="type">char</span>* input = <span class="string">&quot;a123456789&quot;</span>;</span><br><span class="line">	MD5Update(&amp;content, (<span class="type">unsigned</span> <span class="type">char</span>*)input, <span class="built_in">strlen</span>(input));</span><br><span class="line"> </span><br><span class="line">	<span class="comment">// void MD5Final(MD5_CTX * context, unsigned char digest[16]);</span></span><br><span class="line">	<span class="comment">// 进行加密操作，传进去一个char来接收返回值</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> result[<span class="number">16</span>];</span><br><span class="line">	MD5Final(&amp;content, result);</span><br></pre></td></tr></table></figure>
-
-
-
-<p>这样的得到的结果是 unsigned char 的形式，是不能直接查看的，需要进行一种编码，hex或者base64。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/03/26/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0B-%E5%AF%86%E7%A0%81%E5%AD%A6%E8%BF%9B%E9%98%B6/#more" rel="contents">
@@ -1052,103 +1135,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/06/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x09NDK%E5%BC%80%E5%8F%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="没事数命的猫">
-      <meta itemprop="description" content="学而不思则罔">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="妙妙屋">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/12/06/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x09NDK%E5%BC%80%E5%8F%91/" class="post-title-link" itemprop="url">逆向学习 0x09NDK开发</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-12-06 11:53:09" itemprop="dateCreated datePublished" datetime="2024-12-06T11:53:09+08:00">2024-12-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-03-13 17:36:03" itemprop="dateModified" datetime="2025-03-13T17:36:03+08:00">2025-03-13</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">逆向学习</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>9.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>36 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="SO入门"><a href="#SO入门" class="headerlink" title="SO入门"></a>SO入门</h2><p>先自己测一下这个案例</p>
-<p>抓个包</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">POST /user/api/v1/login/app/mobile HTTP/1.1</span><br><span class="line">pa: MTczMjAxNzY1MzAzMyxhMTZhM2ZmOWVmYzU0M2IxYjlkMTBiMGI3NjY3NTk4MiwzZjg3MjNlMWNiMzBhYzYwM2RiYjY1ZGQ4N2QxMTA3Miw=</span><br><span class="line">appInfo: &#123;&quot;IMEI&quot;:&quot;bf1821d5634d0ec8&quot;,&quot;appBuild&quot;:&quot;21070602&quot;,&quot;appVersion&quot;:&quot;6.2.0&quot;,&quot;deviceId&quot;:&quot;bf1821d5634d0ec8&quot;,&quot;deviceName&quot;:&quot;NX627J&quot;,&quot;osType&quot;:&quot;android&quot;,&quot;osVersion&quot;:&quot;9&quot;,&quot;phoneName&quot;:&quot;NX627J&quot;,&quot;phoneSystemVersion&quot;:&quot;9&quot;,&quot;vendor&quot;:&quot;nubia&quot;&#125;</span><br><span class="line">User-Agent: PocketFans201807/6.2.0_21070602 (NX627J:Android 9;nubia PQ3B.190801.03191204 release-keys)</span><br><span class="line">Content-Type: application/json; charset=UTF-8</span><br><span class="line">Content-Length: 43</span><br><span class="line">Host: pocketapi.48.cn</span><br><span class="line">Connection: Keep-Alive</span><br><span class="line">Accept-Encoding: gzip</span><br><span class="line"></span><br><span class="line">&#123;&quot;mobile&quot;:&quot;13112345678&quot;,&quot;pwd&quot;:&quot;a123123123&quot;&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/12/06/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x09NDK%E5%BC%80%E5%8F%91/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1220,7 +1206,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1269,7 +1255,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">160k</span>
+    <span title="站点总字数">161k</span>
 </div>
 
 <!--
