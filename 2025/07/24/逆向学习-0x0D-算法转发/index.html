@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/%E5%8D%9A%E5%AE%A2.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/%E5%8D%9A%E5%AE%A2-copy.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="frida的python库使用安装配置frida的时候是下载了两个frida的相关库，frida 和 frida-tools 之前使用的 frida-ps 等更多的是用来手工调试的阶段，如果要用代码自动化处理，还需要其他语言的接入，比如python爬虫">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逆向学习 0x0D 算法转发">
+<meta property="og:url" content="http://example.com/2025/07/24/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0D-%E7%AE%97%E6%B3%95%E8%BD%AC%E5%8F%91/index.html">
+<meta property="og:site_name" content="妙妙屋">
+<meta property="og:description" content="frida的python库使用安装配置frida的时候是下载了两个frida的相关库，frida 和 frida-tools 之前使用的 frida-ps 等更多的是用来手工调试的阶段，如果要用代码自动化处理，还需要其他语言的接入，比如python爬虫">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250604175941556.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250604180615326.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250605151522222.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250605170819355.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250605175916772.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250605210956090.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250605212822610.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250605220252529.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250606114306422.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250609161728954.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250610203858228.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250610205707598.png">
+<meta property="og:image" content="http://example.com/2025/07/24/%E5%9B%BE%E7%89%87/image-20250610215749558.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250610215824213.png">
+<meta property="og:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250612174708583.png">
+<meta property="article:published_time" content="2025-07-24T06:16:04.000Z">
+<meta property="article:modified_time" content="2025-07-24T06:16:44.468Z">
+<meta property="article:author" content="没事数命的猫">
+<meta property="article:tag" content="安卓逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/%E5%9B%BE%E7%89%87/image-20250604175941556.png">
+
+<link rel="canonical" href="http://example.com/2025/07/24/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0D-%E7%AE%97%E6%B3%95%E8%BD%AC%E5%8F%91/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>逆向学习 0x0D 算法转发 | 妙妙屋</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">妙妙屋</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">思而不学则殆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/07/24/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0D-%E7%AE%97%E6%B3%95%E8%BD%AC%E5%8F%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="没事数命的猫">
+      <meta itemprop="description" content="学而不思则罔">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="妙妙屋">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          逆向学习 0x0D 算法转发
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-07-24 14:16:04 / 修改时间：14:16:44" itemprop="dateCreated datePublished" datetime="2025-07-24T14:16:04+08:00">2025-07-24</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">逆向学习</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="frida的python库使用"><a href="#frida的python库使用" class="headerlink" title="frida的python库使用"></a>frida的python库使用</h3><p>安装配置frida的时候是下载了两个frida的相关库，frida 和 frida-tools 之前使用的 frida-ps 等更多的是用来手工调试的阶段，如果要用代码自动化处理，还需要其他语言的接入，比如python爬虫</p>
+<span id="more"></span>
+
+<p>后续的一些 frida 算法转发方案和 frida 的rpc也需要用到python，如果进行算法转发的话，就不需要对app的算法进行还原了，通过主动调用让app成为加密的工具</p>
+<p>frida可以实时与python进行数据交互，可以把数据发送到python，等待python处理完毕之后，接收返回值，frida继续执行</p>
+<h4 id="包名注入"><a href="#包名注入" class="headerlink" title="包名注入"></a>包名注入</h4><p>使用 frida.get_usb_device() 来通过 USB 连接，下面写入需要注入的代码，然后调用 load 方法进行注入，最好方式命令行关闭可以使用 sys.stdin.read()</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> frida, sys</span><br><span class="line"></span><br><span class="line">JScode = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Java.perform(function() &#123;</span></span><br><span class="line"><span class="string">    var RequestUtils = Java.use(&#x27;com.dodonew.online.http.RequestUtil&#x27;);</span></span><br><span class="line"><span class="string">    RequestUtils.encodeDesMap.overload(&#x27;java.lang.String&#x27;, &#x27;java.lang.String&#x27;, &#x27;java.lang.String&#x27;).implementation = function(str, key, iv) &#123;</span></span><br><span class="line"><span class="string">        console.log(&quot;data&quot;, str)</span></span><br><span class="line"><span class="string">        console.log(&quot;key&quot;, key)</span></span><br><span class="line"><span class="string">        console.log(&quot;iv&quot;, iv)</span></span><br><span class="line"><span class="string">        var retval = this.encodeDesMap(str, key, iv);</span></span><br><span class="line"><span class="string">        console.log(&quot;retval&quot;, retval)</span></span><br><span class="line"><span class="string">        return retval;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    var Utils = Java.use(&#x27;com.dodonew.online.util.Utils&#x27;)</span></span><br><span class="line"><span class="string">    Utils.md5.implementation = function(str) &#123;</span></span><br><span class="line"><span class="string">        console.log(&quot;md5&quot;, str)</span></span><br><span class="line"><span class="string">        var retval = this.md5(str);</span></span><br><span class="line"><span class="string">        console.log(&quot;retval&quot;, retval)</span></span><br><span class="line"><span class="string">        return retval;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过包名注入</span></span><br><span class="line">process = frida.get_usb_device().attach(<span class="string">&#x27;com.dodonew.online&#x27;</span>)</span><br><span class="line">script = process.create_script(JScode)</span><br><span class="line">script.load()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;开始运行&quot;</span>)</span><br><span class="line">sys.stdin.read()</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="pid注入"><a href="#pid注入" class="headerlink" title="pid注入"></a>pid注入</h4><p>和包名注入差不多，先查一下PID</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida-ps -U</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250604175941556.png" alt="image-20250604175941556"></p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250604180615326.png" alt="image-20250604180615326"></p>
+<h4 id="spawn"><a href="#spawn" class="headerlink" title="spawn"></a>spawn</h4><p>spawn附加就是和之前js的命令附加差不多，注意这里的代码和上面的相比多了恢复进程这一步</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过spawn附加</span></span><br><span class="line">device = frida.get_usb_device()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;device:&quot;</span>, device)</span><br><span class="line">pid = device.spawn([<span class="string">&#x27;com.dodonew.online&#x27;</span>])   <span class="comment"># 以挂起的方式创建进程</span></span><br><span class="line">process = device.attach(pid)</span><br><span class="line"></span><br><span class="line">script = process.create_script(JScode)</span><br><span class="line">script.load()</span><br><span class="line">device.resume(pid)   <span class="comment"># 加载完脚本之后回复进程，如果不恢复进程软件无法启动</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;开始运行&quot;</span>)</span><br><span class="line">sys.stdin.read()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>上面相当于</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida -U -f com.dodonew.online</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h4 id="通过非标准端口连接"><a href="#通过非标准端口连接" class="headerlink" title="通过非标准端口连接"></a>通过非标准端口连接</h4><p>frida-server 开启的默认端口是 27042，启动 frida-server的时候可以指定端口的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">frida-server -l 0.0.0.0:8888</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250605151522222.png" alt="image-20250605151522222"></p>
+<p>这种方法是可以进行多设备连接 hook 的，前提是都正常打开了 frida-server，然后根据IP和端口来对多个设备进行hook。但是要操作多个设备，还是整个 gadget 方便点吧。对模拟器进行更改端口时，需要端口转发，因为模拟器和本机的IP地址是一样的</p>
+<h3 id="frida与python的交互"><a href="#frida与python的交互" class="headerlink" title="frida与python的交互"></a>frida与python的交互</h3><h4 id="send"><a href="#send" class="headerlink" title="send"></a>send</h4><p>使用send进行交互，例如要将md5返回值 send 返回给python，不进行打印了，首先要在 js 中更改 </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="title class_">RequestUtils</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.dodonew.online.http.RequestUtil&#x27;</span>);</span><br><span class="line">    <span class="title class_">RequestUtils</span>.<span class="property">encodeDesMap</span>.<span class="title function_">overload</span>(<span class="string">&#x27;java.lang.String&#x27;</span>, <span class="string">&#x27;java.lang.String&#x27;</span>, <span class="string">&#x27;java.lang.String&#x27;</span>).<span class="property">implementation</span> = <span class="keyword">function</span>(<span class="params">str, key, iv</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;data&quot;</span>, str)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;key&quot;</span>, key)</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;iv&quot;</span>, iv)</span><br><span class="line">        <span class="keyword">var</span> retval = <span class="variable language_">this</span>.<span class="title function_">encodeDesMap</span>(str, key, iv);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;retval&quot;</span>, retval)</span><br><span class="line">        <span class="keyword">return</span> retval;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> <span class="title class_">Utils</span> = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.dodonew.online.util.Utils&#x27;</span>)</span><br><span class="line">    <span class="title class_">Utils</span>.<span class="property">md5</span>.<span class="property">implementation</span> = <span class="keyword">function</span>(<span class="params">str</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;md5&quot;</span>, str)</span><br><span class="line">        <span class="keyword">var</span> retval = <span class="variable language_">this</span>.<span class="title function_">md5</span>(str);</span><br><span class="line">        <span class="title function_">send</span>(retval)   <span class="comment">// console.log(&quot;retval&quot;, retval)</span></span><br><span class="line">        <span class="keyword">return</span> retval;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>send只能接收一个参数，将参数包装成一个字典，如果接收多个参数就会报错，type字段为 error，而且send还需要注册一下 ，第一个参数固定是  message 第二个参数是函数名。</p>
+<p>send最重要的作用就是，将js的数据交给python来处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">script.on(&#x27;message&#x27;, messageTest)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250605170819355.png" alt="image-20250605170819355"></p>
+<h4 id="recv"><a href="#recv" class="headerlink" title="recv"></a>recv</h4><p>send是将js里的数据传递给python，recv是等待python里的数据传递给js，传递的时候则通过 create_script 方法创建的那个 script.post 来传递</p>
+<p><code>recv().wait()</code> wait()方法会阻塞方法，等待python的返回</p>
+<p>通过recv更改一下返回值</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> frida, sys</span><br><span class="line"></span><br><span class="line">JScode = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Java.perform(function() &#123;</span></span><br><span class="line"><span class="string">    var RequestUtils = Java.use(&#x27;com.dodonew.online.http.RequestUtil&#x27;);</span></span><br><span class="line"><span class="string">    RequestUtils.encodeDesMap.overload(&#x27;java.lang.String&#x27;, &#x27;java.lang.String&#x27;, &#x27;java.lang.String&#x27;).implementation = function(str, key, iv) &#123;</span></span><br><span class="line"><span class="string">        console.log(&quot;data&quot;, str)</span></span><br><span class="line"><span class="string">        console.log(&quot;key&quot;, key)</span></span><br><span class="line"><span class="string">        console.log(&quot;iv&quot;, iv)</span></span><br><span class="line"><span class="string">        var retval = this.encodeDesMap(str, key, iv);</span></span><br><span class="line"><span class="string">        console.log(&quot;retval&quot;, retval)</span></span><br><span class="line"><span class="string">        return retval;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    var Utils = Java.use(&#x27;com.dodonew.online.util.Utils&#x27;)</span></span><br><span class="line"><span class="string">    Utils.md5.implementation = function(str) &#123;</span></span><br><span class="line"><span class="string">        console.log(&quot;md5&quot;, str)</span></span><br><span class="line"><span class="string">        var retval = this.md5(str);</span></span><br><span class="line"><span class="string">        send(retval)</span></span><br><span class="line"><span class="string">        recv(function(obj) &#123;</span></span><br><span class="line"><span class="string">            console.log(&quot;python:&quot;, obj.data);</span></span><br><span class="line"><span class="string">            retval = obj.data</span></span><br><span class="line"><span class="string">        &#125;).wait();</span></span><br><span class="line"><span class="string">        return retval;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">messageTest</span>(<span class="params">message, data</span>):</span><br><span class="line">    <span class="keyword">if</span> message[<span class="string">&#x27;type&#x27;</span>] == <span class="string">&#x27;send&#x27;</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">u&quot;[*] &#123;0&#125;&quot;</span>.<span class="built_in">format</span>(message[<span class="string">&#x27;payload&#x27;</span>]))</span><br><span class="line">        script.post(&#123; <span class="string">&quot;data&quot;</span>: <span class="string">&quot;7588343d9969bf6e7f9438f7a081d36d&quot;</span>&#125; )</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(message)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">device = frida.get_usb_device()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;device:&quot;</span>, device)</span><br><span class="line">pid = device.spawn([<span class="string">&#x27;com.dodonew.online&#x27;</span>])   <span class="comment"># 以挂起的方式创建进程</span></span><br><span class="line">process = device.attach(pid)</span><br><span class="line"></span><br><span class="line">script = process.create_script(JScode)</span><br><span class="line">script.on(<span class="string">&#x27;message&#x27;</span>, messageTest)</span><br><span class="line">script.load()</span><br><span class="line">device.resume(pid)   <span class="comment"># 加载完脚本之后回复进程，如果不恢复进程软件无法启动</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;开始运行&quot;</span>)</span><br><span class="line">sys.stdin.read()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>通过执行结果可以看到确实是返回的更改之后的数值</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250605175916772.png" alt="image-20250605175916772"></p>
+<p>一般来说除非数据特别复杂，不然有点多此一举了，有点麻烦，js中又不是不可以处理一些数据</p>
+<h3 id="frida-rpc-远程调用"><a href="#frida-rpc-远程调用" class="headerlink" title="frida rpc 远程调用"></a>frida rpc 远程调用</h3><p>回忆一下主动调用，之前了解到的主动调用的方式有点呆板，只能一次调用，是写死了的。这个JS代码也是注入到程序中的，不能再更改了，现在就可以将他拿到python中来，可以跟服务器，爬虫对接等等，修改和调用就相对自由。</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250605210956090.png" alt="image-20250605210956090"></p>
+<p>使用 rpc 导出一个接口让python调用，这种方法可以看到提示有点过时了</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># js代码中</span></span><br><span class="line">rpc.exports = &#123;</span><br><span class="line">    rpcfunc: test</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意如果 exports 中的方法名是大写，下面调用大写字母前就要后下划线_，这个和 js python 规范化的命名方式不同</span></span><br><span class="line">result = script.exports.rpcfunc()</span><br></pre></td></tr></table></figure>
+
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250605212822610.png" alt="image-20250605212822610"></p>
+<p>看下面的提示，提示要异步操作，这样即可正常调用</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = script.exports_sync.rpcfunc()</span><br></pre></td></tr></table></figure>
+
+
+
+<p>rpc.exports 中也可以直接写方法，也可以给出写好的方法名，这个是无所谓的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rpc.<span class="property">exports</span> = &#123;</span><br><span class="line">    <span class="attr">rpcfunc</span>: <span class="keyword">function</span>(<span class="params">data</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> res = <span class="string">&quot;&quot;</span>; </span><br><span class="line">        <span class="title class_">Java</span>.<span class="title function_">perform</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">            res = <span class="title class_">Java</span>.<span class="title function_">use</span>(<span class="string">&#x27;com.dodonew.online.util.Utils&#x27;</span>).<span class="title function_">md5</span>(data);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>虽然这样写还是要手动进行调用，但是是再python中，就可以结合爬虫，或者监听什么的操作稍微灵活一些了</p>
+<h3 id="frida-算法转发"><a href="#frida-算法转发" class="headerlink" title="frida 算法转发"></a>frida 算法转发</h3><p>写一个主动调用加密的算法，跳过算法分析的步骤，再结合之前写过的协议还原，将计算好的发送到服务端，再主动调用解密算法将服务端的数据解密，这样就可以实现将app作为加密机器，完全不用什么操作</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250605220252529.png" alt="image-20250605220252529"></p>
+<p>利用 rpc 进行算法转发在python中直接调用方法，还可以开放一个本地端口，支持其他的语言和python进行交互</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install fastapi</span><br><span class="line">pip install uvicorn</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="get"><a href="#get" class="headerlink" title="get"></a>get</h4><p>getEchoApi 函数上面的注解的意思是，如果访问到这个路由，就调用下面这个方法，比如</p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1:8888/get">http://127.0.0.1:8888/get</a>  如果发送了这个请求，就会调用方法，后面再加上参数</p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1:8888/get?item_id=100&item_user=13112345678&item_pass=123asad">http://127.0.0.1:8888/get?item_id=100&amp;item_user=13112345678&amp;item_pass=123asad</a></p>
+<p>python代码是可以被导包的，如果这个文件被导入会被先执行一遍，在main中的方法是不在这个时候被执行的</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250606114306422.png" alt="image-20250606114306422"></p>
+<p>有了这个东西，就可以使用其他语言，通过一个 get 请求来获取加密后的内容了，也是一个将app中的算法拿出来使用的操作，省去算法还原的操作了</p>
+<h4 id="post"><a href="#post" class="headerlink" title="post"></a>post</h4><p>上面app.get 是get请求app.post 是post请求，面对大量数据（图片）的时候 get 请求长度是不太够的，需要用到post 请求，写post需要用到一个 BaseModel，新建一个calss类</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250609161728954.png" alt="image-20250609161728954"></p>
+<h3 id="fiddler数据转发"><a href="#fiddler数据转发" class="headerlink" title="fiddler数据转发"></a>fiddler数据转发</h3><p>fiddler数据转发：使用fiddler拦截数据包，把数据包发送到指定服务器</p>
+<p>fiddler是一个抓包工具，直接从官网下载exe，默认安装即可</p>
+<p>半汉化插件：<a target="_blank" rel="noopener" href="https://www.52pojie.cn/forum.php?mod=viewthread&tid=1853941&highlight=fiddler%EF%BF%BD%EF%BF%BD%EF%BF%BD%EF%BF%BD">https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=1853941&amp;highlight=fiddler%BA%BA%BB%AF</a></p>
+<p>在选项这里将 https 中的三个选项勾选上，中间会进行证书安装，全部yes即可</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250610203858228.png" alt="image-20250610203858228"></p>
+<p>抓包工具配好了，但是要实现数据转发还需要用到 fiddler script 。这个是 fiddler 功能的扩展，用代码去控制 fiddler</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250610205707598.png" alt="image-20250610205707598"></p>
+<p>找了一下介绍 fiddler script 中的几个方法的文章： <a target="_blank" rel="noopener" href="https://www.kancloud.cn/ncymkj/development_document/2055244">https://www.kancloud.cn/ncymkj/development_document/2055244</a></p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>OnBeforeRequest</strong></td>
+<td align="left">每次请求之前调用</td>
+</tr>
+<tr>
+<td align="left"><strong>OnBeforeResponse</strong></td>
+<td align="left">每次响应之前调用</td>
+</tr>
+<tr>
+<td align="left"><strong>OnBoot</strong></td>
+<td align="left">启动时调用</td>
+</tr>
+<tr>
+<td align="left"><strong>OnShutdown</strong></td>
+<td align="left">fiddler关闭时调用</td>
+</tr>
+<tr>
+<td align="left"><strong>OnAttach</strong></td>
+<td align="left">fiddler注册成系统代理时调用</td>
+</tr>
+<tr>
+<td align="left"><strong>OnDetach</strong></td>
+<td align="left">fiddler 取消注册系统代理时调用</td>
+</tr>
+<tr>
+<td align="left"><strong>Main</strong></td>
+<td align="left">在每次fiddler启动时和编译CustomRules.js 脚本时调用。</td>
+</tr>
+</tbody></table>
+<p>既然是数据转发那么就需要在 OnBeforeResponse 方法中做点手脚了</p>
+<p>这里以抖音为例，尝试拦截一下评论内容</p>
+<img src="../图片/image-20250610215749558.png" alt="image-20250610215749558" style="zoom:50%;" />
+
+<p>搜索一下 刘招华原型 文本信息</p>
+<p>找到了一条请求，根据这条请求筛选 url 和字段</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250610215824213.png" alt="image-20250610215824213"></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (oSession.<span class="title function_">uriContains</span>(<span class="string">&quot;/monitor_browser/collect/batch&quot;</span>))</span><br><span class="line">       &#123;</span><br><span class="line">           <span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(<span class="string">&quot;POST 请求&quot;</span>);</span><br><span class="line">           <span class="keyword">var</span> html = oSession.<span class="title class_">GetRequestBodyAsString</span>()</span><br><span class="line">           <span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(<span class="string">&quot;捕获请求:&quot;</span> + html);</span><br><span class="line">           <span class="keyword">if</span>(html.<span class="title class_">Contains</span>(<span class="string">&quot;resultKeywords&quot;</span>))&#123;</span><br><span class="line">               <span class="comment">//数据统计开始：把内容通过ajax http发送其它地方</span></span><br><span class="line">			<span class="keyword">var</span> _xhr = <span class="keyword">new</span> <span class="title class_">ActiveXObject</span>(<span class="string">&#x27;Microsoft.XMLHTTP&#x27;</span>);</span><br><span class="line">			<span class="keyword">var</span> url = <span class="string">&#x27;http://127.0.0.1:8000/sendData&#x27;</span>;</span><br><span class="line">			<span class="comment">//发送的数据参数</span></span><br><span class="line">			<span class="keyword">var</span> jsonString = oSession.<span class="title class_">GetResponseBodyAsString</span>();</span><br><span class="line">			<span class="keyword">var</span> requestHeaders = oSession.<span class="property">oRequest</span>.<span class="property">headers</span>.<span class="title class_">ToString</span>();</span><br><span class="line">			<span class="keyword">var</span> responseHeaders=oSession.<span class="property">oResponse</span>.<span class="property">headers</span>.<span class="title class_">ToString</span>();</span><br><span class="line">	</span><br><span class="line">			<span class="keyword">var</span> str=<span class="string">&#x27;&#123;&#125;&#x27;</span>;<span class="comment">//构造自己的JSON http请求的信息及返回的结果</span></span><br><span class="line">			<span class="keyword">var</span> data = <span class="title class_">Fiddler</span>.<span class="property">WebFormats</span>.<span class="property">JSON</span>.<span class="title class_">JsonDecode</span>(str);</span><br><span class="line"></span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;requestHeaders&quot;</span>]=requestHeaders;</span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;responseHeaders&quot;</span>]=responseHeaders;</span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;responseBody&quot;</span>] = jsonString;</span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;url&quot;</span>] = oSession.<span class="property">fullUrl</span>;</span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;response_code&quot;</span>] = oSession.<span class="property">responseCode</span>;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span>(oSession.<span class="property">oRequest</span>.<span class="property">headers</span>.<span class="title class_">Exists</span>(<span class="string">&quot;Cookie&quot;</span>))&#123;</span><br><span class="line">				data.<span class="property">JSONObject</span>[<span class="string">&quot;requestCookie&quot;</span>] = oSession.<span class="property">oRequest</span>.<span class="property">headers</span>[<span class="string">&#x27;Cookie&#x27;</span>];</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				data.<span class="property">JSONObject</span>[<span class="string">&quot;requestCookie&quot;</span>] = <span class="string">&#x27;request no Cookie&#x27;</span>;</span><br><span class="line">			&#125;;</span><br><span class="line">			</span><br><span class="line">			<span class="keyword">if</span>(oSession.<span class="property">oResponse</span>.<span class="property">headers</span>.<span class="title class_">Exists</span>(<span class="string">&quot;Cookie&quot;</span>))&#123;</span><br><span class="line">				data.<span class="property">JSONObject</span>[<span class="string">&quot;responseCookie&quot;</span>] = oSession.<span class="property">oResponse</span>.<span class="property">headers</span>[<span class="string">&#x27;Cookie&#x27;</span>];	</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				data.<span class="property">JSONObject</span>[<span class="string">&quot;responseCookie&quot;</span>] = <span class="string">&#x27;response no Cookie&#x27;</span>;</span><br><span class="line">			&#125;;</span><br><span class="line">			jsonString = <span class="title class_">Fiddler</span>.<span class="property">WebFormats</span>.<span class="property">JSON</span>.<span class="title class_">JsonEncode</span>(data.<span class="property">JSONObject</span>)</span><br><span class="line"></span><br><span class="line">			<span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(jsonString);</span><br><span class="line">			</span><br><span class="line">			_xhr.<span class="property">onreadystatechange</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">					<span class="keyword">if</span> (_xhr.<span class="property">readyState</span>==<span class="number">4</span>)&#123;</span><br><span class="line">						<span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(_xhr.<span class="property">responseText</span>);</span><br><span class="line">					&#125;	</span><br><span class="line">			&#125;;</span><br><span class="line">			_xhr.<span class="title function_">open</span>(<span class="string">&#x27;POST&#x27;</span>, url, <span class="literal">true</span>);</span><br><span class="line">			_xhr.<span class="title function_">send</span>(jsonString);</span><br><span class="line">			<span class="comment">//----数据统计结束-----</span></span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			 <span class="comment">//弹窗报错</span></span><br><span class="line">			<span class="title class_">FiddlerObject</span>.<span class="title function_">alert</span>(<span class="string">&quot;抓取出错！&quot;</span>);</span><br><span class="line">		&#125; <span class="comment">// if end</span></span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>将特定url的数据发送到本机的 8000 端口，然后在使用 fastAPI 开启本地端口</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(<span class="string">&quot;xiaojianbang1&quot;</span>);</span><br><span class="line"><span class="comment">//过滤无关请求，只关注特定请求</span></span><br><span class="line"><span class="keyword">if</span> (oSession.<span class="property">fullUrl</span>.<span class="title class_">Contains</span>(<span class="string">&quot;relationalSearch&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">          <span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(<span class="string">&quot;xiaojianbang2&quot;</span>);</span><br><span class="line">	<span class="keyword">var</span> html = oSession.<span class="title class_">GetResponseBodyAsString</span>()</span><br><span class="line">	<span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(html);</span><br><span class="line">	<span class="keyword">if</span>(html.<span class="title class_">Contains</span>(<span class="string">&quot;resultKeywords&quot;</span>))&#123;</span><br><span class="line">		<span class="comment">//数据统计开始：把内容通过ajax http发送其它地方</span></span><br><span class="line">		<span class="keyword">var</span> _xhr = <span class="keyword">new</span> <span class="title class_">ActiveXObject</span>(<span class="string">&#x27;Microsoft.XMLHTTP&#x27;</span>);</span><br><span class="line">		<span class="keyword">var</span> url = <span class="string">&#x27;http://127.0.0.1:8000/sendData&#x27;</span>;</span><br><span class="line">		<span class="comment">//发送的数据参数</span></span><br><span class="line">		<span class="keyword">var</span> jsonString = oSession.<span class="title class_">GetResponseBodyAsString</span>();</span><br><span class="line">		<span class="keyword">var</span> requestHeaders = oSession.<span class="property">oRequest</span>.<span class="property">headers</span>.<span class="title class_">ToString</span>();</span><br><span class="line">		<span class="keyword">var</span> responseHeaders=oSession.<span class="property">oResponse</span>.<span class="property">headers</span>.<span class="title class_">ToString</span>();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">var</span> str=<span class="string">&#x27;&#123;&#125;&#x27;</span>;<span class="comment">//构造自己的JSON http请求的信息及返回的结果</span></span><br><span class="line">		<span class="keyword">var</span> data = <span class="title class_">Fiddler</span>.<span class="property">WebFormats</span>.<span class="property">JSON</span>.<span class="title class_">JsonDecode</span>(str);</span><br><span class="line">	</span><br><span class="line">		data.<span class="property">JSONObject</span>[<span class="string">&quot;requestHeaders&quot;</span>]=requestHeaders;</span><br><span class="line">		data.<span class="property">JSONObject</span>[<span class="string">&quot;responseHeaders&quot;</span>]=responseHeaders;</span><br><span class="line">		data.<span class="property">JSONObject</span>[<span class="string">&quot;responseBody&quot;</span>] = jsonString;</span><br><span class="line">		data.<span class="property">JSONObject</span>[<span class="string">&quot;url&quot;</span>] = oSession.<span class="property">fullUrl</span>;</span><br><span class="line">		data.<span class="property">JSONObject</span>[<span class="string">&quot;response_code&quot;</span>] = oSession.<span class="property">responseCode</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span>(oSession.<span class="property">oRequest</span>.<span class="property">headers</span>.<span class="title class_">Exists</span>(<span class="string">&quot;Cookie&quot;</span>))&#123;</span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;requestCookie&quot;</span>] = oSession.<span class="property">oRequest</span>.<span class="property">headers</span>[<span class="string">&#x27;Cookie&#x27;</span>];</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;requestCookie&quot;</span>] = <span class="string">&#x27;request no Cookie&#x27;</span>;</span><br><span class="line">		&#125;;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">if</span>(oSession.<span class="property">oResponse</span>.<span class="property">headers</span>.<span class="title class_">Exists</span>(<span class="string">&quot;Cookie&quot;</span>))&#123;</span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;responseCookie&quot;</span>] = oSession.<span class="property">oResponse</span>.<span class="property">headers</span>[<span class="string">&#x27;Cookie&#x27;</span>];	</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			data.<span class="property">JSONObject</span>[<span class="string">&quot;responseCookie&quot;</span>] = <span class="string">&#x27;response no Cookie&#x27;</span>;</span><br><span class="line">		&#125;;</span><br><span class="line">		jsonString = <span class="title class_">Fiddler</span>.<span class="property">WebFormats</span>.<span class="property">JSON</span>.<span class="title class_">JsonEncode</span>(data.<span class="property">JSONObject</span>)</span><br><span class="line"></span><br><span class="line">		<span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(jsonString);</span><br><span class="line">		</span><br><span class="line">		_xhr.<span class="property">onreadystatechange</span>=<span class="keyword">function</span>(<span class="params"></span>)&#123;</span><br><span class="line">				<span class="keyword">if</span> (_xhr.<span class="property">readyState</span>==<span class="number">4</span>)&#123;</span><br><span class="line">					<span class="title class_">FiddlerObject</span>.<span class="title function_">log</span>(_xhr.<span class="property">responseText</span>);</span><br><span class="line">				&#125;	</span><br><span class="line">		&#125;;</span><br><span class="line">		_xhr.<span class="title function_">open</span>(<span class="string">&#x27;POST&#x27;</span>, url, <span class="literal">true</span>);</span><br><span class="line">		_xhr.<span class="title function_">send</span>(jsonString);</span><br><span class="line">		<span class="comment">//----数据统计结束-----</span></span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		 <span class="comment">//弹窗报错</span></span><br><span class="line">		<span class="title class_">FiddlerObject</span>.<span class="title function_">alert</span>(<span class="string">&quot;抓取出错！&quot;</span>);</span><br><span class="line">	&#125; <span class="comment">// if end</span></span><br><span class="line">&#125; <span class="comment">// if controll end</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>在 Fiddler 的脚本（如 FiddlerScript 或自定义规则）中，<code>oSession.GetResponseBodyAsString()</code> 和 <code>oSession.GetRequestBodyAsString()</code> 是用于获取 HTTP 消息体内容的方法，<code>oSession.GetResponseBodyAsString()</code>  用于获取<strong>服务端返回给客户端</strong>的HTTP响应<code>oSession.GetRequestBodyAsString()</code>  用于获取<strong>客户端发送给服务端</strong>的HTTP请求</p>
+<p>因此如果获取不到html信息的话可以，换一个API尝试，我对抖音进行测试的时候，使用<code>oSession.GetRequestBodyAsString()</code> 没有获取到body的信息 <code>oSession.GetResponseBodyAsString()</code> 反倒可以</p>
+<p><img src="/../%E5%9B%BE%E7%89%87/image-20250612174708583.png" alt="image-20250612174708583"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AE%89%E5%8D%93%E9%80%86%E5%90%91/" rel="tag"># 安卓逆向</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/07/24/%E9%80%86%E5%90%91%E5%AD%A6%E4%B9%A0-0x0C-so%E9%80%86%E5%90%91%E5%88%86%E6%9E%90/" rel="prev" title="逆向学习 0x0C so逆向分析">
+      <i class="fa fa-chevron-left"></i> 逆向学习 0x0C so逆向分析
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#frida%E7%9A%84python%E5%BA%93%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">frida的python库使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8C%85%E5%90%8D%E6%B3%A8%E5%85%A5"><span class="nav-number">1.1.</span> <span class="nav-text">包名注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pid%E6%B3%A8%E5%85%A5"><span class="nav-number">1.2.</span> <span class="nav-text">pid注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spawn"><span class="nav-number">1.3.</span> <span class="nav-text">spawn</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E9%9D%9E%E6%A0%87%E5%87%86%E7%AB%AF%E5%8F%A3%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.4.</span> <span class="nav-text">通过非标准端口连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida%E4%B8%8Epython%E7%9A%84%E4%BA%A4%E4%BA%92"><span class="nav-number">2.</span> <span class="nav-text">frida与python的交互</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#send"><span class="nav-number">2.1.</span> <span class="nav-text">send</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recv"><span class="nav-number">2.2.</span> <span class="nav-text">recv</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida-rpc-%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">frida rpc 远程调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#frida-%E7%AE%97%E6%B3%95%E8%BD%AC%E5%8F%91"><span class="nav-number">4.</span> <span class="nav-text">frida 算法转发</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#get"><span class="nav-number">4.1.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#post"><span class="nav-number">4.2.</span> <span class="nav-text">post</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fiddler%E6%95%B0%E6%8D%AE%E8%BD%AC%E5%8F%91"><span class="nav-number">5.</span> <span class="nav-text">fiddler数据转发</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="没事数命的猫"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">没事数命的猫</p>
+  <div class="site-description" itemprop="description">学而不思则罔</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">没事数命的猫</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">182k</span>
+</div>
+
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+-->
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
+
+<!-- 点击效果 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/love-click.js"></script>
